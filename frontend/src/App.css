@@ -1,0 +1,104 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #FAFAFD;
+}
+
+#root {
+  background: #FAFAFD;
+  min-height: 100vh;
+}
+
+.main-container {
+  width: 476px;
+  margin: 3% auto;
+  text-align: center;
+  /*padding: 0.8em;*/
+  padding-bottom: 2em;
+}
+
+tr:hover {
+  background: #7ec1ff;
+}
+
+.main-container .ant-picker-calendar {
+  width: 476px;
+  margin: 0 auto;
+}
+
+.mini-calendar-container {
+  background: #FFFFFF;
+  border-radius: 15px;
+  overflow: hidden;
+  height: 80px;
+  display: flex;
+  width: 476px;
+  box-shadow: 0 4px 20px rgba(197, 197, 197, 0.25);
+  margin-bottom: 0.6em;
+}
+
+.mini-calendar-item {
+  width: 68px;
+  height: 80px;
+  text-align: center;
+  background: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.2s ease-in;
+}
+
+.mini-calendar-item h1{
+  color: #000000;
+}
+
+.mini-calendar-item h4{
+  color: #818181;
+}
+
+.mini-calendar-item:hover {
+  background: #ECF0FE;
+}
+
+.mini-calendar-item:hover h1{
+  color: #333399;
+}
+
+.mini-calendar-item:hover h4{
+  color: #4343A1;
+}
+
+.mini-calendar-item h1 {
+  margin-block-end: 0;
+}
+
+.subject-tile {
+  margin: 1em 0;
+  background: #FFFFFF;
+  border-radius: 15px;
+  text-align: start;
+  display: flex;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(197, 197, 197, 0.15);
+}
+
+.subject-tile-left {
+  width: 16%;
+  text-align: center;
+  padding: 2%;
+}
+
+.subject-tile-right {
+  padding: 2%;
+  width: 76%;
+}
+
+.subject-tile-left h4{
+  margin-block-end: 0;
+}
+
+.subject-tile-left h1{
+  margin-block-end: 0.2em;
+}
+
+.subject-tile p{
+  margin: 0.1em 0;
+}
