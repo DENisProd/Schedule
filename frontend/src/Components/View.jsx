@@ -50,7 +50,7 @@ export default function View() {
         let week = []
 
         for (let i = 1; i <= 7; i++) {
-            let first = curr.getDate() - curr.getDay() + i
+            let first = curr.getDate() - curr.getDay() + i +1
             let day = new Date(curr.setDate(first)).toISOString().slice(0, 10)
             week.push(day)
         }
@@ -71,28 +71,39 @@ export default function View() {
 
         })
 
+
         let date = new Date()
 
         axios.get("https://edu.donstu.ru/api/Rasp?idGroup=" + groupId +
             `&sdate=${date.getFullYear()}-${normalize(date.getMonth() + 1)}-${normalize(date.getDate())}`).then(res => {
             setRasp(res.data.data.rasp)
             setInfo(res.data.data.info)
-            console.log(res.data.data.info)
 
             let obj = {}
-            res.data.data.rasp.map(sub => {
-                if (obj[sub['дата'].split('T')[0]]?.length > 0) {
-                    obj[sub['дата'].split('T')[0]].push(sub)
-
+            let rasp1 = res.data.data.rasp
+            for (let i = 0; i < rasp1.length; i++) {
+                if (obj[rasp1[i]['дата'].split('T')[0]]?.length > 0) {
+                    if (rasp1[i]['номерЗанятия'] === rasp1[i-1]['номерЗанятия'] && rasp1[i-1]['дата'].split('T')[0] === rasp1[i]['дата'].split('T')[0]) {
+                        obj[rasp1[i]['дата'].split('T')[0]].push({...rasp1[i], isPodgr: true})
+                    } else {
+                        obj[rasp1[i]['дата'].split('T')[0]].push({...rasp1[i], isPodgr: false})
+                    }
                 } else {
-                    obj[sub['дата'].split('T')[0]] = []
-                    obj[sub['дата'].split('T')[0]].push(sub)
+                    obj[rasp1[i]['дата'].split('T')[0]] = []
+                    obj[rasp1[i]['дата'].split('T')[0]].push({...rasp1[i], isPodgr: false})
                 }
-            })
+            }
+            // res.data.data.rasp.map(sub => {
+            //     if (obj[sub['дата'].split('T')[0]]?.length > 0) {
+            //         obj[sub['дата'].split('T')[0]].push(sub)
+            //     } else {
+            //         obj[sub['дата'].split('T')[0]] = []
+            //         obj[sub['дата'].split('T')[0]].push(sub)
+            //     }
+            // })
             setGroupedRasp(obj)
             setIsLoaded(true)
         })
-
 
     }, [])
 
@@ -112,14 +123,19 @@ export default function View() {
                             <h2>{Number(gr.split('-')[2])} {month[Number(gr.split('-')[1])-1]}</h2>
                             {groupedRasp[gr].map(subject =>
                                 <div className="subject-tile" key={subject['код']}>
-                                    <div className="subject-tile-left" style={{background: getStyle(subject['дисциплина'])}}>
-                                        <h1>{subject['номерЗанятия']}</h1>
-                                        <h4>с {subject['начало']}</h4>
-                                        <h4>до {subject['конец']}</h4>
+                                    <div className="subject-tile-left" style={{background: subject.isPodgr ? 'none' : getStyle(subject['дисциплина'])}}>
+                                        {!subject.isPodgr &&
+                                            <>
+                                                <h1>{subject['номерЗанятия']}</h1>
+                                                <h4>с {subject['начало']}</h4>
+                                                <h4>до {subject['конец']}</h4>
+                                            </>}
+
                                     </div>
 
                                     <div className="subject-tile-right">
                                         <h3>{subject['дисциплина']}</h3>
+                                        <p><b>{subject?.isPodgr && "Подгруппа"}</b></p>
                                         {/*<p>Код {subject['код']}</p>*/}
                                         {/*<p>Дата начала {subject['дата'].split('T')[0]}</p>*/}
 

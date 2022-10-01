@@ -8,6 +8,12 @@ export default function Home() {
     const [groupsList, setGroupList] = useState([])
     const [isLoaded, setIsLoaded] = useState(false)
 
+    const [value, setValue] = useState('')
+
+    const filteredGroups = groupsList.filter(group => {
+        return group.name.toLowerCase().includes(value.toLowerCase())
+    })
+
     useEffect(() => {
         axios("https://edu.donstu.ru/api/raspGrouplist?year=2022-2023").then(res => {
             setGroupList(res.data.data)
@@ -17,24 +23,25 @@ export default function Home() {
 
     return (
         <div>
+            <input onChange={(e) => setValue(e.target.value)} value={value}/>
             {isLoaded ?
                 <table width={500} style={{textAlign: "center"}}>
                     <thead>
-                    <th>ID</th>
+                    {/*<th>ID</th>*/}
                     <th>Группа</th>
                     <th>Курс</th>
                     <th>Факультет</th>
-                    <th>Факультет ID</th>
+                    {/*<th>Факультет ID</th>*/}
                     </thead>
 
                     <tbody>
-                    { groupsList.map(group =>
+                    { filteredGroups.map(group =>
                         <tr key={group.id} onClick={() => navigate('/group/'+group.id)}>
-                            <td>{group.id}</td>
+                            {/*<td>{group.id}</td>*/}
                             <td>{group.name}</td>
                             <td>{group.kurs}</td>
                             <td>{group.facul}</td>
-                            <td>{group.facultyID}</td>
+                            {/*<td>{group.facultyID}</td>*/}
                         </tr>
                     )}
                     </tbody>
