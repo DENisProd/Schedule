@@ -29,6 +29,8 @@ const month = [
     "Декабря"
 ]
 
+const dayOfWeek = []
+
 export default function View() {
 
     const navigate = useNavigate()
@@ -39,6 +41,9 @@ export default function View() {
     const [info, setInfo] = useState({})
     const [groupedRasp, setGroupedRasp] = useState({})
     const [isLoaded, setIsLoaded] = useState(false)
+
+    const date = new Date()
+    const todayDate = date.getDate()
 
     const normalize = (value) => {
         if (value < 10) return "0" + value
@@ -57,6 +62,35 @@ export default function View() {
         return week
     }
 
+    const getCurrentWeek2 = () => {
+        let curr = getMonday(new Date())
+        let week = []
+
+        for (let i = 1; i <= 7; i++) {
+            let first = curr.getDate() - curr.getDay() + i
+            let day = new Date(curr.setDate(first)).toISOString().slice(0, 10)
+            week.push(day)
+        }
+        return week
+    }
+
+    const getMonday = (d) => {
+        d = new Date(d);
+        let day = d.getDay(),
+            diff = d.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
+        return new Date(d.setDate(diff));
+    }
+
+    const getNextWeek = () => {
+        let date = new Date(),
+            targetDay = 1, // пятница, начиная с вс=0
+            targetDate = new Date(),
+            delta = targetDay - date.getDay();
+        if (delta >= 0) {targetDate.setDate(date.getDate() + delta)}
+        else {targetDate.setDate(date.getDate() + 7 + delta)}
+
+    }
+
     const getStyle = (name) => {
         for (let i = 0; i < types.length; i++)
             if (name.split(" ")[0].includes(types[i].name))
@@ -65,14 +99,13 @@ export default function View() {
     }
 
     useEffect(() => {
+        localStorage.setItem("groupId", groupId)
+
         axios.get("https://edu.donstu.ru/api/GetRaspDates?idGroup=" + groupId).then(res => {
             console.log(res.data)
             const data = res.data.data.dates
 
         })
-
-
-        let date = new Date()
 
         axios.get("https://edu.donstu.ru/api/Rasp?idGroup=" + groupId +
             `&sdate=${date.getFullYear()}-${normalize(date.getMonth() + 1)}-${normalize(date.getDate())}`).then(res => {
@@ -93,14 +126,7 @@ export default function View() {
                     obj[rasp1[i]['дата'].split('T')[0]].push({...rasp1[i], isPodgr: false})
                 }
             }
-            // res.data.data.rasp.map(sub => {
-            //     if (obj[sub['дата'].split('T')[0]]?.length > 0) {
-            //         obj[sub['дата'].split('T')[0]].push(sub)
-            //     } else {
-            //         obj[sub['дата'].split('T')[0]] = []
-            //         obj[sub['дата'].split('T')[0]].push(sub)
-            //     }
-            // })
+
             setGroupedRasp(obj)
             setIsLoaded(true)
         })
@@ -108,19 +134,28 @@ export default function View() {
     }, [])
 
     useEffect(() => {
+        const doc = document.getElementById(todayDate)
 
-    }, [rasp])
+        console.log(getCurrentWeek2())
+        document.title = info.group?.name + " - Расписание MySecrets"
+
+        if (doc)
+            doc.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+    }, [isLoaded===true])
 
     return (
         <div className="main-container">
-            <button onClick={() => navigate("/")}>Назад к поиску</button>
+            <button className="btn-back" onClick={() => {
+                localStorage.removeItem("groupId")
+                navigate("/")
+            }}>Назад к поиску</button>
             {isLoaded ?
-                <>
-                    <Title level={2}>Группа {info.group.name}</Title>
-                    <CalendarComponent currentWeek={getCurrentWeek()}/>
+                <div className="tiles-container">
+                    <h2 className="title-h2">Группа {info.group.name}</h2>
+                    <CalendarComponent currentWeek={getCurrentWeek2()}/>
                     {Object.keys(groupedRasp).map(gr =>
-                        <div>
-                            <h2>{Number(gr.split('-')[2])} {month[Number(gr.split('-')[1])-1]}</h2>
+                        <div id={Number(gr.split('-')[2]).toString()}>
+                            <h2 className={gr.split('-')[2]===todayDate.toString() ? "today" : ""}>{Number(gr.split('-')[2])} {month[Number(gr.split('-')[1])-1]} {gr.split('-')[2]===todayDate.toString() && " (сегодня)"}</h2>
                             {groupedRasp[gr].map(subject =>
                                 <div className="subject-tile" key={subject['код']}>
                                     <div className="subject-tile-left" style={{background: subject.isPodgr ? 'none' : getStyle(subject['дисциплина'])}}>
@@ -150,7 +185,7 @@ export default function View() {
                             )}
                         </div>
                     )}
-                </>
+                </div>
                 :
                 <h1>Загрузка</h1>}
 
