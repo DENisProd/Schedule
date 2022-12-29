@@ -1,13 +1,15 @@
-import {Calendar} from "antd";
-import {Typography} from "antd";
+//import {Calendar} from "antd";
+//import {Typography} from "antd";
 import {useEffect, useState} from "react";
+import "../App.css"
 
-const { Title } = Typography
+//const { Title } = Typography
 
-export default function CalendarComponent(props) {
+export default function CalendarComponent({updateSchedule}) {
 
     const [calendarVisible, setCalendarVisible] = useState(false)
     const [currWeek, setCurrWeek] = useState([])
+    const [currentDate, setCurrentDate] = useState(new Date())
 
     const onPanelChange = (value, mode) => {
         console.log(value.format('YYYY-MM-DD'), mode);
@@ -15,30 +17,62 @@ export default function CalendarComponent(props) {
     }
 
     const showCalendar = () => {
-        setCalendarVisible(true)
+        //setCalendarVisible(true)
     }
 
     const onSelect = () => {
         setCalendarVisible(false)
     }
 
+    const getCurrentWeek = (date) => {
+        let curr = getMonday(date)
+        let week = []
+
+        for (let i = 1; i <= 7; i++) {
+            let first = curr.getDate() - curr.getDay() + i
+            let day = new Date(curr.setDate(first)).toISOString().slice(0, 10)
+            week.push(day)
+        }
+        return week
+    }
+
+    const getMonday = (d) => {
+        d = new Date(d);
+        let day = d.getDay(),
+            diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
+        return new Date(d.setDate(diff));
+    }
+
     useEffect(() => {
-        setCurrWeek(props.currentWeek)
+        setCurrWeek(getCurrentWeek(currentDate))
     }, [])
 
     return (
-        <div>
+        <div className="calendar-main-container">
+            <button onClick={() => {
+                let newDate = currentDate
+                newDate.setDate(newDate.getDate() - 7)
+                setCurrWeek(getCurrentWeek(newDate))
+
+                updateSchedule(currentDate)
+            }}>{"<"}</button>
             {!calendarVisible &&
                 <>
                     <MiniCalendar currentWeek={currWeek}/>
-                    <Title onClick={showCalendar} level={5}>27 апреля</Title>
+                    {/*<h1 onClick={showCalendar} level={5}>27 апреля</h1>*/}
                 </>
             }
+            <button onClick={() => {
+                let newDate = currentDate
+                newDate.setDate(newDate.getDate() + 7)
+                setCurrWeek(getCurrentWeek(newDate))
 
+                updateSchedule(currentDate)
+            }}>{">"}</button>
 
-            {calendarVisible &&
-                <Calendar fullscreen={false} onSelect={onSelect} onPanelChange={onPanelChange} />
-            }
+            {/*{calendarVisible &&*/}
+            {/*    <Calendar fullscreen={false} onSelect={onSelect} onPanelChange={onPanelChange} />*/}
+            {/*}*/}
 
         </div>
     )

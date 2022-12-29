@@ -41,10 +41,10 @@ export default function Home() {
     })
 
     useEffect(() => {
-        const savedGroupId = localStorage.getItem("groupId")
-
-        if (savedGroupId)
-            navigate('/group/' + Number.parseInt(savedGroupId))
+        // const savedGroupId = localStorage.getItem("groupId")
+        //
+        // if (savedGroupId)
+        //     navigate('/group/' + Number.parseInt(savedGroupId))
 
 
     }, [])
@@ -101,7 +101,10 @@ export default function Home() {
 
                         <tbody>
                         {filteredGroups.slice(0,20).map(group =>
-                            <tr key={group.id} onClick={() => navigate('/group/' + group.id)}>
+                            <tr key={group.id} onClick={() => {
+                                localStorage.setItem("groupId", group.id)
+                                navigate('/group/' + group.id)}
+                            }>
                                 {/*<td>{group.id}</td>*/}
                                 <td>{group.name}</td>
                                 <td>{group.kurs}</td>
