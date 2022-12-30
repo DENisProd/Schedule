@@ -1,25 +1,31 @@
 {
-  "short_name": "Schedule",
-  "name": "Schedule DSTU",
+  "short_name": "Расписание",
+  "name": "Расписание ДГТУ от mysecrets",
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#FAFAFD",
-  "background_color": "#FAFAFD",
+  "theme_color": "#f2f2f8",
+  "background_color": "#f2f2f8",
   "icons": [
-        {
-            "src": "favicon64x64.ico",
-            "sizes": "64x64",
-            "type": "image/ico"
-        },
-		{
-            "src": "favicon16x16.ico",
-            "sizes": "16x16",
-            "type": "image/ico"
-        },
-        {
-            "src": "icon-512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ],
+    {
+        "src": "favicon64x64.ico",
+        "sizes": "64x64",
+        "type": "image/ico"
+    },
+    {
+        "src": "favicon16x16.ico",
+        "sizes": "16x16",
+        "type": "image/ico"
+    },
+    {
+        "src": "logo512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+    },
+    {
+        "src": "maskable_icon_x192.png",
+        "sizes": "196x196",
+        "type": "image/png",
+        "purpose":"maskable"
+    }
+]
 }

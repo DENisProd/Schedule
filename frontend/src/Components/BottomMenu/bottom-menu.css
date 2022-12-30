@@ -43,7 +43,8 @@
 }
 
 .bottom-menu .btn:hover{
-    background: #dedede;
+    background: #f0efef;
+    border-radius: 2em;
 }
 
 @media screen and (max-width : 1024px) {
