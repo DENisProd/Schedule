@@ -83,6 +83,7 @@ export default function Home() {
                     setIsLoaded(true)
                 }
                 break
+                default: break
         }
     }, [tab])
 
@@ -100,7 +101,7 @@ export default function Home() {
                         </thead>
 
                         <tbody>
-                        {filteredGroups.slice(0,20).map(group =>
+                        {filteredGroups.slice(0,40).map(group =>
                             <tr key={group.id} onClick={() => {
                                 localStorage.setItem("groupId", group.id)
                                 navigate('/group/' + group.id)}
@@ -123,8 +124,11 @@ export default function Home() {
                         <th>Фамилия Имя Отчетво</th>
                         </thead>
                         <tbody>
-                        {filteredTeachers.slice(0,20).map(teachers =>
-                                <tr>
+                        {filteredTeachers.slice(0,40).map(teachers =>
+                                <tr key={teachers.id}
+                                onClick={() => {
+                                    navigate('/teacher/' + teachers.id)}
+                                }>
                                     <td>{teachers.name}</td>
                                 </tr>
                         )}
@@ -139,8 +143,10 @@ export default function Home() {
                         <th>Аудитория</th>
                         </thead>
                         <tbody>
-                        {filteredRooms.slice(0,20).map(room =>
-                                <tr>
+                        {filteredRooms.slice(0,40).map(room =>
+                                <tr onClick={() => {
+                                    navigate('/room/' + room.id)}
+                                }>
                                     <td>{room.name}</td>
                                 </tr>
                             // <tr>{teacher.name}</tr>
@@ -149,6 +155,7 @@ export default function Home() {
                     </table>
                 )
                 break
+                default: break
         }
     }
 
