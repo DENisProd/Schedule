@@ -31,6 +31,7 @@ export default function View() {
     const { groupId } = useParams();
     //const id = 44464
 
+    const [groupChache, setGroupChache] = useState([])
     const [rasp, setRasp] = useState([]);
     const [info, setInfo] = useState({});
     const [groupedRasp, setGroupedRasp] = useState({});
@@ -82,26 +83,48 @@ export default function View() {
         return obj;
     };
 
+    const getDateString = (currentDate) => {
+        return `${currentDate.getFullYear()}-${normalize(currentDate.getMonth() + 1)}-${normalize(currentDate.getDate())}`
+    }
+
     const updateSchedule = (currentDate) => {
         setIsLoaded(false);
+        const curr_date = getDateString(currentDate)
+        let isExists = false
+        let existsIndex = 0
+        Object.keys(groupChache).map((gr) => {
+            if(Object.keys(groupChache[gr])[0]===curr_date) {
+                isExists = true
+                existsIndex = gr
+            }
+        })
 
-        axios
+
+        if (isExists) {
+            setGroupedRasp(groupChache[existsIndex][`${curr_date}`][`${groupId}`]);
+            setIsLoaded(true);
+        } else {
+            axios
             .get(
                 "https://edu.donstu.ru/api/Rasp?idGroup=" +
                     groupId +
-                    `&sdate=${currentDate.getFullYear()}-${normalize(
-                        currentDate.getMonth() + 1
-                    )}-${normalize(currentDate.getDate())}`
+                    `&sdate=${curr_date}`
             )
             .then((res) => {
                 setRasp(res.data.data.rasp);
                 setInfo(res.data.data.info);
 
                 let obj = scheduleProccessing(res);
-
                 setGroupedRasp(obj);
+                if (groupChache.length>0)
+                    setGroupChache([...groupChache, {[`${curr_date}`]: {[`${groupId}`]:obj}}])
+                else
+                    setGroupChache([{[`${curr_date}`]: {[`${groupId}`]:obj}}])
+                
                 setIsLoaded(true);
+                
             });
+        }
     };
 
     const checkFavorites = () => {
@@ -164,6 +187,40 @@ export default function View() {
         if (sended_date.getDate()!=date.getDate()) sendStats()
     }, [isLoaded === true]);
 
+    const setFavorites = () => {
+        let favoritesGroups = JSON.parse(
+            localStorage.getItem("favorites")
+        );
+
+        if (inFavorites) {
+            if (favoritesGroups.length > 0) {
+                let myArray = favoritesGroups.filter(
+                    function (obj) {
+                        return obj.id !== info.group.groupID
+                    }
+                )
+                localStorage.setItem("favorites", JSON.stringify(myArray))
+            }
+        } else {
+            if (favoritesGroups === null)
+                favoritesGroups = [];
+
+            favoritesGroups.push({
+                name: info.group.name,
+                id: info.group.groupID,
+                facul: "",
+            })
+            
+            localStorage.removeItem("favorites");
+            localStorage.setItem(
+                "favorites",
+                JSON.stringify(favoritesGroups)
+            )
+        }
+
+        checkFavorites();
+    }
+
     return (
         <div className="main-container">
             <div className="tiles-container">
@@ -174,50 +231,7 @@ export default function View() {
                     </h2>
 
                     {isLoaded && (
-                        <div
-                            className={
-                                "icon-btn" + (inFavorites ? " favorite" : "")
-                            }
-                            onClick={() => {
-                                let favoritesGroups = JSON.parse(
-                                    localStorage.getItem("favorites")
-                                );
-
-                                if (inFavorites) {
-                                    if (favoritesGroups.length > 0) {
-                                        let myArray = favoritesGroups.filter(
-                                            function (obj) {
-                                                return (
-                                                    obj.id !==
-                                                    info.group.groupID
-                                                );
-                                            }
-                                        );
-                                        console.log(myArray);
-                                        localStorage.setItem(
-                                            "favorites",
-                                            JSON.stringify(myArray)
-                                        );
-                                    }
-                                } else {
-                                    if (favoritesGroups === null)
-                                        favoritesGroups = [];
-                                    favoritesGroups.push({
-                                        name: info.group.name,
-                                        id: info.group.groupID,
-                                        facul: "",
-                                    });
-                                    console.log(favoritesGroups);
-                                    localStorage.removeItem("favorites");
-                                    localStorage.setItem(
-                                        "favorites",
-                                        JSON.stringify(favoritesGroups)
-                                    );
-                                }
-
-                                checkFavorites();
-                            }}
-                        >
+                        <div className={"icon-btn" + (inFavorites ? " favorite" : "")} onClick={() => setFavorites()}>
                             <svg
                                 width="800px"
                                 height="800px"
@@ -235,37 +249,15 @@ export default function View() {
                     <>
                         {Object.keys(groupedRasp).length > 0 ? (
                             <>
-                            
                                 {Object.keys(groupedRasp).map((gr) => (
-                                    <div
-                                        id={Number(gr.split("-")[2]).toString()}
-                                    >
-                                        <h2
-                                            className={
-                                                gr.split("-")[2] ===
-                                                todayDate.toString()
-                                                    ? "today"
-                                                    : "day"
-                                            }
-                                        >
+                                    <div id={Number(gr.split("-")[2]).toString()}>
+                                        <h2 className={gr.split("-")[2] === todayDate.toString() ? "today" : "day"}>
                                             {Number(gr.split("-")[2])}{" "}
-                                            {
-                                                month[
-                                                    Number(gr.split("-")[1]) - 1
-                                                ]
-                                            }{" "}
-                                            {gr.split("-")[2] ===
-                                                todayDate.toString() &&
-                                                " (сегодня)"}
+                                            {month[Number(gr.split("-")[1]) - 1]}{" "}
+                                            {gr.split("-")[2] === todayDate.toString() && " (сегодня)"}
                                         </h2>
                                         {groupedRasp[gr].map((subjects) => (
-                                            // <div>
-                                            // {/* {console.log(subject)} */}
-                                            // ava
-                                            // </div>
-                                            <SwipebleViewTile
-                                                subjects={subjects}
-                                            />
+                                            <SwipebleViewTile subjects={subjects}/>
                                         ))}
                                     </div>
                                 ))}
@@ -275,7 +267,7 @@ export default function View() {
                         )}
                     </>
                 ) : (
-                    <h1>Загрузка</h1>
+                    <h2>Загрузка</h2>
                 )}
             </div>
         </div>
