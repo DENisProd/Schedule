@@ -6,6 +6,9 @@ import axios from "axios";
 import moment from "moment/moment";
 import SwipebleViewTile from "./SwipebleViewTile/SwipebleViewTile";
 
+//const stats_url = "http://localhost:5000/stats"
+const stats_url = "https://schedule.darksecrets.ru/api/stats/"
+
 const month = [
     "Января",
     "Февраля",
@@ -32,6 +35,7 @@ export default function View() {
     const [info, setInfo] = useState({});
     const [groupedRasp, setGroupedRasp] = useState({});
     const [isLoaded, setIsLoaded] = useState(false);
+    const [isSendStats, setIsSendStats] = useState(false);
 
     const [date, setDate] = useState(new Date());
     const todayDate = date.getDate();
@@ -40,38 +44,6 @@ export default function View() {
     const normalize = (value) => {
         if (value < 10) return "0" + value;
         else return value;
-    };
-
-    const scheduleProccessing1 = (res) => {
-        let obj = {};
-        let rasp1 = res.data.data.rasp;
-        for (let i = 0; i < rasp1.length; i++) {
-            if (obj[rasp1[i]["дата"].split("T")[0]]?.length > 0) {
-                if (
-                    rasp1[i]["номерЗанятия"] === rasp1[i - 1]["номерЗанятия"] &&
-                    rasp1[i - 1]["дата"].split("T")[0] ===
-                        rasp1[i]["дата"].split("T")[0]
-                ) {
-                    obj[rasp1[i]["дата"].split("T")[0]].push({
-                        ...rasp1[i],
-                        isPodgr: true,
-                    });
-                } else {
-                    obj[rasp1[i]["дата"].split("T")[0]].push({
-                        ...rasp1[i],
-                        isPodgr: false,
-                    });
-                }
-            } else {
-                obj[rasp1[i]["дата"].split("T")[0]] = [];
-                obj[rasp1[i]["дата"].split("T")[0]].push({
-                    ...rasp1[i],
-                    isPodgr: false,
-                });
-            }
-        }
-
-        return obj;
     };
 
     const scheduleProccessing = (res) => {
@@ -146,6 +118,28 @@ export default function View() {
         }
     };
 
+    const sendStats = () => {
+        const favoritesGroups = JSON.parse(localStorage.getItem("favorites"));
+        let convertedFavorites = []
+        if (favoritesGroups) {
+            favoritesGroups.forEach((favorites) => {
+                convertedFavorites.push(favorites.name)
+            })
+        }
+        
+        axios.
+            post(stats_url, {
+                sg: JSON.parse(localStorage.getItem("searchList")),
+                fav: convertedFavorites
+            })
+
+        const sended_date = new Date()
+        console.log("sended")
+        localStorage.setItem("send_data", sended_date)
+        //setIsSendStats(true)
+        //localStorage.setItem("is_sended", "1")
+    }
+
     useEffect(() => {
         axios
             .get("https://edu.donstu.ru/api/GetRaspDates?idGroup=" + groupId)
@@ -165,6 +159,9 @@ export default function View() {
         checkFavorites();
 
         if (doc) doc.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        const sended_date = new Date(localStorage.getItem("send_data"))
+        if (sended_date.getDate()!=date.getDate()) sendStats()
     }, [isLoaded === true]);
 
     return (
