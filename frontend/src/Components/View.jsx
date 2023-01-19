@@ -1,13 +1,18 @@
 import CalendarComponent from "./CalendarComponent";
-//import {Typography} from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import moment from "moment/moment";
 import SwipebleViewTile from "./SwipebleViewTile/SwipebleViewTile";
+import Loader from "./Loader/Loader";
 
 //const stats_url = "http://localhost:5000/stats"
 const stats_url = "https://schedule.darksecrets.ru/api/stats/"
+
+const requests = {
+    group: "https://edu.donstu.ru/api/Rasp?idGroup=",
+    room: "https://edu.donstu.ru/api/Rasp?idAudLine=",
+    teachers: "https://edu.donstu.ru/api/Rasp?idTeacher=",
+};
 
 const month = [
     "Января",
@@ -24,19 +29,18 @@ const month = [
     "Декабря",
 ];
 
-const dayOfWeek = [];
+// const dayOfWeek = [];
 
-export default function View() {
-    const navigate = useNavigate();
+export default function View({ isTeachers, isRoom, isGroup }) {
+    // const navigate = useNavigate();
     const { groupId } = useParams();
     //const id = 44464
 
     const [groupChache, setGroupChache] = useState([])
-    const [rasp, setRasp] = useState([]);
+    // const [rasp, setRasp] = useState([]);
     const [info, setInfo] = useState({});
     const [groupedRasp, setGroupedRasp] = useState({});
     const [isLoaded, setIsLoaded] = useState(false);
-    const [isSendStats, setIsSendStats] = useState(false);
 
     const [date, setDate] = useState(new Date());
     const todayDate = date.getDate();
@@ -45,6 +49,16 @@ export default function View() {
     const normalize = (value) => {
         if (value < 10) return "0" + value;
         else return value;
+    };
+
+    const getRequestUrl = () => {
+        let url = "";
+
+        if (isTeachers) url = requests.teachers;
+        if (isRoom) url = requests.room;
+        if (isGroup) url = requests.group;
+
+        return url;
     };
 
     const scheduleProccessing = (res) => {
@@ -106,12 +120,12 @@ export default function View() {
         } else {
             axios
             .get(
-                "https://edu.donstu.ru/api/Rasp?idGroup=" +
+                getRequestUrl() +
                     groupId +
                     `&sdate=${curr_date}`
             )
             .then((res) => {
-                setRasp(res.data.data.rasp);
+                // setRasp(res.data.data.rasp);
                 setInfo(res.data.data.info);
 
                 let obj = scheduleProccessing(res);
@@ -143,6 +157,8 @@ export default function View() {
 
     const sendStats = () => {
         const favoritesGroups = JSON.parse(localStorage.getItem("favorites"));
+        const enterCounts = Number.parseInt(localStorage.getItem("count_enter"))
+
         let convertedFavorites = []
         if (favoritesGroups) {
             favoritesGroups.forEach((favorites) => {
@@ -153,14 +169,13 @@ export default function View() {
         axios.
             post(stats_url, {
                 sg: JSON.parse(localStorage.getItem("searchList")),
-                fav: convertedFavorites
+                fav: convertedFavorites,
+                count: enterCounts / 2
             })
 
         const sended_date = new Date()
         console.log("sended")
         localStorage.setItem("send_data", sended_date)
-        //setIsSendStats(true)
-        //localStorage.setItem("is_sended", "1")
     }
 
     useEffect(() => {
@@ -173,8 +188,6 @@ export default function View() {
         updateSchedule(new Date());
     }, []);
 
-    let array = [];
-
     useEffect(() => {
         const doc = document.getElementById(todayDate);
 
@@ -183,6 +196,11 @@ export default function View() {
 
         if (doc) doc.scrollIntoView({ behavior: "smooth", block: "start" });
 
+        let count_enter = Number.parseInt(localStorage.getItem("count_enter"))
+        if (count_enter) count_enter++
+        else count_enter = 1
+        localStorage.setItem("count_enter", count_enter)
+        
         const sended_date = new Date(localStorage.getItem("send_data"))
         if (sended_date.getDate()!=date.getDate()) sendStats()
     }, [isLoaded === true]);
@@ -267,7 +285,7 @@ export default function View() {
                         )}
                     </>
                 ) : (
-                    <h2>Загрузка</h2>
+                    <Loader/>
                 )}
             </div>
         </div>

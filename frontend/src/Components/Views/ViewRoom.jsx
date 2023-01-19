@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment/moment";
 import SwipebleViewTile from "../SwipebleViewTile/SwipebleViewTile";
+import Loader from "../Loader/Loader";
 
 const month = [
     "Января",
@@ -183,7 +184,7 @@ export default function ViewRoom({ isTeachers, isRoom }) {
                         )}
                     </>
                 ) : (
-                    <h1>Загрузка</h1>
+                    <Loader/>
                 )}
             </div>
         </div>
