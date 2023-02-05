@@ -176,7 +176,9 @@ export default function Home() {
                     {getTable()}
                 </>
                 :
-                <Loader/>
+                <>
+                    <Loader/>
+                </>
             }
         </div>
     )

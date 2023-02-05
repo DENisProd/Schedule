@@ -80,7 +80,7 @@ export default function SwipebleViewTile({ isRoom, isTeachers, subjects }) {
             //     onScroll={scrollHandler}
             >
                 {subjects?.map((subject) => (
-                    <SubjectTile isTeachers={isTeachers} isRoom={isRoom} subject={subject} />
+                    <SubjectTile isTeachers={isTeachers} isRoom={isRoom} subject={subject} key={subject["код"]}/>
                 ))}
             </div>
             <DotIndicator currentSlide={currentSlide} subjects={subjects} />
@@ -93,7 +93,7 @@ function DotIndicator({ currentSlide, subjects }) {
 //         console.log(Math.round(currentSlide, 1));
 //     }, []);
     return (
-        <div className="dot-indicator">
+        <div className="dot-indicator" key={subjects["код"]}>
             {subjects?.length > 1 &&
                 subjects.map((subject, index) => (
                     <div
@@ -129,7 +129,7 @@ function SubjectTile({ isRoom, isTeachers, subject }) {
     };
 
     return (
-        <div className="subject-tile" key={subject["код"]}>
+        <div className="subject-tile">
             <div
                 className="subject-tile-left"
                 style={{
