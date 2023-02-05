@@ -8,14 +8,14 @@ body {
 #root {
     /*background: #FAFAFD;*/
     height: 96vh;
+    overflow-y: hidden;
 }
 
 .main-container {
     width: 800px;
-    margin: 3% auto;
+    margin: 3% auto 0 auto;
     text-align: center;
     /*padding: 0.8em;*/
-    padding-bottom: 6em;
 }
 
 .main-container .ant-picker-calendar {
@@ -27,12 +27,12 @@ body {
     background: #ffffff;
     border-radius: 15px;
     overflow: hidden;
-    height: 110px;
+    height: 100px;
     display: flex;
     width: 90%;
     box-shadow: 0 4px 20px rgba(197, 197, 197, 0.25);
-    margin-bottom: 0.6em;
     justify-content: space-between;
+    z-index: 10;
 }
 
 .mini-calendar-item {
@@ -43,10 +43,23 @@ body {
     cursor: pointer;
     transition: all 0.2s ease-in;
     border-right: 1px solid #f0f0f0;
+    user-select: none;
+}
+
+.mini-calendar-item.active, .mini-calendar-item.exists.active {
+    background: #ecf0fe;
+}
+
+.mini-calendar-item.exists {
+    background: #fff0e5;
+}
+
+.mini-calendar-item.exists h1{
+    color: #000000;
 }
 
 .mini-calendar-item h1 {
-    color: #000000;
+    color: #db5867;
 }
 
 .mini-calendar-item h4 {
@@ -99,6 +112,12 @@ body {
     fill: #db5867;
 }
 
+.tiles-main-container {
+    height: 68vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
 .subject-tile {
     margin: 1em 0;
     background: #ffffff;
@@ -145,6 +164,17 @@ body {
 .subject-tile .time-h {
     color: #818181;
     font-weight: 400;
+}
+
+.tiles-container h2{
+    margin-block-end: 0.1em;
+}
+
+.tiles-container h5{
+    margin-block-start: 0.1em;
+    color: #939393;
+    font-weight: 400;
+    margin-block-end: 0.5em;
 }
 
 .tiles-container .today {
@@ -424,7 +454,7 @@ table tbody tr:hover {
     }
 
     .main-container .mini-calendar-container {
-        height: 80px;
+        height: 70px;
     }
     .home-container .search-tabs button {
         font-size: 0.9em;
@@ -449,6 +479,12 @@ table tbody tr:hover {
     }
     .subject-tile-right h3 {
         font-weight: 600;
+    }
+    .main-container .mini-calendar-container {
+        height: 50px;
+    }
+    .mini-calendar-item h4 {
+        font-size: 0.8em;
     }
 
     .subject-tile {
@@ -509,7 +545,7 @@ table tbody tr:hover {
     }
 
     .main-container .mini-calendar-container {
-        height: 70px;
+        height: 60px;
     }
 
     .calendar-main-container button {

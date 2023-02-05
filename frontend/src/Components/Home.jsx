@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Link, useNavigate} from "react-router-dom";
+import Loader from "./Loader/Loader";
 
 const searchList = [
     "группе",
@@ -177,7 +178,9 @@ export default function Home() {
                     {getTable()}
                 </>
                 :
-                <h1>Загрузка...</h1>
+                <>
+                    <Loader/>
+                </>
             }
         </div>
     )
