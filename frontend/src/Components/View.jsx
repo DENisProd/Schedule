@@ -2,8 +2,8 @@ import CalendarComponent from "./CalendarComponent";
 //import {Typography} from "antd";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
+
 import axios from "axios";
-import moment from "moment/moment";
 import SwipebleViewTile from "./SwipebleViewTile/SwipebleViewTile";
 import Loader from "./Loader/Loader";
 
@@ -21,27 +21,6 @@ const month = [
     "Ноября",
     "Декабря",
 ];
-
-const weekDays = {
-    0: "воскресенье",
-    1: "понедельник",
-    2: "вторник",
-    3: "среда",
-    4: "четверг",
-    5: "пятница",
-    6: "суббота",
-}
-
-const stats_url = "https://schedule.darksecrets.ru/api/stats/"
-
-const requests = {
-    group: "https://edu.donstu.ru/api/Rasp?idGroup=",
-    room: "https://edu.donstu.ru/api/Rasp?idAudLine=",
-    teachers: "https://edu.donstu.ru/api/Rasp?idTeacher=",
-};
-
-export default function View({ isTeachers, isRoom, isGroup }) {
-    const {groupId} = useParams();
 
     const [info, setInfo] = useState({});
     const [groupedRasp, setGroupedRasp] = useState({});
@@ -137,6 +116,15 @@ export default function View({ isTeachers, isRoom, isGroup }) {
 
     const updateSchedule = (currDate) => {
         setIsLoaded(false);
+        const curr_date = getDateString(currentDate)
+        let isExists = false
+        let existsIndex = 0
+        Object.keys(groupChache).map((gr) => {
+            if(Object.keys(groupChache[gr])[0]===curr_date) {
+                isExists = true
+                existsIndex = gr
+            }
+        })
 
         let sdate = ""
         if (currDate.getDay() === 0) {

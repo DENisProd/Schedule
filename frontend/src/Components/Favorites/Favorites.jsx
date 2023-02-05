@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import Loader from "../Loader/Loader";
 
 export default function Favorites() {
     const navigate = useNavigate();
@@ -91,7 +92,7 @@ export default function Favorites() {
                             )}
                         </>
                     ) : (
-                        <h1>Загрузка</h1>
+                        <Loader/>
                     )}
                 </div>
                 <aside>

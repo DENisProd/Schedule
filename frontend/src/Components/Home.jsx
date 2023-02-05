@@ -42,15 +42,6 @@ export default function Home() {
     })
 
     useEffect(() => {
-        // const savedGroupId = localStorage.getItem("groupId")
-        //
-        // if (savedGroupId)
-        //     navigate('/group/' + Number.parseInt(savedGroupId))
-
-
-    }, [])
-
-    useEffect(() => {
         setIsLoaded(false)
         switch (tab) {
             case 1:
@@ -105,6 +96,13 @@ export default function Home() {
                         {filteredGroups.slice(0,40).map(group =>
                             <tr key={group.id} onClick={() => {
                                 localStorage.setItem("groupId", group.id)
+                                let searchList = JSON.parse(localStorage.getItem("searchList"))
+                                //console.log(searchList)
+                                if (searchList) 
+                                    searchList.push(group.name)
+                                else searchList = [group.name]
+                                localStorage.setItem("searchList", JSON.stringify(searchList))
+
                                 navigate('/group/' + group.id)}
                             }>
                                 {/*<td>{group.id}</td>*/}

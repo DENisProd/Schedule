@@ -1,3 +1,4 @@
+
 import {useEffect, useState} from "react"
 import axios from "axios"
 import User from "./User"
@@ -8,6 +9,7 @@ export default function Admin() {
     const [password, setPassword] = useState('')
     const [isDataLoaded, setIsDataLoaded] = useState(false)
     const [data, setData] = useState([])
+
     const [eniqueUsers, setEniqueUsers] = useState(0)
     const [eniqueData, setEniqueData] = useState([])
 
@@ -20,6 +22,7 @@ export default function Admin() {
             } else {
                 alert("Неправильный пароль")
             }
+
 
         })
     }
@@ -42,6 +45,7 @@ export default function Admin() {
             <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" name="password"/>
             <button onClick={enter}>Вход</button>
             {isDataLoaded &&
+
                 <div className="tiles-main-container" id={"scrollArea"}>
                     <h4>Уникальных пользователей: {eniqueUsers}</h4>
                     <table>
