@@ -8,5 +8,4 @@ const clientInfo = new Schema({
     enterCount: {type: Number},
     created: {type: Date, default: Date.now}
 })
-
 module.exports = model("ClientInfo", clientInfo)

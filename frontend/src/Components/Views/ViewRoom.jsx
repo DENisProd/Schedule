@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment/moment";
 import SwipebleViewTile from "../SwipebleViewTile/SwipebleViewTile";
+import Loader from "../Loader/Loader";
 
 const month = [
     "Января",

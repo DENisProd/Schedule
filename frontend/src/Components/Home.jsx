@@ -130,6 +130,13 @@ export default function Home() {
                         {filteredGroups.slice(0,40).map(group =>
                             <tr key={group.id} onClick={() => {
                                 localStorage.setItem("groupId", group.id)
+                                let searchList = JSON.parse(localStorage.getItem("searchList"))
+                                //console.log(searchList)
+                                if (searchList) 
+                                    searchList.push(group.name)
+                                else searchList = [group.name]
+                                localStorage.setItem("searchList", JSON.stringify(searchList))
+
                                 navigate('/group/' + group.id)}
                             }>
                                 {/*<td>{group.id}</td>*/}

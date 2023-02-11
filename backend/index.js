@@ -47,6 +47,7 @@ app.post('/stats/', async (req, res) => {
             searchedGroups: req.body.sg,
             favoriteGroups: req.body.fav,
             enterCount: req.body.count
+
         })
 
         await newClientInfo.save()

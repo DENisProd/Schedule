@@ -2,8 +2,8 @@ import CalendarComponent from "./CalendarComponent";
 //import {Typography} from "antd";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
+
 import axios from "axios";
-import moment from "moment/moment";
 import SwipebleViewTile from "./SwipebleViewTile/SwipebleViewTile";
 import Loader from "./Loader/Loader";
 
