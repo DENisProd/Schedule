@@ -55,7 +55,7 @@ export default function CalendarComponent({currentDate, updateSchedule, groupedR
                 newDate.setDate(newDate.getDate() - 7)
                 setCurrWeek(getCurrentWeek(newDate))
 
-                updateSchedule(currentDate)
+                updateSchedule(currentDate, true)
             }}>{"<"}</button>
             {!calendarVisible &&
                 <>
@@ -68,7 +68,7 @@ export default function CalendarComponent({currentDate, updateSchedule, groupedR
                 newDate.setDate(newDate.getDate() + 7)
                 setCurrWeek(getCurrentWeek(newDate))
 
-                updateSchedule(currentDate)
+                updateSchedule(currentDate, true)
             }}>{">"}</button>
 
             {/*{calendarVisible &&*/}

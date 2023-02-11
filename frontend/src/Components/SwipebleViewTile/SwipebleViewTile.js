@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import "../../App.css";
 
-export default function SwipebleViewTile({ isRoom, isTeachers, subjects }) {
+export default function SwipebleViewTile({ isGroup, isRoom, isTeachers, subjects }) {
     const tileRef = useRef(null);
 
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -80,7 +80,7 @@ export default function SwipebleViewTile({ isRoom, isTeachers, subjects }) {
             //     onScroll={scrollHandler}
             >
                 {subjects?.map((subject) => (
-                    <SubjectTile isTeachers={isTeachers} isRoom={isRoom} subject={subject} key={subject["код"]}/>
+                    <SubjectTile isGroup={isGroup} isTeachers={isTeachers} isRoom={isRoom} subject={subject} key={subject["код"]}/>
                 ))}
             </div>
             <DotIndicator currentSlide={currentSlide} subjects={subjects} />
@@ -109,7 +109,7 @@ function DotIndicator({ currentSlide, subjects }) {
     );
 }
 
-function SubjectTile({ isRoom, isTeachers, subject }) {
+function SubjectTile({ isGroup, isRoom, isTeachers, subject }) {
     const types = [
         { name: "Военная кафедра", color: "#fff" },
         { name: "лаб", color: "#E4E9FF" },
@@ -147,7 +147,7 @@ function SubjectTile({ isRoom, isTeachers, subject }) {
 
             <div className="subject-tile-right">
                 <h3>{subject["дисциплина"]}</h3>
-                {isRoom || isTeachers && <p>Группа {subject["группа"]}</p>}
+                {!isGroup && <p>Группа {subject["группа"]}</p>}
                 <p>Аудитория {subject["аудитория"]}</p>
                 <p>{subject["преподаватель"]}</p>
             </div>
