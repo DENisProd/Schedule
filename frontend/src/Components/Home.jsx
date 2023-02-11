@@ -50,8 +50,7 @@ export default function Home() {
 
     }, [])
 
-    useEffect(() => {
-        setIsLoaded(false)
+    const getInfo = (tab) => {
         switch (tab) {
             case 1:
                 if (groupsList.length === 0) {
@@ -59,6 +58,12 @@ export default function Home() {
                         setGroupList(res.data.data)
                         setIsLoaded(true)
                     })
+                        .catch(err => {
+                            setTimeout(() => {
+                                console.log("Ошибка соединения (((")
+                                getInfo(tab)
+                            }, 1000);
+                        })
                 } else {
                     setIsLoaded(true)
                 }
@@ -67,25 +72,42 @@ export default function Home() {
                 if (teachersList.length === 0) {
                     axios("https://edu.donstu.ru/api/raspTeacherlist?year=2022-2023").then(res => {
                         setTeachersList(res.data.data)
-                        console.log(res.data.data[2].name)
                         setIsLoaded(true)
                     })
+                        .catch(err => {
+                            setTimeout(() => {
+                                console.log("Ошибка соединения (((")
+                                getInfo(tab)
+                            }, 1000);
+                        })
                 } else {
                     setIsLoaded(true)
                 }
                 break
             case 3:
                 if (roomsList.length===0) {
-                    axios("https://edu.donstu.ru/api/raspAudlist?year=2022-2023").then(res => {
-                        setRoomsList(res.data.data)
-                        setIsLoaded(true)
-                    })
+                    axios("https://edu.donstu.ru/api/raspAudlist?year=2022-2023")
+                        .then(res => {
+                            setRoomsList(res.data.data)
+                            setIsLoaded(true)
+                        })
+                        .catch(err => {
+                            setTimeout(() => {
+                                console.log("Ошибка соединения (((")
+                                getInfo(tab)
+                            }, 1000);
+                        })
                 } else {
                     setIsLoaded(true)
                 }
                 break
-                default: break
+            default: break
         }
+    }
+
+    useEffect(() => {
+        setIsLoaded(false)
+        getInfo(tab)
     }, [tab])
 
     const getTable = () => {
@@ -95,9 +117,12 @@ export default function Home() {
                     <table>
                         <thead>
                         {/*<th>ID</th>*/}
-                        <th>Группа</th>
-                        <th>Курс</th>
-                        <th>Факультет</th>
+                        <tr>
+                            <th>Группа</th>
+                            <th>Курс</th>
+                            <th>Факультет</th>
+                        </tr>
+
                         {/*<th>Факультет ID</th>*/}
                         </thead>
 
@@ -117,12 +142,11 @@ export default function Home() {
                         </tbody>
                     </table>
                 )
-                break
             case 2:
                 return (
                     <table>
                         <thead>
-                        <th>Фамилия Имя Отчетво</th>
+                        <tr><th>Фамилия Имя Отчетво</th></tr>
                         </thead>
                         <tbody>
                         {filteredTeachers.slice(0,40).map(teachers =>
@@ -136,18 +160,18 @@ export default function Home() {
                         </tbody>
                     </table>
                 )
-                break
             case 3:
                 return (
                     <table>
                         <thead>
-                        <th>Аудитория</th>
+                        <tr><th>Аудитория</th></tr>
                         </thead>
                         <tbody>
                         {filteredRooms.slice(0,40).map(room =>
                                 <tr onClick={() => {
                                     navigate('/room/' + room.id)}
-                                }>
+                                }
+                                    key={room.id}>
                                     <td>{room.name}</td>
                                 </tr>
                             // <tr>{teacher.name}</tr>
@@ -155,7 +179,6 @@ export default function Home() {
                         </tbody>
                     </table>
                 )
-                break
                 default: break
         }
     }

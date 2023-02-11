@@ -40,7 +40,7 @@ const requests = {
     teachers: "https://edu.donstu.ru/api/Rasp?idTeacher=",
 };
 
-export default function View({ isTeachers, isRoom, isGroup }) {
+export default function View({isTeachers, isRoom, isGroup}) {
     const {groupId} = useParams();
 
     const [info, setInfo] = useState({});
@@ -53,6 +53,8 @@ export default function View({ isTeachers, isRoom, isGroup }) {
     const todayDate = date.getDate();
     const [inFavorites, setInFavorites] = useState(false);
     const [lookAt, setLookAt] = useState([])
+    const [attempt, setAttempt] = useState(1)
+    const [isError, setIsError] = useState(true)
 
     const normalize = (value) => {
         if (value < 10) return "0" + value;
@@ -109,34 +111,8 @@ export default function View({ isTeachers, isRoom, isGroup }) {
         return `${currentDate.getFullYear()}-${normalize(currentDate.getMonth() + 1)}-${normalize(currentDate.getDate())}`
     }
 
-    // const updateSchedule = (currDate) => {
-    //     setIsLoaded(false);
-    //     let sdate = ""
-    //     if (currDate.getDay() === 0) {
-    //         let newDate = currDate
-    //         newDate.setDate(newDate.getDate() + 1)
-    //         setCurrentDate(newDate)
-    //     }
-    //
-    //     sdate = `${currentDate.getFullYear()}-${normalize(currentDate.getMonth() + 1)}-${normalize(currentDate.getDate())}`
-    //
-    //     axios
-    //         .get(
-    //             "https://edu.donstu.ru/api/Rasp?idGroup=" + getRequestUrl() +
-    //             `&sdate=` + sdate
-    //         )
-    //         .then((res) => {
-    //             setInfo(res.data.data.info);
-    //
-    //             let obj = scheduleProccessing(res);
-    //
-    //             setGroupedRasp(obj);
-    //             setIsLoaded(true);
-    //         });
-    // };
-
-    const updateSchedule = (currDate) => {
-        setIsLoaded(false);
+    const updateSchedule = (currDate, isNext = false) => {
+        if (isNext) setIsLoaded(false);
 
         let sdate = ""
         if (currDate.getDay() === 0) {
@@ -150,8 +126,9 @@ export default function View({ isTeachers, isRoom, isGroup }) {
         const curr_date = getDateString(currentDate)
         let isExists = false
         let existsIndex = 0
+
         Object.keys(groupChache).map((gr) => {
-            if(Object.keys(groupChache[gr])[0]===curr_date) {
+            if (Object.keys(groupChache[gr])[0] === curr_date) {
                 isExists = true
                 existsIndex = gr
             }
@@ -167,17 +144,34 @@ export default function View({ isTeachers, isRoom, isGroup }) {
                 .then((res) => {
                     // setRasp(res.data.data.rasp);
                     setInfo(res.data.data.info);
-
+                    console.log("fetched")
                     let obj = scheduleProccessing(res);
                     setGroupedRasp(obj);
-                    if (groupChache.length>0)
-                        setGroupChache([...groupChache, {[`${curr_date}`]: {[`${groupId}`]:obj}}])
+                    if (groupChache.length > 0)
+                        setGroupChache([...groupChache, {[`${curr_date}`]: {[`${groupId}`]: obj}}])
                     else
-                        setGroupChache([{[`${curr_date}`]: {[`${groupId}`]:obj}}])
+                        setGroupChache([{[`${curr_date}`]: {[`${groupId}`]: obj}}])
+
 
                     setIsLoaded(true);
 
-                });
+                })
+                .catch(err => {
+                    console.log("Ошибка")
+                    setTimeout(() => {
+                        setAttempt(attempt + 1)
+                        console.log(attempt)
+                        if (attempt < 3) {
+                            updateSchedule(currDate)
+                            return
+                        } else {
+                            setIsError(false)
+                            return
+                        }
+
+                    }, 1000);
+
+                })
         }
     };
 
@@ -205,15 +199,13 @@ export default function View({ isTeachers, isRoom, isGroup }) {
             })
         }
 
-        axios.
-        post(stats_url, {
+        axios.post(stats_url, {
             sg: JSON.parse(localStorage.getItem("searchList")),
             fav: convertedFavorites,
             count: enterCounts / 2
         })
 
         const sended_date = new Date()
-        console.log("sended")
         localStorage.setItem("send_data", sended_date)
     }
 
@@ -225,8 +217,25 @@ export default function View({ isTeachers, isRoom, isGroup }) {
         //         const data = res.data.data.dates;
         //     });
         setIsLoaded(false)
+        if (isGroup) {
+            const cache = JSON.parse(localStorage.getItem("cache"))
+            const infoCache = JSON.parse(localStorage.getItem("infoCache"))
+            if (cache !== null && infoCache !== null && Object.keys(cache).length > 0 && Object.keys(infoCache).length > 0) {
+
+                setGroupedRasp(cache)
+                setInfo(infoCache)
+                setIsLoaded(true)
+                console.log("cache")
+            }
+        }
+
         updateSchedule(currentDate);
     }, []);
+
+    const normalizeThresholds = (threshold) => {
+        const th = 1 / (threshold.length)
+        return th > 1 ? 1 : th
+    }
 
     useEffect(() => {
 
@@ -239,7 +248,11 @@ export default function View({ isTeachers, isRoom, isGroup }) {
         localStorage.setItem("count_enter", count_enter)
 
         const sended_date = new Date(localStorage.getItem("send_data"))
-        if (sended_date.getDate()!=date.getDate()) sendStats()
+        if (sended_date.getDate() !== date.getDate()) sendStats()
+        if (isGroup) {
+            localStorage.setItem("cache", JSON.stringify(groupedRasp))
+            localStorage.setItem("infoCache", JSON.stringify(info))
+        }
     }, [isLoaded === true]);
 
     useEffect(() => {
@@ -247,9 +260,7 @@ export default function View({ isTeachers, isRoom, isGroup }) {
         if (groupedRasp) {
 
             const targets = Object.keys(groupedRasp).map(gr => document.getElementById(new Date(gr).getDate()))
-
-            const thresholds = Object.keys(groupedRasp).map(gr => 1 / (groupedRasp[gr].length/2))
-
+            const thresholds = Object.keys(groupedRasp).map(gr => normalizeThresholds(groupedRasp[gr]))
             const callback = (entries, observer) => {
 
                 entries.map(entry => {
@@ -271,7 +282,7 @@ export default function View({ isTeachers, isRoom, isGroup }) {
                 })
             }
         }
-    }, [groupedRasp, isLoaded===true])
+    }, [groupedRasp, isLoaded === true])
 
     const scrollTo = (to) => {
         const doc = document.getElementById(to);
@@ -282,37 +293,47 @@ export default function View({ isTeachers, isRoom, isGroup }) {
     return (
         <div className="main-container">
             <div className="tiles-container">
-                <ViewHeader isLoaded={isLoaded} inFavorites={inFavorites} checkFavorites={checkFavorites} group={info.group}/>
-                <CalendarComponent currentDate={currentDate} updateSchedule={updateSchedule} groupedRasp={groupedRasp} scrollTo={scrollTo} lookAt={lookAt}/>
+                <ViewHeader isGroup={isGroup} isTeachers={isTeachers} isRoom={isRoom} isLoaded={isLoaded}
+                            inFavorites={inFavorites} checkFavorites={checkFavorites} group={info}/>
+                <CalendarComponent currentDate={currentDate} updateSchedule={updateSchedule} groupedRasp={groupedRasp}
+                                   scrollTo={scrollTo} lookAt={lookAt}/>
 
                 <div className="tiles-main-container" id={"scrollArea"}>
-                {isLoaded ? (
-                    <>
-                        {Object.keys(groupedRasp).length > 0 ? (
-                            <>
-                                {Object.keys(groupedRasp).map((gr) => (
-                                    <div id={Number(gr.split("-")[2]).toString()}>
-                                        <h2 className={gr.split("-")[2] === todayDate.toString() ? "today" : "day"}>
-                                            {Number(gr.split("-")[2])}{" "}
-                                            {month[Number(gr.split("-")[1]) - 1]}{" "}
-                                            {gr.split("-")[2] === todayDate.toString() && " (сегодня)"}
-                                        </h2>
-                                        <h5>{weekDays[new Date(gr).getDay()]}</h5>
-                                        {groupedRasp[gr].map((subjects) => (
-                                            <SwipebleViewTile subjects={subjects}/>
-                                        ))}
-                                    </div>
-                                ))}
-                            </>
-                        ) : (
-                            <h3>На данную неделю нет расписания</h3>
-                        )}
-                    </>
-                ) : (
-                    <>
-                        <Loader/>
-                    </>
-                )}
+                    {isError ?
+                        <>
+                            {isLoaded ? (
+                                <>
+                                    {Object.keys(groupedRasp).length > 0 ? (
+                                        <>
+                                            {Object.keys(groupedRasp).map((gr) => (
+                                                <div id={Number(gr.split("-")[2]).toString()}>
+                                                    <h2 className={gr.split("-")[2] === todayDate.toString() ? "today" : "day"}>
+                                                        {Number(gr.split("-")[2])}{" "}
+                                                        {month[Number(gr.split("-")[1]) - 1]}{" "}
+                                                        {gr.split("-")[2] === todayDate.toString() && " (сегодня)"}
+                                                    </h2>
+                                                    <h5>{weekDays[new Date(gr).getDay()]}</h5>
+                                                    {groupedRasp[gr].map((subjects) => (
+                                                        <SwipebleViewTile isGroup={isGroup} subjects={subjects}/>
+                                                    ))}
+                                                </div>
+                                            ))}
+                                        </>
+                                    ) : (
+                                        <h3>На данную неделю нет расписания</h3>
+                                    )}
+                                </>
+                            ) : (
+                                <>
+                                    <Loader/>
+                                </>
+                            )}
+                        </>
+                        :
+                        <>
+                            <h3>Ошибка сети :( перезагрузите страницу или включите интернет</h3>
+                        </>
+                    }
                 </div>
             </div>
         </div>
@@ -329,7 +350,9 @@ function ViewHeader(props) {
         if (props.inFavorites) {
             if (favoritesGroups.length > 0) {
                 let myArray = favoritesGroups.filter(
-                    function (obj) {return (obj.id !== props.group.groupID);});
+                    function (obj) {
+                        return (obj.id !== props.group.groupID);
+                    });
                 localStorage.setItem("favorites", JSON.stringify(myArray));
             }
         } else {
@@ -349,9 +372,13 @@ function ViewHeader(props) {
     return (
         <header>
             <div style={{padding: "0 1.5em"}}></div>
-            <h2 className="title-h2">Группа {props.isLoaded && props.group.name}</h2>
+            {props.isRoom && <h2 className="title-h2">Аудитория {props.isLoaded && props.group.aud.name}</h2>}
+            {props.isTeachers &&
+                <h2 className="title-h2">Преподаватель {props.isLoaded && props.group.prepod.name}</h2>}
+            {props.isGroup && <h2 className="title-h2">Группа {props.isLoaded && props.group.group.name}</h2>}
 
-            {props.isLoaded && (
+
+            {(props.isLoaded && props.isGroup) && (
                 <div
                     className={"icon-btn" + (props.inFavorites ? " favorite" : "")}
                     onClick={addToFavorites}>
