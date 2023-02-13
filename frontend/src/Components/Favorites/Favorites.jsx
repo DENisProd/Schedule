@@ -46,6 +46,7 @@ export default function Favorites() {
                 <div className="favorites-container">
                     {isLoaded ? (
                         <>
+                            <h5>Версия веб-приложения 0.71</h5>
                             <h2 className="title-h2">Список избранных групп</h2>
                             {groupsList ? (
                                 <>

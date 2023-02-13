@@ -46,12 +46,12 @@ export default function Admin() {
             <button onClick={enter}>Вход</button>
             {isDataLoaded &&
 
-                <div className="tiles-main-container" id={"scrollArea"}>
+                <div className="tiles-main-container" id={"admin_container"}>
                     <h4>Уникальных пользователей: {eniqueUsers}</h4>
                     <table>
                         <thead>
                         <tr>
-                            <td>ID</td>
+                            {/*<td>ID</td>*/}
                             <td>User Agent</td>
                             <td>IP</td>
                             <td>searchedGroups</td>

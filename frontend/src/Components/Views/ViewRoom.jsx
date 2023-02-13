@@ -1,4 +1,4 @@
-import CalendarComponent from "../CalendarComponent";
+import CalendarComponent from "../View/CalendarComponent";
 //import {Typography} from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
