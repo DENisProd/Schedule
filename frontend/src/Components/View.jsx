@@ -44,6 +44,7 @@ const requests = {
 
 export default function View({isTeachers, isRoom, isGroup}) {
     const {groupId} = useParams();
+    const navigate = useNavigate()
 
     const [info, setInfo] = useState({});
     const [groupedRasp, setGroupedRasp] = useState({});
@@ -180,6 +181,7 @@ export default function View({isTeachers, isRoom, isGroup}) {
     const checkFavorites = () => {
         setInFavorites(false);
         const favoritesGroups = JSON.parse(localStorage.getItem("favorites"));
+        console.log(favoritesGroups)
         if (favoritesGroups) {
             favoritesGroups.forEach((favorites) => {
                 if (favorites.id === info?.group?.groupID) {

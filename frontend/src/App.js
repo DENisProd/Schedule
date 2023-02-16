@@ -11,7 +11,11 @@ function App() {
 
     useEffect(() => {
         const href = window.location.href.split('/')
+        //console.log(href)
+        const domainArray = href.slice(0,3)
         const groupId = Number(localStorage.getItem("groupId"));
+        if (groupId && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + groupId
+        
         window.addEventListener("offline", function () {
             alert("Отсутствует подключение к интернету");
         });
@@ -23,6 +27,7 @@ function App() {
                     {/*<Route element={}/>*/}
                     <Route path="/" element={<Home />} />
                     <Route path="/group/:groupId" element={<View isGroup={true} />} />
+                    <Route path="/group/" element={<Home/>} />
                     <Route path="/room/:groupId" element={<View isRoom={true}/>} />
                     <Route path="/teacher/:groupId" element={<View isTeachers={true}/>} />
                     <Route path="/favorites" element={<Favorites />} />

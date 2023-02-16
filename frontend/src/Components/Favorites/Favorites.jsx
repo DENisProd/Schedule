@@ -15,11 +15,15 @@ export default function Favorites() {
     let filteredGroups = [];
 
     useEffect(() => {
+        loadFavorites()
+    }, []);
+
+    const loadFavorites = () => {
         const data = JSON.parse(localStorage.getItem("favorites"));
         setGroupList(data);
         getMyGroup()
         setIsLoaded(true);
-    }, []);
+    }
 
     window.addEventListener("storage", (event) => {
         //console.log(event);
@@ -40,13 +44,23 @@ export default function Favorites() {
         getMyGroup()
     };
 
+    const removeFavorite = () => {
+        const data = JSON.parse(localStorage.getItem("favorites"))
+        let groupFromStorage = data
+        groupFromStorage.map(gr => {
+            Object.keys(gr).forEach(gr => console.log(gr))
+        })
+        console.log(data)
+        loadFavorites()
+    }
+
     return (
         <>
             <div className="favorites-main-container">
                 <div className="favorites-container">
                     {isLoaded ? (
                         <>
-                            <h5>Версия веб-приложения 0.71</h5>
+                            <h6>Версия веб-приложения 0.72</h6>
                             <h2 className="title-h2">Список избранных групп</h2>
                             {groupsList ? (
                                 <>
@@ -68,6 +82,8 @@ export default function Favorites() {
                                                             chooseHandler(e)
                                                         }
                                                     />
+
+                                                    <button name={'btn'+group.id} onClick={() => removeFavorite(group.id)}>X</button>
                                                 </div>
                                             ) : (
                                                 <div

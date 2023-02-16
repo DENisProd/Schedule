@@ -132,9 +132,9 @@ export default function Home() {
                                 localStorage.setItem("groupId", group.id)
                                 let searchList = JSON.parse(localStorage.getItem("searchList"))
                                 //console.log(searchList)
-                                if (searchList) 
-                                    searchList.push(group.name)
-                                else searchList = [group.name]
+                               // console.log(group)
+                                if (!searchList) searchList = []
+                                searchList.push(group.name)
                                 localStorage.setItem("searchList", JSON.stringify(searchList))
 
                                 navigate('/group/' + group.id)}

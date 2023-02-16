@@ -9,22 +9,27 @@ export default function ViewHeaderTitle(props) {
 
         if (props.inFavorites) {
             if (favoritesGroups.length > 0) {
+                //console.log(props.group.groupID)
                 let myArray = favoritesGroups.filter(
                     function (obj) {
-                        return (obj.id !== props.group.groupID);
+                        return (obj.id !== props.group.group.groupID);
                     });
+                    //console.log(myArray)
                 localStorage.setItem("favorites", JSON.stringify(myArray));
             }
         } else {
             if (favoritesGroups === null) favoritesGroups = [];
+            //console.log(props.group)
             favoritesGroups.push({
-                name: props.group.name,
-                id: props.group.groupID,
+                name: props.group.group.name,
+                id: props.group.group.groupID,
                 facul: "",
             });
             localStorage.removeItem("favorites");
             localStorage.setItem("favorites", JSON.stringify(favoritesGroups));
         }
+
+        //console.log(favoritesGroups)
 
         props.checkFavorites();
     }
