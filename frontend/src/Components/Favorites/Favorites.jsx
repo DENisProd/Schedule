@@ -2,6 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Loader from "../Loader/Loader";
 
+import "../../App.css"
+import "./favorites.css"
+
 export default function Favorites() {
     const navigate = useNavigate();
 
@@ -44,14 +47,13 @@ export default function Favorites() {
         getMyGroup()
     };
 
-    const removeFavorite = () => {
+    const removeFavorite = (id) => {
         const data = JSON.parse(localStorage.getItem("favorites"))
         let groupFromStorage = data
-        groupFromStorage.map(gr => {
-            Object.keys(gr).forEach(gr => console.log(gr))
-        })
-        console.log(data)
+        groupFromStorage = groupFromStorage.filter(gr => gr.id !== id)
+        localStorage.setItem("favorites", JSON.stringify(groupFromStorage))
         loadFavorites()
+        setIsGroupChoose(false)
     }
 
     return (
@@ -67,13 +69,11 @@ export default function Favorites() {
                                     {groupsList.map((group) => (
                                         <>
                                             {isGroupChoose ? (
-                                                <div
-                                                    className="favorite-tile"
-                                                    key={group.id}
-                                                >
+                                                <div className="favorite-tile" key={group.id}>
                                                     {/*<td>{group.id}</td>*/}
                                                     {myGroup===group.id && "Моя группа - "}
 
+                                                    <button name={'btn'+group.id} onClick={() => removeFavorite(group.id)}>X</button>
                                                     {group.name}
                                                     <input
                                                         type="checkbox"
@@ -82,8 +82,7 @@ export default function Favorites() {
                                                             chooseHandler(e)
                                                         }
                                                     />
-
-                                                    <button name={'btn'+group.id} onClick={() => removeFavorite(group.id)}>X</button>
+                                                    
                                                 </div>
                                             ) : (
                                                 <div

@@ -226,20 +226,6 @@ table tbody tr:hover {
     text-align: center;
 }
 
-.favorites-bottom-container {
-  margin-bottom: 70px;
-}
-
-.favorites-bottom-container button {
-  border: none;
-  padding: 3px 15px;
-  border-radius: 1em;
-  background: #7ec1ff;
-  color: #fff;
-  font-weight: 400;
-  font-size: 1.2em;
-}
-
 .favorites-main-container div {
     width: 60%;
 }
@@ -274,10 +260,6 @@ table tbody tr:hover {
 
 .favorites-main-container .favorite-tile:hover {
     background: #7ec1ff;
-}
-
-.favorites-bottom-container {
-  text-align: center;
 }
 
 .subject-tile-container {

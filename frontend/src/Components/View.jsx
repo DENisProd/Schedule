@@ -157,7 +157,7 @@ export default function View({isTeachers, isRoom, isGroup}) {
 
 
                     setIsLoaded(true);
-
+                    checkFavorites();
                 })
                 .catch(err => {
                     console.log("Ошибка")
@@ -181,7 +181,7 @@ export default function View({isTeachers, isRoom, isGroup}) {
     const checkFavorites = () => {
         setInFavorites(false);
         const favoritesGroups = JSON.parse(localStorage.getItem("favorites"));
-        console.log(favoritesGroups)
+        //console.log(favoritesGroups)
         if (favoritesGroups) {
             favoritesGroups.forEach((favorites) => {
                 if (favorites.id === info?.group?.groupID) {
@@ -253,7 +253,7 @@ export default function View({isTeachers, isRoom, isGroup}) {
     useEffect(() => {
 
         document.title = info.group?.name + " - Расписание MySecrets";
-        checkFavorites();
+        //checkFavorites();
         scrollTo(todayDate)
         let count_enter = Number.parseInt(localStorage.getItem("count_enter"))
         if (count_enter) count_enter++
