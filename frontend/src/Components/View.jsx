@@ -1,7 +1,7 @@
 import CalendarComponent from "./View/CalendarComponent";
 //import {Typography} from "antd";
 import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 
 import axios from "axios";
 import SwipebleViewTile from "./SwipebleViewTile/SwipebleViewTile";
@@ -23,6 +23,9 @@ const month = [
     "Ноября",
     "Декабря",
 ];
+
+// https://edu.donstu.ru/api/EventsCalendar?eventID=undefined   календарь событий
+// https://edu.donstu.ru/api/Feed?userID=-271626&startDate=null   лента
 
 const weekDays = {
     0: "воскресенье",
@@ -114,6 +117,36 @@ export default function View({isTeachers, isRoom, isGroup}) {
         return `${currentDate.getFullYear()}-${normalize(currentDate.getMonth() + 1)}-${normalize(currentDate.getDate())}`
     }
 
+    // const checkFavorites = (_info = info) => {
+    //     setInFavorites(false)
+    //     const favoritesGroups = JSON.parse(localStorage.getItem("favorites"))
+    //     if (favoritesGroups) {
+    //         favoritesGroups.forEach((favorites) => {
+    //             console.log(favorites)
+    //             console.log(info)
+    //             console.log(_info)
+    //                 if (Number.parseInt(favorites.id) === Number.parseInt(_info.group.groupId)) {
+    //                     setInFavorites(true)
+    //                     console.log(inFavorites)
+    //                     return
+    //                 }
+    //         })
+    //     }
+    // }
+
+    const checkFavorites = (_info = info) => {
+        setInFavorites(false);
+        const favoritesGroups = JSON.parse(localStorage.getItem("favorites"));
+        if (favoritesGroups) {
+            favoritesGroups.forEach((favorites) => {
+                if (favorites.id === _info?.group?.groupID) {
+                    setInFavorites(true);
+                    return;
+                }
+            });
+        }
+    };
+
     const updateSchedule = (currDate, isNext = false) => {
         if (isNext) setIsLoaded(false);
 
@@ -154,13 +187,14 @@ export default function View({isTeachers, isRoom, isGroup}) {
                         setGroupChache([...groupChache, {[`${curr_date}`]: {[`${groupId}`]: obj}}])
                     else
                         setGroupChache([{[`${curr_date}`]: {[`${groupId}`]: obj}}])
-
-
+                    checkFavorites(res.data.data.info);
                     setIsLoaded(true);
-                    checkFavorites();
+
+
                 })
                 .catch(err => {
                     console.log("Ошибка")
+                    //console.log(err)
                     setTimeout(() => {
                         setAttempt(attempt + 1)
                         console.log(attempt)
@@ -168,7 +202,7 @@ export default function View({isTeachers, isRoom, isGroup}) {
                             updateSchedule(currDate)
                             return
                         } else {
-                            setIsError(false)
+                            setIsError(true)
                             return
                         }
 
@@ -176,21 +210,7 @@ export default function View({isTeachers, isRoom, isGroup}) {
 
                 })
         }
-    };
-
-    const checkFavorites = () => {
-        setInFavorites(false);
-        const favoritesGroups = JSON.parse(localStorage.getItem("favorites"));
-        //console.log(favoritesGroups)
-        if (favoritesGroups) {
-            favoritesGroups.forEach((favorites) => {
-                if (favorites.id === info?.group?.groupID) {
-                    setInFavorites(true);
-                    return;
-                }
-            });
-        }
-    };
+    }
 
     const sendStats = () => {
         let sended_date = new Date(localStorage.getItem("send_data"))
@@ -234,14 +254,16 @@ export default function View({isTeachers, isRoom, isGroup}) {
             const cache = JSON.parse(localStorage.getItem("cache"))
             const infoCache = JSON.parse(localStorage.getItem("infoCache"))
             if (cache !== null && infoCache !== null && Object.keys(cache).length > 0 && Object.keys(infoCache).length > 0) {
+                if (infoCache.group.groupID === groupId) {
+                    setGroupedRasp(cache)
+                    setInfo(infoCache)
+                    setIsLoaded(true)
+                    console.log("cache")
+                }
 
-                setGroupedRasp(cache)
-                setInfo(infoCache)
-                setIsLoaded(true)
-                console.log("cache")
             }
         }
-
+        console.log("use effect")
         updateSchedule(currentDate);
     }, []);
 

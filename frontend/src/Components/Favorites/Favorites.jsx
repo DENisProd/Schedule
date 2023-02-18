@@ -19,13 +19,14 @@ export default function Favorites() {
 
     useEffect(() => {
         loadFavorites()
-    }, []);
+    }, [])
 
     const loadFavorites = () => {
-        const data = JSON.parse(localStorage.getItem("favorites"));
-        setGroupList(data);
+        let data = JSON.parse(localStorage.getItem("favorites"))
+        let filtered = data.filter(gr => gr.hasOwnProperty('name')===true)
+        setGroupList(filtered)
         getMyGroup()
-        setIsLoaded(true);
+        setIsLoaded(true)
     }
 
     window.addEventListener("storage", (event) => {
@@ -62,7 +63,7 @@ export default function Favorites() {
                 <div className="favorites-container">
                     {isLoaded ? (
                         <>
-                            <h6>Версия веб-приложения 0.72</h6>
+                            <h6><a href="https://vk.com/public218030183">Группа в vk</a> версия веб-приложения 0.73</h6>
                             <h2 className="title-h2">Список избранных групп</h2>
                             {groupsList ? (
                                 <>

@@ -14,22 +14,20 @@ export default function ViewHeaderTitle(props) {
                     function (obj) {
                         return (obj.id !== props.group.group.groupID);
                     });
-                    //console.log(myArray)
                 localStorage.setItem("favorites", JSON.stringify(myArray));
             }
         } else {
             if (favoritesGroups === null) favoritesGroups = [];
-            //console.log(props.group)
             favoritesGroups.push({
                 name: props.group.group.name,
-                id: props.group.group.groupID,
-                facul: "",
+                id: props.group.group.groupID
             });
+            let favoritesFiltered = favoritesGroups.filter(gr => gr.hasOwnProperty('name')===true)
             localStorage.removeItem("favorites");
-            localStorage.setItem("favorites", JSON.stringify(favoritesGroups));
+            localStorage.setItem("favorites", JSON.stringify(favoritesFiltered));
         }
 
-        //console.log(favoritesGroups)
+        console.log(favoritesGroups)
 
         props.checkFavorites();
     }
