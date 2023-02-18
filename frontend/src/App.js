@@ -1,5 +1,5 @@
 import "./App.css";
-import {useEffect} from "react"
+import {useEffect, useState} from "react"
 import {BrowserRouter, Route, Routes, useNavigate} from "react-router-dom";
 import Home from "./Components/Home";
 import View from "./Components/View";
@@ -8,6 +8,7 @@ import Favorites from "./Components/Favorites/Favorites";
 import Admin from "./Components/Admin/Admin";
 
 function App() {
+    const [isOffline, setIsOffline] = useState(false)
 
     useEffect(() => {
         const href = window.location.href.split('/')
@@ -17,12 +18,13 @@ function App() {
         if (groupId && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + groupId
         
         window.addEventListener("offline", function () {
-            alert("Отсутствует подключение к интернету");
+            setIsOffline(true)
         });
     }, []);
 
     return (
             <BrowserRouter>
+                {isOffline && <div>offline</div>}
                 <Routes>
                     {/*<Route element={}/>*/}
                     <Route path="/" element={<Home />} />
