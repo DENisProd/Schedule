@@ -11,6 +11,13 @@ body {
     overflow-y: hidden;
 }
 
+.bg-img {
+    z-index: -100;
+    margin-top: -100vh;
+    position: absolute;
+    left: 30%;
+}
+
 #admin_container {
     width: 80%;
     margin: 0 auto;
@@ -397,6 +404,15 @@ table tbody tr:hover {
     .today,
     .day {
         font-size: 1em;
+    }
+
+    .tiles-main-container {
+        height: 80vh;
+    }
+
+    .bg-img {
+        left: 0;
+        width: 100%;
     }
 }
 @media screen and (max-width: 520px) {

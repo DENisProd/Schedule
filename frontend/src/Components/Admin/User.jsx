@@ -62,6 +62,7 @@ export default function User({user}) {
             <td>{user.searchedGroups?.map(sg => ` ${sg}`)}</td>
             <td>{user.favoriteGroups?.map(fg => ` ${fg}`)}</td>
             <td>{user.enterCount}</td>
+            <td>{user?.group}</td>
             <td>{user?.created.replace('Z','').split('T')[0]} {user?.created.replace('Z','').split('T')[1]}</td>
         </tr>
     )

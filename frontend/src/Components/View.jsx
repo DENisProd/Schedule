@@ -9,6 +9,8 @@ import Loader from "./Loader/Loader";
 import ViewHeader from "./View/ViewHeader";
 import ViewHeaderTitle from "./View/ViewHeader";
 
+const currentVersion = 0.73
+
 const month = [
     "Января",
     "Февраля",
@@ -287,6 +289,10 @@ export default function View({isTeachers, isRoom, isGroup}) {
             localStorage.setItem("cache", JSON.stringify(groupedRasp))
             localStorage.setItem("infoCache", JSON.stringify(info))
         }
+        const usedVersion = localStorage.getItem("usedver")
+        if (usedVersion && Number.parseInt(usedVersion)!==currentVersion) console.log("update!")
+        else localStorage.setItem("usedver", currentVersion.toString())
+
     }, [isLoaded === true]);
 
     useEffect(() => {

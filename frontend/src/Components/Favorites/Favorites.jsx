@@ -63,7 +63,7 @@ export default function Favorites() {
                 <div className="favorites-container">
                     {isLoaded ? (
                         <>
-                            <h6><a href="https://vk.com/public218030183">Группа в vk</a> версия веб-приложения 0.73</h6>
+                            <h6><a href="https://vk.com/public218030183">Группа в vk</a> версия веб-приложения 0.74</h6>
                             <h2 className="title-h2">Список избранных групп</h2>
                             {groupsList ? (
                                 <>

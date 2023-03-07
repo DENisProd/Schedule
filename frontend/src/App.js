@@ -6,9 +6,26 @@ import View from "./Components/View";
 import BottomMenu from "./Components/BottomMenu/BottomMenu";
 import Favorites from "./Components/Favorites/Favorites";
 import Admin from "./Components/Admin/Admin";
+import Navigator from "./Components/Navigator";
+
+import bg from "./assets/8marta.png"
+
 
 function App() {
     const [isOffline, setIsOffline] = useState(false)
+
+    function IOS() {
+        return [
+                'iPad Simulator',
+                'iPhone Simulator',
+                'iPod Simulator',
+                'iPad',
+                'iPhone',
+                'iPod'
+            ].includes(navigator.platform)
+            // iPad on iOS 13 detection
+            || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+    }
 
     useEffect(() => {
         const href = window.location.href.split('/')
@@ -16,6 +33,8 @@ function App() {
         const domainArray = href.slice(0,3)
         const groupId = Number(localStorage.getItem("groupId"));
         if (groupId && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + groupId
+
+        if(IOS()) document.getElementById('root').classList.add('ios-detected')
         
         window.addEventListener("offline", function () {
             setIsOffline(true)
@@ -25,6 +44,7 @@ function App() {
     return (
             <BrowserRouter>
                 {isOffline && <div>offline</div>}
+
                 <Routes>
                     {/*<Route element={}/>*/}
                     <Route path="/" element={<Home />} />
@@ -34,8 +54,10 @@ function App() {
                     <Route path="/teacher/:groupId" element={<View isTeachers={true}/>} />
                     <Route path="/favorites" element={<Favorites />} />
                     <Route path="/admin" element={<Admin />} />
+                    <Route path="/navigator/:audId" element={<Navigator />} />
                 </Routes>
                 <BottomMenu />
+                <img className="bg-img" src={bg}/>
             </BrowserRouter>
     );
 }
