@@ -1,0 +1,10 @@
+.compare-container {
+    display: block;
+    gap: 2em;
+    overflow-y: scroll;
+}
+
+.compare-horizontal {
+    display: flex;
+    gap: 2em;
+}

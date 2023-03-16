@@ -12,6 +12,7 @@ export default function Admin() {
     const [isFreqCalculated, setIsFreqCalculated] = useState(false)
     const [data, setData] = useState([])
 
+
     const [searchUnion, setSearchUnion] = useState([])
     const [freqSearchUnion, setFreqSearchUnion] = useState([])
     const [favoritesUnion, setFavoritesUnion] = useState([])

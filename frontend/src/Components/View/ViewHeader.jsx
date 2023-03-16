@@ -27,14 +27,17 @@ export default function ViewHeaderTitle(props) {
             localStorage.setItem("favorites", JSON.stringify(favoritesFiltered));
         }
 
-        console.log(favoritesGroups)
-
         props.checkFavorites();
     }
 
     return (
         <header className="view-container">
-            <div style={{padding: "0 1.5em"}}></div>
+
+            {props.isLoaded &&
+                <svg onClick={() => props.addToCompare(props.group.group.groupID)} className="compare-btn" width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M3 12a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1ZM3 8a1 1 0 0 1 1-1h16a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1ZM3 16a1 1 0 0 1 1-1h8a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1Z"/></svg>
+            }
+
+
             {props.isRoom && <h2 className="title-h2">Аудитория {props.isLoaded && props.group.aud.name}</h2>}
             {props.isTeachers &&
                 <h2 className="title-h2">Преподаватель {props.isLoaded && props.group.prepod.name}</h2>}

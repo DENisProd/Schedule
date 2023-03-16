@@ -9,10 +9,12 @@ import Admin from "./Components/Admin/Admin";
 import Navigator from "./Components/Navigator";
 
 import bg from "./assets/8marta.png"
+import Compare from "./Components/Compare/Compare";
 
 
 function App() {
     const [isOffline, setIsOffline] = useState(false)
+    const [compareList, setCompareList] = useState([])
 
     function IOS() {
         return [
@@ -25,6 +27,16 @@ function App() {
             ].includes(navigator.platform)
             // iPad on iOS 13 detection
             || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+    }
+
+    const addToCompare = (group) => {
+        let isExists = false
+        compareList.map(gr => {
+            if (group===gr) isExists=true
+        })
+        if (!isExists)
+            setCompareList((prevState) => [...prevState, group])
+        console.log(compareList)
     }
 
     useEffect(() => {
@@ -48,16 +60,17 @@ function App() {
                 <Routes>
                     {/*<Route element={}/>*/}
                     <Route path="/" element={<Home />} />
-                    <Route path="/group/:groupId" element={<View isGroup={true} />} />
+                    <Route path="/group/:groupId" element={<View addToCompare={addToCompare} isGroup={true} />} />
                     <Route path="/group/" element={<Home/>} />
                     <Route path="/room/:groupId" element={<View isRoom={true}/>} />
                     <Route path="/teacher/:groupId" element={<View isTeachers={true}/>} />
                     <Route path="/favorites" element={<Favorites />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/navigator/:audId" element={<Navigator />} />
+                    <Route path="/compare/" element={<Compare compareList={compareList} />} />
                 </Routes>
                 <BottomMenu />
-                <img className="bg-img" src={bg}/>
+                {/*<img className="bg-img" src={bg}/>*/}
             </BrowserRouter>
     );
 }

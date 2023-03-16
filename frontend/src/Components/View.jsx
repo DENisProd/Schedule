@@ -47,7 +47,7 @@ const requests = {
     teachers: "https://edu.donstu.ru/api/Rasp?idTeacher=",
 };
 
-export default function View({isTeachers, isRoom, isGroup}) {
+export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
     const {groupId} = useParams();
     const navigate = useNavigate()
 
@@ -334,7 +334,7 @@ export default function View({isTeachers, isRoom, isGroup}) {
         <div className="main-container" id={"tiles-container"}>
             {/*<div className="tiles-container">*/}
                 <ViewHeaderTitle isGroup={isGroup} isTeachers={isTeachers} isRoom={isRoom} isLoaded={isLoaded}
-                            inFavorites={inFavorites} checkFavorites={checkFavorites} group={info}/>
+                            inFavorites={inFavorites} checkFavorites={checkFavorites} group={info} addToCompare={addToCompare}/>
                 <CalendarComponent currentDate={currentDate} updateSchedule={updateSchedule} groupedRasp={groupedRasp}
                                    scrollTo={scrollTo} lookAt={lookAt}/>
 

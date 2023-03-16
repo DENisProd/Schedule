@@ -8,7 +8,7 @@ body {
 #root {
     /*background: #FAFAFD;*/
     height: 96vh;
-    overflow-y: hidden;
+    /*overflow-y: hidden;*/
 }
 
 .bg-img {
@@ -52,6 +52,7 @@ body {
     height: 68vh;
     overflow-y: scroll;
     overflow-x: hidden;
+    padding-bottom: 5em;
 }
 
 .subject-tile {

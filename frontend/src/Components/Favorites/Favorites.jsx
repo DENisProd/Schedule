@@ -5,6 +5,8 @@ import Loader from "../Loader/Loader";
 import "../../App.css"
 import "./favorites.css"
 
+const version = "0.75beta"
+
 export default function Favorites() {
     const navigate = useNavigate();
 
@@ -23,9 +25,11 @@ export default function Favorites() {
 
     const loadFavorites = () => {
         let data = JSON.parse(localStorage.getItem("favorites"))
-        let filtered = data.filter(gr => gr.hasOwnProperty('name')===true)
-        setGroupList(filtered)
-        getMyGroup()
+        if (data) {
+            let filtered = data.filter(gr => gr.hasOwnProperty('name')===true)
+            setGroupList(filtered)
+            getMyGroup()
+        }
         setIsLoaded(true)
     }
 
@@ -39,7 +43,8 @@ export default function Favorites() {
     };
 
     const chooseButtonHandler = (state) => {
-        setIsGroupChoose(state);
+        if (groupsList.length>0)
+            setIsGroupChoose(state)
     };
 
     const chooseHandler = (event) => {
@@ -63,9 +68,10 @@ export default function Favorites() {
                 <div className="favorites-container">
                     {isLoaded ? (
                         <>
-                            <h6><a href="https://vk.com/public218030183">Группа в vk</a> версия веб-приложения 0.74</h6>
+                            <h6><a href="https://vk.com/public218030183">Группа в vk</a> версия веб-приложения {version}</h6>
+                            <button onClick={() => navigate('/compare/')}>Сравнение</button>
                             <h2 className="title-h2">Список избранных групп</h2>
-                            {groupsList ? (
+                            {groupsList.length>0 ? (
                                 <>
                                     {groupsList.map((group) => (
                                         <>
