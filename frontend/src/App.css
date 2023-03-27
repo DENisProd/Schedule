@@ -1,14 +1,52 @@
+:root[data-theme="light"] {
+    --background-color: #f2f2f8;
+    --text-color: #131336;
+    --background-secondary: #FDFDFE;
+    --background-tile: #ffffff;
+    --menu-bg: #7B7AFF;
+    --text-color-secondary: #ffffff;
+}
+
+:root[data-theme="dark"] {
+    --background-color: #080C14;
+    --text-color: #FCFFFF;
+    --background-secondary: #0D121E;
+    --background-tile: #313131;
+    --menu-bg: #2D2D2D;
+    --text-color-secondary: #777777;
+}
+
 body {
     margin: 0;
     padding: 0;
-    background: #f2f2f8;
+    background: var(--background-color);
+    color: var(--text-color);
     font-family: "Montserrat", sans-serif;
 }
+
 
 #root {
     /*background: #FAFAFD;*/
     height: 96vh;
-    overflow-y: hidden;
+    /*overflow-y: hidden;*/
+}
+
+.bg-img {
+    z-index: -100;
+    margin-top: -100vh;
+    position: absolute;
+    left: 30%;
+}
+
+#admin_container {
+    width: 80%;
+    margin: 0 auto;
+    overflow-x: scroll;
+}
+
+#admin_container td svg{
+    width: 2em;
+    height: 2em;
 }
 
 .main-container {
@@ -18,115 +56,34 @@ body {
     /*padding: 0.8em;*/
 }
 
-.main-container .ant-picker-calendar {
-    width: 100%;
-    margin: 0 auto;
-}
-
-.main-container .mini-calendar-container {
-    background: #ffffff;
-    border-radius: 15px;
-    overflow: hidden;
-    height: 100px;
-    display: flex;
-    width: 90%;
-    box-shadow: 0 4px 20px rgba(197, 197, 197, 0.25);
-    justify-content: space-between;
-    z-index: 10;
-}
-
-.mini-calendar-item {
-    width: 33.3%;
-    height: 100%;
-    text-align: center;
-    background: #ffffff;
-    cursor: pointer;
-    transition: all 0.2s ease-in;
-    border-right: 1px solid #f0f0f0;
-    user-select: none;
-}
-
-.mini-calendar-item.active, .mini-calendar-item.exists.active {
-    background: #ecf0fe;
-}
-
-.mini-calendar-item.exists {
-    background: #fff0e5;
-}
-
-.mini-calendar-item.exists h1{
-    color: #000000;
-}
-
-.mini-calendar-item h1 {
-    color: #db5867;
-}
-
-.mini-calendar-item h4 {
-    color: #818181;
-    font-weight: 400;
-}
-
-.mini-calendar-item:hover {
-    background: #ecf0fe;
-}
-
-.mini-calendar-item:hover h1 {
-    color: #333399;
-}
-
-.mini-calendar-item:hover h4 {
-    color: #4343a1;
-}
-
-.mini-calendar-item h1 {
-    margin-block-end: 0;
-    font-size: 1.5em;
-}
-
-.btn-back {
-    border: none;
-    border-radius: 10px;
-    text-align: start;
-    cursor: pointer;
-    color: #ffffff;
-    background: #7ec1ff;
-    font-weight: 600;
-    padding: 0.3em 1em;
-    font-size: 1.5em;
-}
-
-.icon-btn {
-    background: none;
-    outline: none;
-    border: none;
-    color: #dedede;
-}
-
-.icon-btn svg {
-    width: 30px;
-    height: 30px;
-}
-
-.icon-btn.favorite {
-    fill: #db5867;
-}
+/*.btn-back {*/
+/*    border: none;*/
+/*    border-radius: 10px;*/
+/*    text-align: start;*/
+/*    cursor: pointer;*/
+/*    color: #ffffff;*/
+/*    background: #7ec1ff;*/
+/*    font-weight: 600;*/
+/*    padding: 0.3em 1em;*/
+/*    font-size: 1.5em;*/
+/*}*/
 
 .tiles-main-container {
     height: 68vh;
     overflow-y: scroll;
     overflow-x: hidden;
+    padding-bottom: 5em;
 }
 
 .subject-tile {
     margin: 1em 0;
-    background: #ffffff;
+    background: var(--background-tile);
     border-radius: 15px;
     text-align: start;
     display: flex;
     overflow: hidden;
     box-shadow: 0px 4px 20px rgba(197, 197, 197, 0.15);
-    border: #dce1e6 1px solid;
+    border: var(--text-color-secondary) 1px solid;
 }
 
 .subject-tile-left {
@@ -166,22 +123,22 @@ body {
     font-weight: 400;
 }
 
-.tiles-container h2{
+#tiles-container h2{
     margin-block-end: 0.1em;
 }
 
-.tiles-container h5{
+#tiles-container h5{
     margin-block-start: 0.1em;
     color: #939393;
     font-weight: 400;
     margin-block-end: 0.5em;
 }
 
-.tiles-container .today {
+#tiles-container .today {
     color: #333399;
 }
 
-.tiles-container header {
+#tiles-container header {
     display: flex;
     justify-content: space-between;
     margin: 1em 0;
@@ -207,21 +164,23 @@ body {
     margin: 0.2em auto;
     border: 0;
     outline: 0;
-    color: #333333;
+    color: var(--text-color);
     padding: 6px 15px;
     font-size: 1.1em;
+    background: none;
 }
 
 .home-container .search-tabs {
     display: flex;
-    background: #e8eaf2;
+    background: var(--background-color);
     border-radius: 10px 10px 0 0;
     font-weight: 600;
     justify-content: space-between;
 }
 
 .home-container .search-tabs .active {
-    background: #ffffff;
+    background: var(--background-tile);
+    color: var(--text-color)
 }
 
 .home-container .search-tabs button {
@@ -229,7 +188,7 @@ body {
     width: 33%;
     border-radius: 10px 10px 0 0;
     position: relative;
-    color: #000c17;
+    color: var(--text-color);
     border: 0;
     background: transparent;
     cursor: pointer;
@@ -239,29 +198,29 @@ body {
 
 .home-container .search-container {
     width: 100%;
-    background: #ffffff;
+    background: var(--background-tile);
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(197, 197, 197, 0.15);
     margin: 1em 0;
-    border: #dce1e6 1px solid;
+    border: var(--text-color-secondary) 1px solid;
 }
 
 .home-container table {
     width: 100%;
     text-align: center;
-    background: #ffffff;
+    background: var(--background-tile);
     box-shadow: 0 4px 20px rgba(197, 197, 197, 0.15);
     font-family: "Roboto", sans-serif;
     border-collapse: collapse;
 }
 
 table tr:nth-child(even) {
-    background: #f8f7f7;
+    background: var(--background-secondary);
 }
 
 table thead {
-    background: #ecf0fe;
-    color: #262626;
+    background: var(--menu-bg);
+    color: var(--text-color);
     font-size: 1.2em;
 }
 table thead th {
@@ -274,7 +233,7 @@ table tbody td {
     padding: 5px;
     font-size: 1em;
     text-align: center;
-    border: 1px solid #eeeeee;
+    border: 1px solid var(--text-color-secondary);
 }
 
 table tbody td:first-child {
@@ -283,7 +242,7 @@ table tbody td:first-child {
 
 table tbody tr:hover {
     cursor: pointer;
-    background: #ecf0fe;
+    background: var(--menu-bg);
     box-shadow: 0 0 25px 2px rgba(199, 210, 249, 0.17);
 }
 
@@ -297,27 +256,13 @@ table tbody tr:hover {
     text-align: center;
 }
 
-.favorites-bottom-container {
-  margin-bottom: 70px;
-}
-
-.favorites-bottom-container button {
-  border: none;
-  padding: 3px 15px;
-  border-radius: 1em;
-  background: #7ec1ff;
-  color: #fff;
-  font-weight: 400;
-  font-size: 1.2em;
-}
-
 .favorites-main-container div {
     width: 60%;
 }
 
 .favorites-main-container aside {
     width: 38%;
-    background: #ecf0fe;
+    background: var(--background-tile);
     
 }
 
@@ -336,42 +281,15 @@ table tbody tr:hover {
     text-align: center;
     padding: 8px;
     margin: 0.6em 0;
-    background: #fff;
+    background: var(--background-tile);
     border-radius: 8px;
-    border: 1px solid #dedede;
+    border: 1px solid var(--text-color-secondary);
     cursor: pointer;
     box-shadow: 0px 4px 20px rgba(197, 197, 197, 0.25);
 }
 
 .favorites-main-container .favorite-tile:hover {
-    background: #7ec1ff;
-}
-
-.favorites-bottom-container {
-  text-align: center;
-}
-
-.calendar-main-container {
-    text-align: -webkit-center;
-    display: flex;
-    justify-content: space-between;
-}
-
-.calendar-main-container button {
-    background: none;
-    border: none;
-    font-weight: 800;
-    font-size: 1.5em;
-    cursor: pointer;
-}
-
-.calendar-main-container button:hover {
-    color: #7ec1ff;
-}
-
-.calendar-main-container button:focus {
-    color: #db5867;
-    outline: 0;
+    background: var(--menu-bg);
 }
 
 .subject-tile-container {
@@ -449,13 +367,6 @@ table tbody tr:hover {
         margin: 0;
     }
 
-    .mini-calendar-item h1 {
-        font-size: 1em;
-    }
-
-    .main-container .mini-calendar-container {
-        height: 70px;
-    }
     .home-container .search-tabs button {
         font-size: 0.9em;
     }
@@ -479,12 +390,6 @@ table tbody tr:hover {
     }
     .subject-tile-right h3 {
         font-weight: 600;
-    }
-    .main-container .mini-calendar-container {
-        height: 50px;
-    }
-    .mini-calendar-item h4 {
-        font-size: 0.8em;
     }
 
     .subject-tile {
@@ -523,6 +428,15 @@ table tbody tr:hover {
     .day {
         font-size: 1em;
     }
+
+    .tiles-main-container {
+        height: 80vh;
+    }
+
+    .bg-img {
+        left: 0;
+        width: 100%;
+    }
 }
 @media screen and (max-width: 520px) {
     .home-container .search-tabs button {
@@ -537,18 +451,5 @@ table tbody tr:hover {
     .subject-tile-right {
         padding: 2%;
         width: 66%;
-    }
-
-    .mini-calendar-item h4 {
-        margin-block-start: 0.5em;
-        margin-block-end: 0.5em;
-    }
-
-    .main-container .mini-calendar-container {
-        height: 60px;
-    }
-
-    .calendar-main-container button {
-        font-size: 1.2em;
     }
 }

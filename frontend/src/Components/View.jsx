@@ -1,11 +1,15 @@
-import CalendarComponent from "./CalendarComponent";
+import CalendarComponent from "./View/CalendarComponent";
 //import {Typography} from "antd";
 import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 
 import axios from "axios";
 import SwipebleViewTile from "./SwipebleViewTile/SwipebleViewTile";
 import Loader from "./Loader/Loader";
+import ViewHeader from "./View/ViewHeader";
+import ViewHeaderTitle from "./View/ViewHeader";
+
+const currentVersion = 0.73
 
 const month = [
     "Января",
@@ -21,6 +25,9 @@ const month = [
     "Ноября",
     "Декабря",
 ];
+
+// https://edu.donstu.ru/api/EventsCalendar?eventID=undefined   календарь событий
+// https://edu.donstu.ru/api/Feed?userID=-271626&startDate=null   лента
 
 const weekDays = {
     0: "воскресенье",
@@ -40,8 +47,9 @@ const requests = {
     teachers: "https://edu.donstu.ru/api/Rasp?idTeacher=",
 };
 
-export default function View({isTeachers, isRoom, isGroup}) {
+export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
     const {groupId} = useParams();
+    const navigate = useNavigate()
 
     const [info, setInfo] = useState({});
     const [groupedRasp, setGroupedRasp] = useState({});
@@ -111,6 +119,36 @@ export default function View({isTeachers, isRoom, isGroup}) {
         return `${currentDate.getFullYear()}-${normalize(currentDate.getMonth() + 1)}-${normalize(currentDate.getDate())}`
     }
 
+    // const checkFavorites = (_info = info) => {
+    //     setInFavorites(false)
+    //     const favoritesGroups = JSON.parse(localStorage.getItem("favorites"))
+    //     if (favoritesGroups) {
+    //         favoritesGroups.forEach((favorites) => {
+    //             console.log(favorites)
+    //             console.log(info)
+    //             console.log(_info)
+    //                 if (Number.parseInt(favorites.id) === Number.parseInt(_info.group.groupId)) {
+    //                     setInFavorites(true)
+    //                     console.log(inFavorites)
+    //                     return
+    //                 }
+    //         })
+    //     }
+    // }
+
+    const checkFavorites = (_info = info) => {
+        setInFavorites(false);
+        const favoritesGroups = JSON.parse(localStorage.getItem("favorites"));
+        if (favoritesGroups) {
+            favoritesGroups.forEach((favorites) => {
+                if (favorites.id === _info?.group?.groupID) {
+                    setInFavorites(true);
+                    return;
+                }
+            });
+        }
+    };
+
     const updateSchedule = (currDate, isNext = false) => {
         if (isNext) setIsLoaded(false);
 
@@ -151,13 +189,14 @@ export default function View({isTeachers, isRoom, isGroup}) {
                         setGroupChache([...groupChache, {[`${curr_date}`]: {[`${groupId}`]: obj}}])
                     else
                         setGroupChache([{[`${curr_date}`]: {[`${groupId}`]: obj}}])
-
-
+                    checkFavorites(res.data.data.info);
                     setIsLoaded(true);
+
 
                 })
                 .catch(err => {
                     console.log("Ошибка")
+                    //console.log(err)
                     setTimeout(() => {
                         setAttempt(attempt + 1)
                         console.log(attempt)
@@ -165,7 +204,7 @@ export default function View({isTeachers, isRoom, isGroup}) {
                             updateSchedule(currDate)
                             return
                         } else {
-                            setIsError(false)
+                            setIsError(true)
                             return
                         }
 
@@ -173,40 +212,36 @@ export default function View({isTeachers, isRoom, isGroup}) {
 
                 })
         }
-    };
-
-    const checkFavorites = () => {
-        setInFavorites(false);
-        const favoritesGroups = JSON.parse(localStorage.getItem("favorites"));
-        if (favoritesGroups) {
-            favoritesGroups.forEach((favorites) => {
-                if (favorites.id === info?.group?.groupID) {
-                    setInFavorites(true);
-                    return;
-                }
-            });
-        }
-    };
+    }
 
     const sendStats = () => {
-        const favoritesGroups = JSON.parse(localStorage.getItem("favorites"));
-        const enterCounts = Number.parseInt(localStorage.getItem("count_enter"))
+        let sended_date = new Date(localStorage.getItem("send_data"))
+        if (sended_date.getDate() !== date.getDate()) {
+            const favoritesGroups = JSON.parse(localStorage.getItem("favorites"));
+            const enterCounts = Number.parseInt(localStorage.getItem("count_enter"))
+            const myGroupID = Number.parseInt(localStorage.getItem("my-group"))
+            let myGroupName = ""
 
-        let convertedFavorites = []
-        if (favoritesGroups) {
-            favoritesGroups.forEach((favorites) => {
-                convertedFavorites.push(favorites.name)
+            let convertedFavorites = []
+            if (favoritesGroups) {
+                favoritesGroups.forEach((favorites) => {
+                    if (favorites.id === myGroupID) myGroupName = favorites.name
+                    convertedFavorites.push(favorites.name)
+                })
+            }
+
+            axios.post(stats_url, {
+                sg: JSON.parse(localStorage.getItem("searchList")),
+                fav: convertedFavorites,
+                count: enterCounts / 2,
+                group: myGroupName
+            }).then(res => {
+                sended_date = new Date()
+                localStorage.setItem("send_data", sended_date)
             })
+        } else {
+            console.log("пока рано")
         }
-
-        axios.post(stats_url, {
-            sg: JSON.parse(localStorage.getItem("searchList")),
-            fav: convertedFavorites,
-            count: enterCounts / 2
-        })
-
-        const sended_date = new Date()
-        localStorage.setItem("send_data", sended_date)
     }
 
 
@@ -221,14 +256,16 @@ export default function View({isTeachers, isRoom, isGroup}) {
             const cache = JSON.parse(localStorage.getItem("cache"))
             const infoCache = JSON.parse(localStorage.getItem("infoCache"))
             if (cache !== null && infoCache !== null && Object.keys(cache).length > 0 && Object.keys(infoCache).length > 0) {
+                if (infoCache.group.groupID === groupId) {
+                    setGroupedRasp(cache)
+                    setInfo(infoCache)
+                    setIsLoaded(true)
+                    console.log("cache")
+                }
 
-                setGroupedRasp(cache)
-                setInfo(infoCache)
-                setIsLoaded(true)
-                console.log("cache")
             }
         }
-
+        console.log("use effect")
         updateSchedule(currentDate);
     }, []);
 
@@ -240,26 +277,29 @@ export default function View({isTeachers, isRoom, isGroup}) {
     useEffect(() => {
 
         document.title = info.group?.name + " - Расписание MySecrets";
-        checkFavorites();
+        //checkFavorites();
         scrollTo(todayDate)
         let count_enter = Number.parseInt(localStorage.getItem("count_enter"))
         if (count_enter) count_enter++
         else count_enter = 1
-        localStorage.setItem("count_enter", count_enter)
+        localStorage.setItem("count_enter", count_enter.toString())
 
-        const sended_date = new Date(localStorage.getItem("send_data"))
-        if (sended_date.getDate() !== date.getDate()) sendStats()
+        sendStats()
         if (isGroup) {
             localStorage.setItem("cache", JSON.stringify(groupedRasp))
             localStorage.setItem("infoCache", JSON.stringify(info))
         }
+        const usedVersion = localStorage.getItem("usedver")
+        if (usedVersion && Number.parseInt(usedVersion)!==currentVersion) console.log("update!")
+        else localStorage.setItem("usedver", currentVersion.toString())
+
     }, [isLoaded === true]);
 
     useEffect(() => {
         setLookAt([])
         if (groupedRasp) {
 
-            const targets = Object.keys(groupedRasp).map(gr => document.getElementById(new Date(gr).getDate()))
+            const targets = Object.keys(groupedRasp).map(gr => document.getElementById(new Date(gr).getDate().toString()))
             const thresholds = Object.keys(groupedRasp).map(gr => normalizeThresholds(groupedRasp[gr]))
             const callback = (entries, observer) => {
 
@@ -291,10 +331,10 @@ export default function View({isTeachers, isRoom, isGroup}) {
     }
 
     return (
-        <div className="main-container">
-            <div className="tiles-container">
-                <ViewHeader isGroup={isGroup} isTeachers={isTeachers} isRoom={isRoom} isLoaded={isLoaded}
-                            inFavorites={inFavorites} checkFavorites={checkFavorites} group={info}/>
+        <div className="main-container" id={"tiles-container"}>
+            {/*<div className="tiles-container">*/}
+                <ViewHeaderTitle isGroup={isGroup} isTeachers={isTeachers} isRoom={isRoom} isLoaded={isLoaded}
+                            inFavorites={inFavorites} checkFavorites={checkFavorites} group={info} addToCompare={addToCompare}/>
                 <CalendarComponent currentDate={currentDate} updateSchedule={updateSchedule} groupedRasp={groupedRasp}
                                    scrollTo={scrollTo} lookAt={lookAt}/>
 
@@ -335,59 +375,7 @@ export default function View({isTeachers, isRoom, isGroup}) {
                         </>
                     }
                 </div>
-            </div>
+            {/*</div>*/}
         </div>
     );
-}
-
-function ViewHeader(props) {
-
-    const addToFavorites = () => {
-        let favoritesGroups = JSON.parse(
-            localStorage.getItem("favorites")
-        );
-
-        if (props.inFavorites) {
-            if (favoritesGroups.length > 0) {
-                let myArray = favoritesGroups.filter(
-                    function (obj) {
-                        return (obj.id !== props.group.groupID);
-                    });
-                localStorage.setItem("favorites", JSON.stringify(myArray));
-            }
-        } else {
-            if (favoritesGroups === null) favoritesGroups = [];
-            favoritesGroups.push({
-                name: props.group.name,
-                id: props.group.groupID,
-                facul: "",
-            });
-            localStorage.removeItem("favorites");
-            localStorage.setItem("favorites", JSON.stringify(favoritesGroups));
-        }
-
-        props.checkFavorites();
-    }
-
-    return (
-        <header>
-            <div style={{padding: "0 1.5em"}}></div>
-            {props.isRoom && <h2 className="title-h2">Аудитория {props.isLoaded && props.group.aud.name}</h2>}
-            {props.isTeachers &&
-                <h2 className="title-h2">Преподаватель {props.isLoaded && props.group.prepod.name}</h2>}
-            {props.isGroup && <h2 className="title-h2">Группа {props.isLoaded && props.group.group.name}</h2>}
-
-
-            {(props.isLoaded && props.isGroup) && (
-                <div
-                    className={"icon-btn" + (props.inFavorites ? " favorite" : "")}
-                    onClick={addToFavorites}>
-                    <svg width="800px" height="800px" viewBox="-5.5 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="m0 2.089v21.912l6.546-6.26 6.545 6.26v-21.912c-.012-1.156-.952-2.089-2.109-2.089-.026 0-.051 0-.077.001h.004-8.726c-.022-.001-.047-.001-.073-.001-1.158 0-2.098.933-2.109 2.088v.001z"/>
-                    </svg>
-                </div>
-            )}
-        </header>
-    )
 }

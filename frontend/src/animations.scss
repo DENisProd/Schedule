@@ -1,0 +1,19 @@
+@keyframes show {
+  from { opacity: 0; transform: translateY(300px); }
+  to { opacity: 1;transform: translateY(0); }
+}
+
+@keyframes show2 {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes closeAnim {
+  from { opacity: 1;transform: translateY(0); }
+  to { opacity: 0; transform: translateY(300px); }
+}
+
+@keyframes closeAnim2 {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}

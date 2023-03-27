@@ -1,0 +1,148 @@
+.view-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 1em 0;
+}
+
+.mini-calendar-container {
+    background: #ffffff;
+    border-radius: 15px;
+    overflow: hidden;
+    height: 100px;
+    display: flex;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(197, 197, 197, 0.25);
+    justify-content: space-between;
+    z-index: 10;
+}
+
+.mini-calendar-item {
+    width: 33.3%;
+    height: 100%;
+    text-align: center;
+    background: var(--background-tile);
+    cursor: pointer;
+    transition: all 0.2s ease-in;
+    border-right: 1px solid var(--text-color-secondary);
+    user-select: none;
+}
+
+.mini-calendar-item.active, .mini-calendar-item.exists.active {
+    background: var(--background-secondary);
+
+}
+
+.mini-calendar-item.exists {
+    background: #fff2a6;
+}
+
+.mini-calendar-item.exists h1{
+    color: var(--text-color)
+}
+
+.mini-calendar-item h1 {
+    color: #db5867;
+}
+
+.mini-calendar-item h4 {
+    color: #818181;
+    font-weight: 400;
+}
+
+.mini-calendar-item:hover {
+    background: var(--background-secondary);
+}
+
+.mini-calendar-item:hover h1 {
+    color: #333399;
+}
+
+.mini-calendar-item:hover h4 {
+    color: #4343a1;
+}
+
+.mini-calendar-item h1 {
+    margin-block-end: 0;
+    font-size: 1.5em;
+}
+
+.compare-btn {
+    width: 45px;
+    height: 45px;
+    fill: #db5867;
+}
+
+.icon-btn {
+    background: none;
+    outline: none;
+    border: none;
+    fill: var(--text-color-secondary);
+}
+
+.icon-btn svg {
+    width: 30px;
+    height: 30px;
+}
+
+.icon-btn.favorite {
+    fill: #db5867;
+}
+
+.calendar-main-container {
+    text-align: -webkit-center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.calendar-main-container button {
+    background: none;
+    border: none;
+    font-weight: 800;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+.calendar-main-container button:hover {
+    color: #7ec1ff;
+}
+
+.calendar-main-container button:focus {
+    color: #db5867;
+    outline: 0;
+}
+
+
+
+@media screen and (max-width: 1024px) {
+    .mini-calendar-item h1 {
+        font-size: 1em;
+    }
+
+    .mini-calendar-container {
+        height: 70px;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .mini-calendar-item h4 {
+        font-size: 0.8em;
+    }
+    .mini-calendar-container {
+        height: 50px;
+    }
+}
+
+@media screen and (max-width: 520px) {
+    .mini-calendar-item h4 {
+        margin-block-start: 0.5em;
+        margin-block-end: 0.5em;
+    }
+
+    .mini-calendar-container {
+        height: 60px;
+    }
+
+    .calendar-main-container button {
+        font-size: 1.2em;
+    }
+}

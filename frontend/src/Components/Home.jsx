@@ -127,14 +127,14 @@ export default function Home() {
                         </thead>
 
                         <tbody>
-                        {filteredGroups.slice(0,40).map(group =>
+                        {filteredGroups.slice(0,100).map(group =>
                             <tr key={group.id} onClick={() => {
                                 localStorage.setItem("groupId", group.id)
                                 let searchList = JSON.parse(localStorage.getItem("searchList"))
                                 //console.log(searchList)
-                                if (searchList) 
-                                    searchList.push(group.name)
-                                else searchList = [group.name]
+                               // console.log(group)
+                                if (!searchList) searchList = []
+                                searchList.push(group.name)
                                 localStorage.setItem("searchList", JSON.stringify(searchList))
 
                                 navigate('/group/' + group.id)}
@@ -156,7 +156,7 @@ export default function Home() {
                         <tr><th>Фамилия Имя Отчетво</th></tr>
                         </thead>
                         <tbody>
-                        {filteredTeachers.slice(0,40).map(teachers =>
+                        {filteredTeachers.slice(0,100).map(teachers =>
                                 <tr key={teachers.id}
                                 onClick={() => {
                                     navigate('/teacher/' + teachers.id)}
@@ -174,7 +174,7 @@ export default function Home() {
                         <tr><th>Аудитория</th></tr>
                         </thead>
                         <tbody>
-                        {filteredRooms.slice(0,40).map(room =>
+                        {filteredRooms.slice(0,100).map(room =>
                                 <tr onClick={() => {
                                     navigate('/room/' + room.id)}
                                 }
@@ -204,9 +204,9 @@ export default function Home() {
             </div>
 
             {isLoaded ?
-                <>
+                <div className="tiles-main-container" id={"scrollArea"}>
                     {getTable()}
-                </>
+                </div>
                 :
                 <>
                     <Loader/>
