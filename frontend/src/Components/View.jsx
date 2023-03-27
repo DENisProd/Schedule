@@ -265,7 +265,6 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
 
             }
         }
-        console.log("use effect")
         updateSchedule(currentDate);
     }, []);
 
@@ -285,6 +284,7 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
         localStorage.setItem("count_enter", count_enter.toString())
 
         sendStats()
+
         if (isGroup) {
             localStorage.setItem("cache", JSON.stringify(groupedRasp))
             localStorage.setItem("infoCache", JSON.stringify(info))
