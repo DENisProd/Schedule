@@ -20,23 +20,24 @@
     width: 33.3%;
     height: 100%;
     text-align: center;
-    background: #ffffff;
+    background: var(--background-tile);
     cursor: pointer;
     transition: all 0.2s ease-in;
-    border-right: 1px solid #f0f0f0;
+    border-right: 1px solid var(--text-color-secondary);
     user-select: none;
 }
 
 .mini-calendar-item.active, .mini-calendar-item.exists.active {
-    background: #ecf0fe;
+    background: var(--background-secondary);
+
 }
 
 .mini-calendar-item.exists {
-    background: #fff0e5;
+    background: #fff2a6;
 }
 
 .mini-calendar-item.exists h1{
-    color: #000000;
+    color: var(--text-color)
 }
 
 .mini-calendar-item h1 {
@@ -49,7 +50,7 @@
 }
 
 .mini-calendar-item:hover {
-    background: #ecf0fe;
+    background: var(--background-secondary);
 }
 
 .mini-calendar-item:hover h1 {
@@ -75,7 +76,7 @@
     background: none;
     outline: none;
     border: none;
-    color: #dedede;
+    fill: var(--text-color-secondary);
 }
 
 .icon-btn svg {

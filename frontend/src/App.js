@@ -10,6 +10,8 @@ import Navigator from "./Components/Navigator";
 
 import bg from "./assets/8marta.png"
 import Compare from "./Components/Compare/Compare";
+import {ThemeProvider} from "./providers/ThemeProvider";
+import BottomNavigation from "./Components/BottomNavigation/BottomNavigation";
 
 
 function App() {
@@ -56,7 +58,6 @@ function App() {
     return (
             <BrowserRouter>
                 {isOffline && <div>offline</div>}
-
                 <Routes>
                     {/*<Route element={}/>*/}
                     <Route path="/" element={<Home />} />
@@ -69,10 +70,10 @@ function App() {
                     <Route path="/navigator/:audId" element={<Navigator />} />
                     <Route path="/compare/" element={<Compare compareList={compareList} />} />
                 </Routes>
-                <BottomMenu />
+                <BottomNavigation />
                 {/*<img className="bg-img" src={bg}/>*/}
             </BrowserRouter>
-    );
+    )
 }
 
 export default App;
