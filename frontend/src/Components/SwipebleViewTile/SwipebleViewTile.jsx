@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
-import "../../App.css";
+// import "../../App.css";
+
+import styles from "./swipeble-view-tile.module.scss"
+import cn from "classnames"
 
 export default function SwipebleViewTile({ isGroup, isRoom, isTeachers, subjects }) {
     const tileRef = useRef(null);
@@ -66,10 +69,7 @@ export default function SwipebleViewTile({ isGroup, isRoom, isTeachers, subjects
     return (
         <>
             <div
-                className={
-                    "subject-tile-container" +
-                    (subjects?.length > 1 ? " scrollable" : "")
-                }
+                className={cn(styles.subject_tile_container, subjects?.length > 1 && styles.scrollable)}
                 key={
                     new Date() +
                     (subjects &&
@@ -93,15 +93,11 @@ function DotIndicator({ currentSlide, subjects }) {
 //         console.log(Math.round(currentSlide, 1));
 //     }, []);
     return (
-        <div className="dot-indicator" key={subjects["код"]}>
+        <div className={styles.dot_indicator} key={subjects["код"]}>
             {subjects?.length > 1 &&
                 subjects.map((subject, index) => (
                     <div
-                        className={
-                            "" +
-                            (Math.round(currentSlide, 1) === index
-                                ? "current"
-                                : "")
+                        className={cn(Math.round(Number(currentSlide), 1) === index && styles.current)
                         }
                     />
                 ))}
@@ -111,14 +107,15 @@ function DotIndicator({ currentSlide, subjects }) {
 
 function SubjectTile({ isGroup, isRoom, isTeachers, subject }) {
     const types = [
-        { name: "Военная кафедра", color: "#fff" },
-        { name: "лаб", color: "#E4E9FF" },
-        { name: "лек", color: "#DBFFE7" },
-        { name: "пр.", color: "#FFE2E7" },
-        { name: "фв", color: "#FFF8E1" },
+        { name: "Военная кафедра", color: styles.green },
+        { name: "лаб", color: styles.blue },
+        { name: "лек", color: styles.green },
+        { name: "пр.", color: styles.pink },
+        { name: "пер", color: styles.pink },
+        { name: "фв", color: styles.blue },
         { name: "экз", color: "#AADAFF" },
-        { name: "зач", color: "#F2BAA6" },
-        { name: "зчО", color: "#F2BAA6" },
+        { name: "зач", color: styles.orange },
+        { name: "зчО", color: styles.orange },
     ];
 
     const getStyle = (name) => {
@@ -129,23 +126,18 @@ function SubjectTile({ isGroup, isRoom, isTeachers, subject }) {
     };
 
     return (
-        <div className="subject-tile">
-            <div
-                className="subject-tile-left"
-                style={{
-                    background: getStyle(subject["дисциплина"]),
-                }}
-            >
+        <div className={styles.subject_tile}>
+            <div className={cn(styles.subject_tile_left, getStyle(subject["дисциплина"]))}>
                 <h1>{subject["номерЗанятия"]}</h1>
-                <h4 className="time-h">
+                <h4 className={styles.time_h}>
                     с <span className="time-span">{subject["начало"]}</span>
                 </h4>
-                <h4 className="time-h">
+                <h4 className={styles.time_h}>
                     до <span className="time-span">{subject["конец"]}</span>
                 </h4>
             </div>
 
-            <div className="subject-tile-right">
+            <div className={styles.subject_tile_right}>
                 <h3>{subject["дисциплина"]}</h3>
                 {!isGroup && <p>Группа {subject["группа"]}</p>}
                 <p>Аудитория {subject["аудитория"]}</p>

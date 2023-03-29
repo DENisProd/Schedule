@@ -1,5 +1,4 @@
 import CalendarComponent from "./View/CalendarComponent";
-//import {Typography} from "antd";
 import {useNavigate, useParams} from "react-router-dom";
 import {useCallback, useEffect, useState} from "react";
 
@@ -8,6 +7,7 @@ import SwipebleViewTile from "./SwipebleViewTile/SwipebleViewTile";
 import Loader from "./Loader/Loader";
 import ViewHeader from "./View/ViewHeader";
 import ViewHeaderTitle from "./View/ViewHeader";
+import "./View/view-header.css"
 
 const currentVersion = 0.73
 
@@ -305,7 +305,7 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
 
                 entries.map(entry => {
                     setLookAt([])
-                    if (entry.intersectionRatio > 0.1) {
+                    if (entry.intersectionRatio > 0.2) {
                         setLookAt(prev => [...prev, normalize(entry.target.id)])
                     }
                 })
@@ -333,12 +333,16 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
     return (
         <div className="main-container" id={"tiles-container"}>
             {/*<div className="tiles-container">*/}
-                <ViewHeaderTitle isGroup={isGroup} isTeachers={isTeachers} isRoom={isRoom} isLoaded={isLoaded}
-                            inFavorites={inFavorites} checkFavorites={checkFavorites} group={info} addToCompare={addToCompare}/>
+            <div className="view-header">
                 <CalendarComponent currentDate={currentDate} updateSchedule={updateSchedule} groupedRasp={groupedRasp}
                                    scrollTo={scrollTo} lookAt={lookAt}/>
+                <ViewHeaderTitle isGroup={isGroup} isTeachers={isTeachers} isRoom={isRoom} isLoaded={isLoaded}
+                                 inFavorites={inFavorites} checkFavorites={checkFavorites} group={info} addToCompare={addToCompare}/>
+            </div>
 
-                <div className="tiles-main-container" id={"scrollArea"}>
+            <div id={"scrollArea"}>
+
+                {/*<div className="tiles-main-container" id={"scrollArea"}>*/}
                     {isError ?
                         <>
                             {isLoaded ? (

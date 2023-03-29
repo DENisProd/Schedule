@@ -43,7 +43,7 @@
   }
 
   & .on {
-    background-color: $lavanda;
+    background-color: var(--lavanda);
     left: calc(100% - 1.8em);
   }
 }

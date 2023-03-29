@@ -20,7 +20,7 @@ const MenuButton = ({setIsModalOpened, setInspectName, name, img, title, onClick
             <img src={img} alt={name + '_icon'} contextMenu={(e) => {
                 e.preventDefault();
             }}/>
-            <h5>{title}</h5>
+            <h4>{title}</h4>
         </button>
     )
 }
