@@ -17,8 +17,9 @@ $medium: 1200px;
 
   & h5 {
     margin: 0;
-    font-weight: 500;
+    font-weight: 600;
     text-align: center;
+    user-select: none;
 
     @media screen and (max-width: $small) {
       font-size: 1em;
@@ -35,6 +36,7 @@ $medium: 1200px;
     height: 100%;
     z-index: 8;
     animation: 0.4s show2 ease-in-out;
+    user-select: none;
 
     .menu_container.closed & {
       animation: 0.3s closeAnim2 ease-in-out;
@@ -57,6 +59,10 @@ $medium: 1200px;
     animation: 0.3s show ease-in-out;
     transition: all 0.3s ease-in-out;
 
+    &.settings {
+      height: 80vh;
+    }
+
     @media screen and (max-width: $small) {
 
     }
@@ -64,23 +70,37 @@ $medium: 1200px;
       left: 24%
     }
 
-    & .theme_choose {
-      display: flex;
-      height: 2em;
+    & .setting_icon {
+      position: fixed;
       gap: 1em;
-      align-items: center;
-      position: absolute;
-      bottom: 5em;
-      user-select: none;
+      align-items: end;
+      bottom: 4.2em;
+      left: 0;
+      width: 88%;
+      height: 5em;
+      padding: 0 6% 1em 6%;
+      display: flex;
+      justify-content: space-between;
+      background: linear-gradient(0deg, var(--menu-bg) 50%, rgba(244,66,98,0) 100%);
+
+      & svg {
+        fill: var(--background-color);
+        width: 3em;
+        height: 3em;
+        transition: all 0.3s ease-in-out;
+
+        &.active {
+          fill: $lavanda;
+        }
+      }
     }
+
 
     &.closed {
       animation: 0.3s closeAnim ease-in-out;
     }
 
     & .exit_btn {
-      height: 40px;
-      width: 40px;
       background: none;
       //border: 2px solid $light-gray;
       border: none;
@@ -88,11 +108,10 @@ $medium: 1200px;
       border-radius: 10px;
       font-weight: 800;
       font-size: 1.5em;
-      right: 1em;
-      position: absolute;
-      bottom: 3em;
       cursor: pointer;
       user-select: none;
+      vertical-align: middle;
+      padding-bottom: 0.2em;
     }
 
     & .card_wrapper {
@@ -104,6 +123,7 @@ $medium: 1200px;
       -webkit-touch-callout: none !important;
       flex-flow: wrap;
       justify-content: center;
+      transition: all 0.3s ease-in-out;
 
       @media screen and (max-width: $small) {
         //width: 20em;
@@ -111,6 +131,7 @@ $medium: 1200px;
       @media screen and (min-width: $medium) {
         //left: 24%
       }
+
 
       & .card {
         width: 6em;

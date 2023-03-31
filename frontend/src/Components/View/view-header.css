@@ -4,7 +4,7 @@
     margin: 0 auto 0 auto;
     /*background: var(--background-color);*/
     backdrop-filter: blur(20px);
-    border-top: var(--nav-color) 2px solid;
+    border-top: var(--nav-color-secondary) 2px solid;
     background: var(--bg-semi-transperent);
     display: flex;
     flex-direction: column;
@@ -12,6 +12,16 @@
     padding-top: 0.5em;
     padding-bottom: 0.2em;
     bottom: calc(var(--nav-height) - 2px);
+
+}
+
+.view-header.top {
+    top: 0;
+    height: 110px;
+    border-top: none;
+    border-bottom: var(--nav-color-secondary) 2px solid;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 .view-container {

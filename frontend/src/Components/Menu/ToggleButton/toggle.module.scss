@@ -1,7 +1,7 @@
 @import "../../../colors";
 
 .btn {
-  border: 2px solid var(--background-secondary);
+  //border: 2px solid var(--background-secondary);
   background-color: var(--background-color);
   color: var(--text-color);
   border-radius: 100px;
@@ -38,12 +38,12 @@
   }
 
   & .off {
-    background-color: #333;
+    background-color: var(--menu-bg);
     left: .4em;
   }
 
   & .on {
-    background-color: var(--lavanda);
+    background-color: $lavanda;
     left: calc(100% - 1.8em);
   }
 }

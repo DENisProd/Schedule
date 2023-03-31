@@ -1,6 +1,6 @@
 import CalendarComponent from "./View/CalendarComponent";
 import {useNavigate, useParams} from "react-router-dom";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useContext, useEffect, useState} from "react";
 
 import axios from "axios";
 import SwipebleViewTile from "./SwipebleViewTile/SwipebleViewTile";
@@ -8,6 +8,8 @@ import Loader from "./Loader/Loader";
 import ViewHeader from "./View/ViewHeader";
 import ViewHeaderTitle from "./View/ViewHeader";
 import "./View/view-header.css"
+import {SettingsContext} from "../providers/SettingsProvider";
+import cn from "classnames";
 
 const currentVersion = 0.73
 
@@ -63,6 +65,8 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
     const [lookAt, setLookAt] = useState([])
     const [attempt, setAttempt] = useState(1)
     const [isError, setIsError] = useState(true)
+
+    const {settings, setSettings} = useContext(SettingsContext)
 
     const normalize = (value) => {
         if (value < 10) return "0" + value;
@@ -331,14 +335,11 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
     }
 
     return (
-        <div className="main-container" id={"tiles-container"}>
+        <div className={cn("main-container", settings?.calDir === "top" && "top")} id={"tiles-container"}>
             {/*<div className="tiles-container">*/}
-            <div className="view-header">
-                <CalendarComponent currentDate={currentDate} updateSchedule={updateSchedule} groupedRasp={groupedRasp}
-                                   scrollTo={scrollTo} lookAt={lookAt}/>
-                <ViewHeaderTitle isGroup={isGroup} isTeachers={isTeachers} isRoom={isRoom} isLoaded={isLoaded}
-                                 inFavorites={inFavorites} checkFavorites={checkFavorites} group={info} addToCompare={addToCompare}/>
-            </div>
+            <ViewHeader currentDate={currentDate} updateSchedule={updateSchedule} groupedRasp={groupedRasp}
+                        scrollTo={scrollTo} lookAt={lookAt} isGroup={isGroup} isTeachers={isTeachers} isRoom={isRoom} isLoaded={isLoaded}
+                        inFavorites={inFavorites} checkFavorites={checkFavorites} group={info} addToCompare={addToCompare}/>
 
             <div id={"scrollArea"}>
 

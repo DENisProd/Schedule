@@ -47,7 +47,11 @@ const BottomNavigation = () => {
                 </svg>
                 <p>Поиск</p>
             </div>
-            <div className={cn(selected.indexOf('group') !== -1  && styles.selected)} onClick={() => navigate("/group/" + (myGroup>100 ? myGroup : groupId))}>
+            <div className={cn(selected.indexOf('group') !== -1  && styles.selected)}
+                 onClick={() => {
+                     setIsModalOpen(false)
+                     navigate("/group/" + (myGroup > 100 ? myGroup : groupId))
+                 }}>
                 <svg
                     width="800px"
                     height="800px"

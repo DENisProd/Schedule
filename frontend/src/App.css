@@ -14,6 +14,7 @@
     --orange: #FFD9AB;
     --red: #F74141;
     --nav-color: #C7CDDD;
+    --nav-color-secondary: #DFE5F5;
     --lavanda: #ECF0FE;
 }
 
@@ -25,6 +26,7 @@
     --background-tile: #313131;
     --background-tile-border: #363636;
     --menu-bg: #2D2D2D;
+    /*--menu-bg: #2D2D2D;*/
     --text-color-secondary: #6e6e6e;
     --text-color-secondary2: #6e6e6e;
     --green: #74E092;
@@ -34,6 +36,11 @@
     --red: #F74141;
     --lavanda: #7B7AFF;
     --nav-color: #2D2D2D;
+    --nav-color-secondary: #3D3D3D;
+}
+
+html {
+    background: var(--background-color);
 }
 
 body {
@@ -54,6 +61,10 @@ body {
 
 #root.ios-detected {
     --nav-height: 70px;
+}
+
+#root.scroll-blocked {
+    overflow-y: hidden;
 }
 
 .bg-img {
@@ -80,6 +91,11 @@ body {
     text-align: center;
     padding-bottom: 13em;
     /*padding: 0.8em;*/
+}
+
+.main-container.top{
+    padding-bottom: 5em;
+    padding-top: 8em;
 }
 
 .tiles-main-container {
