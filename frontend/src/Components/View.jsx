@@ -10,6 +10,10 @@ import ViewHeaderTitle from "./View/ViewHeader";
 import "./View/view-header.css"
 import {SettingsContext} from "../providers/SettingsProvider";
 import cn from "classnames";
+import Calendar from "./View/Calendar/Calendar";
+import EuropeanCalendar from "./View/Calendar/EuropeanCalendar";
+import Calendar2 from "./View/Calendar/Calendar2";
+import {groupByDate, groupByDateWithSubgroups} from "../utils/groupHelpers";
 
 const currentVersion = 0.73
 
@@ -69,18 +73,18 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
     const {settings, setSettings} = useContext(SettingsContext)
 
     const normalize = (value) => {
-        if (value < 10) return "0" + value;
-        else return value;
+        if (value < 10) return "0" + value
+        else return value
     };
 
     const getRequestUrl = () => {
-        let url = "";
+        let url = ""
 
-        if (isTeachers) url = requests.teachers;
-        if (isRoom) url = requests.room;
-        if (isGroup) url = requests.group;
+        if (isTeachers) url = requests.teachers
+        if (isRoom) url = requests.room
+        if (isGroup) url = requests.group
 
-        return url;
+        return url
     };
 
     const scheduleProccessing = (res) => {
@@ -188,6 +192,13 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
                     setInfo(res.data.data.info);
                     console.log("fetched")
                     let obj = scheduleProccessing(res);
+                    console.log(obj)
+                    try {
+                        let objTest = groupByDateWithSubgroups(res)
+                        console.log(objTest)
+                    } catch (e) {
+                        console.log(e)
+                    }
                     setGroupedRasp(obj);
                     if (groupChache.length > 0)
                         setGroupChache([...groupChache, {[`${curr_date}`]: {[`${groupId}`]: obj}}])
@@ -269,6 +280,7 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
 
             }
         }
+        document.getElementById('root').classList.remove('scroll-blocked')
         updateSchedule(currentDate);
     }, []);
 
@@ -341,6 +353,7 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
                         scrollTo={scrollTo} lookAt={lookAt} isGroup={isGroup} isTeachers={isTeachers} isRoom={isRoom} isLoaded={isLoaded}
                         inFavorites={inFavorites} checkFavorites={checkFavorites} group={info} addToCompare={addToCompare}/>
 
+            {/*<Calendar2/>*/}
             <div id={"scrollArea"}>
 
                 {/*<div className="tiles-main-container" id={"scrollArea"}>*/}

@@ -1,6 +1,6 @@
 .view-header {
     position: fixed;
-    width: 800px;
+    width: 700px;
     margin: 0 auto 0 auto;
     /*background: var(--background-color);*/
     backdrop-filter: blur(20px);
@@ -8,7 +8,7 @@
     background: var(--bg-semi-transperent);
     display: flex;
     flex-direction: column;
-    gap: 1em;
+    gap: 0.5em;
     padding-top: 0.5em;
     padding-bottom: 0.2em;
     bottom: calc(var(--nav-height) - 2px);
@@ -17,7 +17,7 @@
 
 .view-header.top {
     top: 0;
-    height: 110px;
+    height: 130px;
     border-top: none;
     border-bottom: var(--nav-color-secondary) 2px solid;
     padding-top: 0.5em;
@@ -28,13 +28,14 @@
     display: flex;
     justify-content: space-between;
     margin: 0;
+    align-items: center;
 }
 
 .mini-calendar-container {
     background: var(--background-color);
     border-radius: 15px;
     overflow: hidden;
-    height: 100px;
+    height: 80px;
     display: flex;
     width: 90%;
     /*box-shadow: 0 4px 20px rgba(197, 197, 197, 0.25);*/
@@ -70,13 +71,12 @@
     color: var(--text-color)
 }
 
-.mini-calendar-item h1 {
-    color: var(--red);
-}
-
 .mini-calendar-item h4 {
     color: var(--text-color-secondary);
     font-weight: 500;
+    font-size: 1em;
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
 }
 
 .mini-calendar-item:hover {
@@ -93,15 +93,20 @@
 
 .mini-calendar-item h1 {
     margin-block-end: 0;
-    font-size: 1.5em;
+    font-size: 1.2em;
+    color: var(--red);
 }
 
 .compare-btn {
     width: 45px;
     height: 45px;
-    fill: var(--red);
+    fill: var(--nav-color);
     margin-top: -0.5em;
     cursor: pointer;
+}
+
+.compare-btn.active {
+    fill: var(--blue);
 }
 
 .icon-btn {
@@ -156,19 +161,33 @@
     .mini-calendar-container {
         height: 70px;
     }
+
+    .view-header {
+        height: 110px;
+    }
+
+    .view-header.top {
+        height: 130px;
+    }
 }
 
 @media screen and (max-width: 800px) {
     .mini-calendar-item h4 {
         font-size: 0.8em;
+        margin-block-start: 0.5em;
+        margin-block-end: 0.5em;
     }
     .mini-calendar-container {
-        height: 50px;
+        height: 60px;
     }
     .view-header {
         left: 0;
         padding: 0.8em 5vw 0.2em 5vw;
         width: 90vw;
+    }
+
+    .view-header.top {
+        height: 105px;
     }
 }
 

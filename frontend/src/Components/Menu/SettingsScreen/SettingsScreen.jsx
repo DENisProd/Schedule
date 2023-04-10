@@ -6,6 +6,8 @@ import ToggleButton from "../ToggleButton/ToggleButton";
 
 import {SettingsContext} from "../../../providers/SettingsProvider";
 
+const version = "0.83b2"
+
 const SettingsScreen = () => {
     const {settings, setSettings} = useContext(SettingsContext)
     const {theme, setTheme} = useContext(ThemeContext)
@@ -30,9 +32,14 @@ const SettingsScreen = () => {
         <div className={styles.settings_cont}>
             <h5>Настройки</h5>
             <div className={cn(styles.setting_line, styles.setting_container)}>
+                <span>Версия приложения: {version}</span>
+            </div>
+
+            <div className={cn(styles.setting_line, styles.setting_container)}>
                 <span>Темная тема</span>
                 <ToggleButton {...{isOn, toggle}} />
             </div>
+
             <div className={cn(styles.choose_mode)}>
                 <span>Расположения календаря</span>
                 <div className={styles.choose_wrapper}>

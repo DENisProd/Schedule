@@ -12,6 +12,8 @@ import bg from "./assets/8marta.png"
 import Compare from "./Components/Compare/Compare";
 import {ThemeProvider} from "./providers/ThemeProvider";
 import BottomNavigation from "./Components/BottomNavigation/BottomNavigation";
+import FavoritesNew from "./Components/FavoritesNew/FavoritesNew";
+import ViewNew from "./Components/ViewNew/ViewNew";
 
 
 function App() {
@@ -60,12 +62,13 @@ function App() {
                 {isOffline && <div>offline</div>}
                 <Routes>
                     {/*<Route element={}/>*/}
-                    <Route path="/" element={<Home />} />
-                    <Route path="/group/:groupId" element={<View addToCompare={addToCompare} isGroup={true} />} />
-                    <Route path="/group/" element={<Home/>} />
+                    <Route path="/" element={<FavoritesNew />} />
+                    {/*<Route path="/group/:groupId" element={<View addToCompare={addToCompare} isGroup={true} />} />*/}
+                    <Route path="/group/:groupId" element={<ViewNew addToCompare={addToCompare} isGroup={true} />} />
+                    <Route path="/group/" element={<FavoritesNew />} />
                     <Route path="/room/:groupId" element={<View isRoom={true}/>} />
                     <Route path="/teacher/:groupId" element={<View isTeachers={true}/>} />
-                    <Route path="/favorites" element={<Favorites />} />
+                    {/*<Route path="/favorites" element={<FavoritesNew />} />*/}
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/navigator/:audId" element={<Navigator />} />
                     <Route path="/compare/" element={<Compare compareList={compareList} />} />

@@ -17,7 +17,8 @@ function groupByDate (data, field) {
             obj[date].push({...array[i]})
         }
     }
-
+    console.log(data.data.info.group.name)
+    console.log({obj: obj, date: data.data.info.date.split("T")[0]})
     return {obj: obj, date: data.data.info.date.split("T")[0]}
 }
 
@@ -35,44 +36,35 @@ function createMatrix (merged, groupList) {
 
             for (let j = 0; j < groupsIds.length; j++) {
                 const temp = groups[groupsIds[j]]
-                console.log(temp)
 
                 Object.keys(temp).map(n => {
-                    console.log(temp[n])
                     if (table[n]) table[n].push(temp[n])
                     else table[n] = [ temp[n] ]
-                    // table[n].push(temp[Object.keys(temp)[0]])
                 })
-                // console.log( temp[Object.keys(temp)[0]] )
-                //
-                // table.push([ temp[Object.keys(temp)[0]] ])
             }
-
 
         tables[date] = table
     })
-
-    console.log(table)
-    console.log(tables)
     return tables
 }
 
 function mergeGroupedObjects(objects, monday, groupsId) {
     let mergedObject = {}
-    console.log(objects)
     let date = new Date(monday)
+
+    const emptyDay = {
+        1: {},
+        2: {},
+        3: {},
+        4: {},
+        5: {},
+        6: {},
+        7: {},
+    }
 
     mergedObject[monday] = {}
     for (let i = 0; i < groupsId.length; i++) {
-        mergedObject[monday][groupsId[i]] = {
-            1: {},
-            2: {},
-            3: {},
-            4: {},
-            5: {},
-            6: {},
-            7: {},
-        }
+        mergedObject[monday][groupsId[i]] = emptyDay
     }
 
     for (let i = 0; i < 6; i++) {
@@ -80,54 +72,15 @@ function mergeGroupedObjects(objects, monday, groupsId) {
         const nextDay = date.toISOString().split("T")[0]
         mergedObject[nextDay] = {}
         for (let i = 0; i < groupsId.length; i++) {
-            mergedObject[nextDay][groupsId[i]] = {
-                    1: {},
-                    2: {},
-                    3: {},
-                    4: {},
-                    5: {},
-                    6: {},
-                    7: {},
-                }
+            mergedObject[nextDay][groupsId[i]] = emptyDay
         }
     }
-
-    // for (let i = 0; i < groupsId.length; i++) {
-    //     objects.map(obj => {
-    //         Object.keys(mergedObject).map(date => {
-    //             mergedObject[date] = {[groupsId[i]]: {
-    //                     1: {},
-    //                     2: {},
-    //                     3: {},
-    //                     4: {},
-    //                     5: {},
-    //                     6: {},
-    //                     7: {},
-    //                 }}
-    //         })
-    //     })
-    // }
-
-
-    console.log(mergedObject)
 
     objects.map(obj => {
         const temp = Object.values(obj)[0]
         const groupId = Object.keys(obj)[0]
-        console.log(temp)
-
-
-
         Object.keys(temp).map(date => {
-            let day = {
-                1: {},
-                2: {},
-                3: {},
-                4: {},
-                5: {},
-                6: {},
-                7: {},
-            }
+            let day = structuredClone(emptyDay)
             temp[date].map(para => {
                 day[para["номерЗанятия"]] = para
             })
@@ -135,8 +88,6 @@ function mergeGroupedObjects(objects, monday, groupsId) {
             else mergedObject[date] = {[groupId]: day}
         })
     })
-
-    console.log(mergedObject)
 
     return mergedObject
 }

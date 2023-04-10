@@ -1,0 +1,55 @@
+.view_scroll {
+  display: flex;
+  width: 600px;
+  min-height: 50vh;
+  margin: 0 auto;
+  overflow-x: scroll;
+  gap: 20px;
+  padding-bottom: 20vh;
+  scroll-padding-left: 0.3rem;
+  scroll-padding-right: 0.3rem;
+  scroll-snap-type: x mandatory;
+  scroll-snap-stop: always;
+  scrollbar-width: none;
+
+  @media screen and (max-width: 800px) {
+    & {
+      width: 94%;
+    }
+  }
+
+  & .day {
+    min-width: 99%;
+    min-height: 30vh;
+    text-align: center;
+    scroll-snap-align: center;
+
+    & .day_title {
+      margin-block-end: 0.2em;
+      color: var(--text-color);
+
+      &.today {
+        color: var(--lavanda);
+      }
+    }
+
+    & .subtitle {
+      margin-block-start: 0.2em;
+      margin-block-end: 0.2em;
+      color: var(--text-color-secondary2);
+    }
+
+    @media screen and (max-width: 800px) {
+      & .day_title{
+        font-size: 1em;
+      }
+
+      & .subtitle {
+        font-size: 0.7em;
+      }
+    }
+  }
+}
+.container {
+
+}

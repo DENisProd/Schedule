@@ -129,10 +129,11 @@ function SubjectTile({ isGroup, isRoom, isTeachers, subject }) {
             <div className={cn(styles.subject_tile_left, getStyle(subject["дисциплина"]))}>
                 <h1>{subject["номерЗанятия"]}</h1>
                 <h4 className={styles.time_h}>
-                    с <span className="time-span">{subject["начало"]}</span>
+                    <span className="time-span">{subject["начало"]}</span>
                 </h4>
+                <p>до</p>
                 <h4 className={styles.time_h}>
-                    до <span className="time-span">{subject["конец"]}</span>
+                    <span className="time-span">{subject["конец"]}</span>
                 </h4>
             </div>
 

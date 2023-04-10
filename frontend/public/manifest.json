@@ -1,10 +1,13 @@
 {
-  "short_name": "Расписание",
-  "name": "Расписание ДГТУ от mysecrets",
+  "short_name": "Я Студент",
+  "name": "Расписание Я Студент",
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#f2f2f8",
-  "background_color": "#f2f2f8",
+  "lang": "ru-RU",
+  "theme_colors": [
+    { "color": "light" },
+    { "color": "dark", "media": "(prefers-color-scheme: dark)" }
+  ],
   "icons": [
     {
         "src": "favicon64x64.ico",

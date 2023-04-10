@@ -48,7 +48,7 @@ body {
     padding: 0;
     background: var(--background-color);
     color: var(--text-color);
-    font-family: "Montserrat", sans-serif;
+    font-family: "Roboto", sans-serif;
 }
 
 
@@ -86,16 +86,16 @@ body {
 }
 
 .main-container {
-    width: 800px;
+    width: 700px;
     margin: 0 auto 0 auto;
     text-align: center;
-    padding-bottom: 13em;
+    padding-bottom: 14em;
     /*padding: 0.8em;*/
 }
 
 .main-container.top{
     padding-bottom: 5em;
-    padding-top: 8em;
+    padding-top: 11em;
 }
 
 .tiles-main-container {
@@ -187,7 +187,6 @@ body {
     text-align: center;
     background: var(--background-tile);
     box-shadow: 0 4px 20px rgba(197, 197, 197, 0.15);
-    font-family: "Roboto", sans-serif;
     border-collapse: collapse;
 }
 
@@ -271,10 +270,20 @@ table tbody tr:hover {
         left: 0;
         width: 100%;
     }
+
+    .main-container.top{
+        padding-bottom: 5em;
+        padding-top: 9em;
+    }
 }
 @media screen and (max-width: 520px) {
     .home-container .search-tabs button {
         font-size: 0.9em;
         width: auto;
+    }
+
+    .main-container.top{
+        padding-bottom: 5em;
+        padding-top: 8em;
     }
 }

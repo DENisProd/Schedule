@@ -5,7 +5,7 @@ import Loader from "../Loader/Loader";
 import "../../App.css"
 import "./favorites.css"
 
-const version = "0.82b2"
+const version = "0.83b2"
 
 export default function Favorites() {
     const navigate = useNavigate();
