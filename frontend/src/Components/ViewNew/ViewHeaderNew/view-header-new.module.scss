@@ -1,0 +1,161 @@
+.container_wrapper {
+  position: fixed;
+  height: 10em;
+  width: 100%;
+  bottom: calc(var(--nav-height) - 2px);
+
+  .container {
+    width: 600px;
+    margin: 0 auto 0 auto;
+    height: 100%;
+    background: var(--background-color);
+    border-top: var(--background-tile) 2px solid;
+
+    @media screen and (max-width: 1024px) {
+      & {
+        width: 100%;
+      }
+    }
+
+    & .title_container {
+      display: flex;
+      padding-top: 0.5em;
+      width: 90%;
+      margin: 0 auto 0 auto;
+
+      @media screen and (max-width: 1024px) {
+        & {
+          width: 80%;
+        }
+      }
+
+      & div:first-child {
+        text-align: start;
+      }
+      & div:last-child {
+        text-align: end;
+      }
+
+      & div {
+        flex-grow: 1;
+      }
+
+      & .title {
+        flex: 4;
+        color: var(--text-color);
+        font-family: "Montserrat", sans-serif;
+        font-weight: 700;
+        font-size: 1.2rem;
+        text-align: center;
+      }
+
+      & .icon_button {
+        padding-top: 2px;
+        flex-grow: 1;
+        background: none;
+        outline: none;
+        border: none;
+        fill: var(--nav-color);
+        transition: all 0.3s ease-in-out;
+        cursor: pointer;
+
+        & svg {
+          width: 1.5rem;
+          height: 1.5rem;
+        }
+
+        &.favorite {
+          fill: var(--red);
+        }
+      }
+    }
+
+    & .calendar_container {
+      display: flex;
+      width: 100%;
+      justify-content: space-evenly;
+      gap: 2%;
+
+      & button {
+        background: none;
+        border: none;
+        font-weight: 800;
+        color: var(--text-color)
+      }
+
+      & .calendar_mini {
+        display: flex;
+        width: 90%;
+        justify-content: space-evenly;
+        background: var(--background-tile);
+        //padding: 2%;
+        border-radius: 1em;
+        height: 4em;
+        overflow: hidden;
+
+        @media screen and (max-width: 1024px) {
+          & {
+            width: 80%;
+          }
+        }
+
+        & div {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-evenly;
+          text-align: center;
+          flex-grow: 1;
+          //background: #D62648;
+
+          &.current {
+            background: var(--lavanda);
+
+            &.holiday {
+              color: var(--text-color);
+              background: var(--red);
+            }
+          }
+
+          &.holiday {
+            color: var(--red);
+          }
+        }
+
+        & p {
+          margin: 0;
+
+          &.day_name {
+            font-size: 0.8em;
+          }
+        }
+      }
+    }
+  }
+
+  &.top {
+    top: 0;
+    height: 9.5em;
+
+    & .container {
+      border-bottom: var(--background-tile) 2px solid;
+      border-top: none;
+    }
+  }
+
+  & .bottom {
+    text-align: center;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+
+    & button {
+      color: var(--text-color);
+      background: var(--background-tile);
+      font-size: 0.7em;
+      font-weight: 400;
+      margin: 0;
+      border: none;
+      padding: 0.3em 1em;
+      border-radius: 1em;
+    }
+  }
+}

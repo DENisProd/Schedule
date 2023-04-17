@@ -1,0 +1,135 @@
+.favorites_screen {
+  transition: all 0.4s ease-in-out;
+  width: 50%;
+  margin: 1em auto;
+
+  & .title {
+    color: var(--text-color);
+    font-family: "Montserrat", sans-serif;
+    text-align: center;
+
+    @media screen and (max-width: 1024px) {
+      & {
+        font-size: 1.5em;
+        margin: 0;
+      }
+    }
+
+    @media screen and (max-width: 800px) {
+      & {
+        font-size: 1.2em;
+      }
+    }
+  }
+
+  & .bottom_container {
+    width: 100%;
+    height: 90px;
+    background: linear-gradient(0deg, var(--background-color) 50%, rgba(244,66,98,0) 100%);
+    position: fixed;
+    bottom: var(--nav-height);
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    padding-bottom: 2em;
+
+
+    & button{
+      width: 44%;
+      height: 40px;
+      border-radius: 1em;
+      border: none;
+      background: var(--lavanda);
+      color: var(--text-color);
+      font-weight: 500;
+      font-family: "Montserrat", sans-serif;
+      cursor: pointer;
+    }
+  }
+
+  @media screen and (max-width: 1024px) {
+    & {
+      width: 90%;
+    }
+  }
+
+  & .search_container {
+    //background: var(--background-tile);
+
+
+  }
+
+  & .favorites_container {
+    margin: 1em 0;
+    padding-bottom: 8em;
+    gap: 0.5em;
+    //overflow-y: scroll;
+    //overflow-x: auto;
+
+    @media screen and (max-width: 1024px) {
+      & {
+        padding-bottom: 10em;
+      }
+    }
+
+    & .tile {
+      width: 92%;
+      padding: 0.7em 4%;
+      background: var(--background-tile);
+      border-radius: 1em;
+      text-align: center;
+      margin-bottom: 1em;
+      cursor: pointer;
+      display: flex;
+      height: 1.4em;
+      //justify-content: space-evenly;
+
+      &.my {
+        box-shadow: 0 0 20px var(--lavanda);
+        color: var(--lavanda);
+      }
+
+      & div {
+
+        width: 25%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+      }
+
+      & .name {
+        text-align: start;
+      }
+
+      & .actions {
+        flex-direction: row;
+        gap: 1em;
+
+        & .btn {
+          border: none;
+          height: 1.8em;
+          width: 1.8em;
+          padding: 0;
+          font-size: 0.8em;
+          background: var(--background-color);
+          color: var(--red);
+          border-radius: 0.4em;
+        }
+
+        & input[type="checkbox"] {
+          appearance: none;
+          margin: 0;
+          outline: 0;
+          font-size: 0.8em;
+          background: var(--background-color);
+          color: var(--red);
+          border-radius: 0.4em;
+        }
+      }
+
+
+    }
+  }
+}

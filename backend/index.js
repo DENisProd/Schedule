@@ -4,11 +4,27 @@ const config = require("config")
 const corsMiddleware = require("./middleware/cors.middleware")
 const ClientInfo = require('./models/clientInfo.js')
 const requestIp = require('request-ip')
+const rateLimit = require('express-rate-limit')
 //const cors from 'cors'
-//darkadmin
-//dark123
+
 const app = express()
 const PORT = config.get("serverPort")
+
+const apiLimiter = rateLimit({
+    windowMs: 30 * 60 * 1000, // 15 minutes
+    max: 2, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+})
+
+const admin10 = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 10, // Limit each IP to 5 create account requests per `window` (here, per hour)
+    message:
+        'Too many accounts created from this IP, please try again after an hour',
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+})
 
 app.use(requestIp.mw())
 app.use(corsMiddleware)
@@ -18,11 +34,8 @@ const parseIp = (req) =>
     req.headers['x-forwarded-for']
     || req.socket.remoteAddress
 
-app.get('/', (req, res) => {
-    res.status(200).json({success: "ok"})
-})
 
-app.post('/all/', async (req, res) => {
+app.post('/all/', admin10, async (req, res) => {
     console.log(req.body)
     try {
         const data = await ClientInfo.find({})
@@ -37,8 +50,7 @@ app.post('/all/', async (req, res) => {
     }
 })
 
-
-app.post('/stats/', async (req, res) => {
+app.post('/stats/', apiLimiter, async (req, res) => {
     try {
         const ip = req.clientIp;
         const newClientInfo = new ClientInfo({
@@ -46,8 +58,8 @@ app.post('/stats/', async (req, res) => {
             ipAdress: ip,
             searchedGroups: req.body.sg,
             favoriteGroups: req.body.fav,
-            enterCount: req.body.count
-
+            enterCount: req.body.count,
+            group: req.body.group
         })
 
         await newClientInfo.save()

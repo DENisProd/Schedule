@@ -3,8 +3,10 @@ import axios from "axios";
 
 import './compare.css'
 
-function groupByDate (array, field) {
+function groupByDate (data, field) {
+    const array = data.data.rasp
     let obj = {}
+
     for (let i = 0; i < array.length; i++) {
         const date = array[i][field].split("T")[0]
         if (obj[date]?.length > 0) {
@@ -15,38 +17,102 @@ function groupByDate (array, field) {
             obj[date].push({...array[i]})
         }
     }
-    return obj;
+    console.log(data.data.info.group.name)
+    console.log({obj: obj, date: data.data.info.date.split("T")[0]})
+    return {obj: obj, date: data.data.info.date.split("T")[0]}
 }
 
-function mergeGroupedObjects(objects) {
+function createMatrix (merged, groupList) {
+    let table = {}
+    let tables = []
+    const obj = Object.keys(merged)
+
+    obj.map(date => {
+        table = []
+        table[0] = groupList
+
+            const groups = merged[date]
+            const groupsIds = Object.keys(groups)
+
+            for (let j = 0; j < groupsIds.length; j++) {
+                const temp = groups[groupsIds[j]]
+
+                Object.keys(temp).map(n => {
+                    if (table[n]) table[n].push(temp[n])
+                    else table[n] = [ temp[n] ]
+                })
+            }
+
+        tables[date] = table
+    })
+    return tables
+}
+
+function mergeGroupedObjects(objects, monday, groupsId) {
     let mergedObject = {}
+    let date = new Date(monday)
+
+    const emptyDay = {
+        1: {},
+        2: {},
+        3: {},
+        4: {},
+        5: {},
+        6: {},
+        7: {},
+    }
+
+    mergedObject[monday] = {}
+    for (let i = 0; i < groupsId.length; i++) {
+        mergedObject[monday][groupsId[i]] = emptyDay
+    }
+
+    for (let i = 0; i < 6; i++) {
+        date.setDate(date.getDate()+1)
+        const nextDay = date.toISOString().split("T")[0]
+        mergedObject[nextDay] = {}
+        for (let i = 0; i < groupsId.length; i++) {
+            mergedObject[nextDay][groupsId[i]] = emptyDay
+        }
+    }
+
     objects.map(obj => {
         const temp = Object.values(obj)[0]
         const groupId = Object.keys(obj)[0]
-
         Object.keys(temp).map(date => {
-            if (mergedObject[date]) mergedObject[date][groupId] = temp[date]
-            else mergedObject[date] = {[groupId]: temp[date]}
+            let day = structuredClone(emptyDay)
+            temp[date].map(para => {
+                day[para["номерЗанятия"]] = para
+            })
+            if (mergedObject[date]) mergedObject[date][groupId] = day
+            else mergedObject[date] = {[groupId]: day}
         })
     })
 
     return mergedObject
 }
 
-export default function Compare({compareList}) {
+export default function Compare({compareList2}) {
     // Кэш результатов запросов
     const [data, setData] = useState([])
     // группированный объект по датам и группам (дата: {группа1: [], группа2: []})
     const [groupedSchedule, setGroupedSchedule] = useState([])
+    const [matrix, setMatrix] = useState([])
     const [attempt, setAttempt] = useState(1)
 
-    const compareList2 = [44461, 44757, 44464]
+    const compareList = [44461, 44757, 44464, 43750, 44822, 44439, 45138, 43868]
 
     const setAndProcessing = (object) => {
         setData(prev => [...prev, object])
-        const answer = groupByDate(object.data.rasp, 'дата')
+        const answer = groupByDate(object, 'дата')
+        console.log(answer)
+        //createMatrix(object)
         return answer
     }
+
+    // const createMatrix = () => {
+    //
+    // }
 
 
     const fetchGroup = (groupID) => {
@@ -77,7 +143,7 @@ export default function Compare({compareList}) {
                 })
                 .catch(e => {
                     console.log('ошибка')
-
+                    resolve({})
                     setTimeout(() => {
                         setAttempt(attempt + 1)
                         console.log(attempt)
@@ -96,16 +162,28 @@ export default function Compare({compareList}) {
 
     function reduceWay(callback) {
         let object = []
+        let date = null
         compareList
             .reduce((accum, item) => {
                 return accum
-                    .then(res => fetchGroup(item, res).then(res => object.push(res)))
+                    .then(res => fetchGroup(item, res).then(res => {
+                        console.log(res)
+                        const tempObjKey = Object.keys(res)[0]
+                        object.push({[tempObjKey]: res[tempObjKey].obj})
+                        date = res[tempObjKey].date
+                    }))
             }, Promise.resolve())
-            .then(result => callback(object));
+            .then(result => callback(object, date));
     }
 
-    const fetchSeries = (result) => {
-        setGroupedSchedule(mergeGroupedObjects(result))
+    const fetchSeries = (result, date) => {
+        const merged = mergeGroupedObjects(result, date, compareList)
+        setGroupedSchedule(merged)
+        const _matrix = createMatrix(merged, compareList)
+        console.log(_matrix)
+        const sortedMatrix = Object.fromEntries(Object.entries(_matrix).sort())
+        console.log(sortedMatrix)
+        setMatrix(sortedMatrix)
     }
 
     useEffect(() => {
@@ -121,19 +199,46 @@ export default function Compare({compareList}) {
 
     return (
         <div className="compare-container">
-            {Object.keys(groupedSchedule).map(date =>
-                <div className="compare-horizontal">
-                    {Object.keys(groupedSchedule[date]).map(group =>
-                        <div>
-                            <p>{group}</p>
-                            <p>{groupedSchedule[date][group].map(lesson =>
-                                <p>{lesson['аудитория']} {lesson['номерЗанятия']}</p>
-
-                            )}</p>
-                        </div>
-                    )}
+            <div>
+                {Object.keys(matrix).map(date =>
+                <div>
+                    <h5>{date}</h5>
+                    <table>
+                        {/*{console.log(matrix[date])}*/}
+                        {matrix[date].map((line, index) =>
+                        <tr>
+                            {Object.keys(line).map(col =>
+                                <td style={{textAlign: 'center', height: '2em', width: '8em', background: `${line[col]["аудитория"] ? 'green' : 'red' }`}}>
+                                    {index===0 ? line[col] : line[col]["аудитория"] && line[col]["аудитория"]}
+                                </td>
+                            )}
+                        </tr>
+                        )}
+                    </table>
                 </div>
-            )}
+
+
+                )}
+            </div>
+            {/*{Object.keys(groupedSchedule).map(date =>*/}
+            {/*    <div className="compare-horizontal">*/}
+            {/*        {Object.keys(groupedSchedule[date]).map(group =>*/}
+            {/*            <div>*/}
+            {/*                {Object.keys(groupedSchedule[date][group]).map(number =>*/}
+            {/*                    <div>*/}
+            {/*                        <span>{number} </span>*/}
+            {/*                        {groupedSchedule[date][group][number]["аудитория"]}*/}
+            {/*                    </div>*/}
+            {/*                )}*/}
+            {/*                /!*<p>{group}</p>*!/*/}
+            {/*                /!*<p>{groupedSchedule[date][group].map(lesson =>*!/*/}
+            {/*                /!*    <p>{lesson['аудитория']} {lesson['номерЗанятия']}</p>*!/*/}
+
+            {/*                /!*)}</p>*!/*/}
+            {/*            </div>*/}
+            {/*        )}*/}
+            {/*    </div>*/}
+            {/*)}*/}
             {compareList.length > 0 ?
                 <div>{compareList.map(groupId => groupId + " ")}</div>
                 :

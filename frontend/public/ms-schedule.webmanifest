@@ -3,8 +3,8 @@
   "name": "Schedule DSTU",
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#FAFAFD",
-  "background_color": "#FAFAFD",
+  "theme_color": "light",
+  "background_color": "light",
   "icons": [
         {
             "src": "favicon64x64.ico",

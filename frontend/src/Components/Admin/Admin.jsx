@@ -12,7 +12,6 @@ export default function Admin() {
     const [isFreqCalculated, setIsFreqCalculated] = useState(false)
     const [data, setData] = useState([])
 
-
     const [searchUnion, setSearchUnion] = useState([])
     const [freqSearchUnion, setFreqSearchUnion] = useState([])
     const [favoritesUnion, setFavoritesUnion] = useState([])
@@ -45,7 +44,7 @@ export default function Admin() {
             }, {})
             : null;
 
-    const getTop5 = (arr) => Object.entries(arr).slice(0,10).map(entry => entry[1]);
+    const getTop5 = (arr) => Object.entries(arr).slice(0,20).map(entry => entry[1]);
 
     const topArrToLi = (arr) => {
         console.log(arr)
@@ -88,8 +87,7 @@ export default function Admin() {
     // helpers end
 
     // logic start
-    const uniqByUserAgent = uniqByProp(setUniqueData,'userAgent')
-    const getUniqAndPrint = compose(uniqByUserAgent)
+
 
     useEffect(() => {
         setEniqueUsers(0)
@@ -104,8 +102,8 @@ export default function Admin() {
         const table = {};
         const res = data.filter(({enterCount}) =>(!table[enterCount] && (table[enterCount] = 1)));
         console.log(res)
-        let devices = {
-        }
+        let devices = {}
+
         res.map(user => {
             let parser = new UAParser(user.userAgent)
             let parserResults = parser.getResult()
@@ -118,6 +116,8 @@ export default function Admin() {
 
         let filteredTopVisits = topVisits.filter(value =>  value.enterCount > 20)
         console.log(filteredTopVisits)
+        const uniqByUserAgent = uniqByProp(setUniqueData,'userAgent')
+        const getUniqAndPrint = compose(uniqByUserAgent)
         //setData(filteredTopVisits)
         setEniqueUsers(dat.length)
         createUnion()

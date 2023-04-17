@@ -1,0 +1,106 @@
+@import "../../../colors";
+
+.settings_cont {
+  display: flex;
+  flex-direction: column;
+  height: 80%;
+  overflow-y: scroll;
+  padding-bottom: 3em;
+
+  & .setting_container {
+    user-select: none;
+    align-items: center;
+    display: flex;
+    height: 2em;
+  }
+
+  & .setting_line {
+    margin-top: 1em;
+    width: 100%;
+    justify-content: space-between;
+
+    & span {
+      font-weight: 500;
+    }
+  }
+
+  & .choose_mode {
+    margin-top: 1em;
+    width: 100%;
+
+    & .choose_wrapper {
+      display: flex;
+      justify-content: space-evenly;
+      margin-top: 1.5em;
+
+      & .choose_card {
+        width: 45%;
+        height: 12em;
+        text-align: -webkit-center;
+        user-select: none;
+        padding: 0.5em 0;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+
+        & svg {
+          width: 70%;
+          height: 10.5em;
+
+          & .secondary {
+            fill: var(--nav-color-secondary);
+          }
+
+          & .main {
+            fill: var(--nav-color);
+
+            &.stroke {
+              stroke: var(--nav-color-secondary);
+            }
+          }
+        }
+
+
+        & img {
+          width: 70%;
+          height: 10.5em;
+        }
+
+        &.selected {
+          border-radius: 1em;
+          padding: 0.5em 0;
+          background: var(--background-tile);
+
+          & svg {
+            width: 70%;
+            height: 10.5em;
+
+            & .secondary {
+              fill: var(--background-tile);
+            }
+
+            & .main {
+              fill: var(--background-color);
+
+              &.stroke {
+                stroke: var(--background-tile);
+              }
+            }
+          }
+        }
+
+        & h5 {
+          font-weight: 500;
+          text-align: center;
+          font-size: 0.9em;
+          color: var(--text-color-secondary2);
+        }
+      }
+    }
+
+    & span {
+      font-weight: 500;
+      user-select: none;
+    }
+  }
+
+}

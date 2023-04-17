@@ -1,13 +1,20 @@
 import CalendarComponent from "./View/CalendarComponent";
-//import {Typography} from "antd";
 import {useNavigate, useParams} from "react-router-dom";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useContext, useEffect, useState} from "react";
 
 import axios from "axios";
 import SwipebleViewTile from "./SwipebleViewTile/SwipebleViewTile";
 import Loader from "./Loader/Loader";
 import ViewHeader from "./View/ViewHeader";
 import ViewHeaderTitle from "./View/ViewHeader";
+import "./View/view-header.css"
+import {SettingsContext} from "../providers/SettingsProvider";
+import cn from "classnames";
+import Calendar from "./View/Calendar/Calendar";
+import EuropeanCalendar from "./View/Calendar/EuropeanCalendar";
+import Calendar2 from "./View/Calendar/Calendar2";
+import {groupByDate, groupByDateWithSubgroups} from "../utils/groupHelpers";
+import {sendStats} from "../utils/sendStats";
 
 const currentVersion = 0.73
 
@@ -64,19 +71,21 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
     const [attempt, setAttempt] = useState(1)
     const [isError, setIsError] = useState(true)
 
+    const {settings, setSettings} = useContext(SettingsContext)
+
     const normalize = (value) => {
-        if (value < 10) return "0" + value;
-        else return value;
+        if (value < 10) return "0" + value
+        else return value
     };
 
     const getRequestUrl = () => {
-        let url = "";
+        let url = ""
 
-        if (isTeachers) url = requests.teachers;
-        if (isRoom) url = requests.room;
-        if (isGroup) url = requests.group;
+        if (isTeachers) url = requests.teachers
+        if (isRoom) url = requests.room
+        if (isGroup) url = requests.group
 
-        return url;
+        return url
     };
 
     const scheduleProccessing = (res) => {
@@ -184,7 +193,15 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
                     setInfo(res.data.data.info);
                     console.log("fetched")
                     let obj = scheduleProccessing(res);
-                    setGroupedRasp(obj);
+                    console.log(obj)
+                    try {
+                        let objTest = groupByDateWithSubgroups(res.data)
+                        console.log(objTest)
+                        setGroupedRasp(objTest.sked);
+                    } catch (e) {
+                        console.log(e)
+                    }
+                    // setGroupedRasp(obj);
                     if (groupChache.length > 0)
                         setGroupChache([...groupChache, {[`${curr_date}`]: {[`${groupId}`]: obj}}])
                     else
@@ -214,37 +231,6 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
         }
     }
 
-    const sendStats = () => {
-        let sended_date = new Date(localStorage.getItem("send_data"))
-        if (sended_date.getDate() !== date.getDate()) {
-            const favoritesGroups = JSON.parse(localStorage.getItem("favorites"));
-            const enterCounts = Number.parseInt(localStorage.getItem("count_enter"))
-            const myGroupID = Number.parseInt(localStorage.getItem("my-group"))
-            let myGroupName = ""
-
-            let convertedFavorites = []
-            if (favoritesGroups) {
-                favoritesGroups.forEach((favorites) => {
-                    if (favorites.id === myGroupID) myGroupName = favorites.name
-                    convertedFavorites.push(favorites.name)
-                })
-            }
-
-            axios.post(stats_url, {
-                sg: JSON.parse(localStorage.getItem("searchList")),
-                fav: convertedFavorites,
-                count: enterCounts / 2,
-                group: myGroupName
-            }).then(res => {
-                sended_date = new Date()
-                localStorage.setItem("send_data", sended_date)
-            })
-        } else {
-            console.log("пока рано")
-        }
-    }
-
-
     useEffect(() => {
         // axios
         //     .get("https://edu.donstu.ru/api/GetRaspDates?idGroup=" + groupId)
@@ -265,7 +251,7 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
 
             }
         }
-        console.log("use effect")
+        document.getElementById('root').classList.remove('scroll-blocked')
         updateSchedule(currentDate);
     }, []);
 
@@ -276,7 +262,7 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
 
     useEffect(() => {
 
-        document.title = info.group?.name + " - Расписание MySecrets";
+        document.title = info.group?.name + " - Я Студент";
         //checkFavorites();
         scrollTo(todayDate)
         let count_enter = Number.parseInt(localStorage.getItem("count_enter"))
@@ -285,6 +271,7 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
         localStorage.setItem("count_enter", count_enter.toString())
 
         sendStats()
+
         if (isGroup) {
             localStorage.setItem("cache", JSON.stringify(groupedRasp))
             localStorage.setItem("infoCache", JSON.stringify(info))
@@ -305,7 +292,7 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
 
                 entries.map(entry => {
                     setLookAt([])
-                    if (entry.intersectionRatio > 0.1) {
+                    if (entry.intersectionRatio > 0.2) {
                         setLookAt(prev => [...prev, normalize(entry.target.id)])
                     }
                 })
@@ -331,14 +318,16 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
     }
 
     return (
-        <div className="main-container" id={"tiles-container"}>
+        <div className={cn("main-container", settings?.calDir === "top" && "top")} id={"tiles-container"}>
             {/*<div className="tiles-container">*/}
-                <ViewHeaderTitle isGroup={isGroup} isTeachers={isTeachers} isRoom={isRoom} isLoaded={isLoaded}
-                            inFavorites={inFavorites} checkFavorites={checkFavorites} group={info} addToCompare={addToCompare}/>
-                <CalendarComponent currentDate={currentDate} updateSchedule={updateSchedule} groupedRasp={groupedRasp}
-                                   scrollTo={scrollTo} lookAt={lookAt}/>
+            <ViewHeader currentDate={currentDate} updateSchedule={updateSchedule} groupedRasp={groupedRasp}
+                        scrollTo={scrollTo} lookAt={lookAt} isGroup={isGroup} isTeachers={isTeachers} isRoom={isRoom} isLoaded={isLoaded}
+                        inFavorites={inFavorites} checkFavorites={checkFavorites} group={info} addToCompare={addToCompare}/>
 
-                <div className="tiles-main-container" id={"scrollArea"}>
+            {/*<Calendar2/>*/}
+            <div id={"scrollArea"}>
+
+                {/*<div className="tiles-main-container" id={"scrollArea"}>*/}
                     {isError ?
                         <>
                             {isLoaded ? (
@@ -346,7 +335,7 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
                                     {Object.keys(groupedRasp).length > 0 ? (
                                         <>
                                             {Object.keys(groupedRasp).map((gr) => (
-                                                <div id={Number(gr.split("-")[2]).toString()}>
+                                                <div id={Number(gr.split("-")[2]).toString()} style={{minHeight: '20vh'}}>
                                                     <h2 className={gr.split("-")[2] === todayDate.toString() ? "today" : "day"}>
                                                         {Number(gr.split("-")[2])}{" "}
                                                         {month[Number(gr.split("-")[1]) - 1]}{" "}

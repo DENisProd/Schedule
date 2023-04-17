@@ -5,7 +5,7 @@ import Loader from "../Loader/Loader";
 import "../../App.css"
 import "./favorites.css"
 
-const version = "0.75beta"
+const version = "0.83b2"
 
 export default function Favorites() {
     const navigate = useNavigate();
@@ -68,8 +68,7 @@ export default function Favorites() {
                 <div className="favorites-container">
                     {isLoaded ? (
                         <>
-                            <h6><a href="https://vk.com/public218030183">Группа в vk</a> версия веб-приложения {version}</h6>
-                            <button onClick={() => navigate('/compare/')}>Сравнение</button>
+                            <h6>Версия веб-приложения {version}</h6>
                             <h2 className="title-h2">Список избранных групп</h2>
                             {groupsList.length>0 ? (
                                 <>
