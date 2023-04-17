@@ -5,5 +5,6 @@ export const URLS = {
     GET_GROUPS: BASE_URL + "raspGrouplist",
     GET_TEACHERS: BASE_URL + "raspTeacherlist",
     GET_ROOMS: BASE_URL + "raspAudlist",
-    GET_UNIVERSITY: BASE_URL + ""
+    GET_UNIVERSITY: BASE_URL + "",
+    STATS: "https://schedule.darksecrets.ru/api/stats/"
 }

@@ -14,6 +14,7 @@ import Calendar from "./View/Calendar/Calendar";
 import EuropeanCalendar from "./View/Calendar/EuropeanCalendar";
 import Calendar2 from "./View/Calendar/Calendar2";
 import {groupByDate, groupByDateWithSubgroups} from "../utils/groupHelpers";
+import {sendStats} from "../utils/sendStats";
 
 const currentVersion = 0.73
 
@@ -194,12 +195,13 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
                     let obj = scheduleProccessing(res);
                     console.log(obj)
                     try {
-                        let objTest = groupByDateWithSubgroups(res)
+                        let objTest = groupByDateWithSubgroups(res.data)
                         console.log(objTest)
+                        setGroupedRasp(objTest.sked);
                     } catch (e) {
                         console.log(e)
                     }
-                    setGroupedRasp(obj);
+                    // setGroupedRasp(obj);
                     if (groupChache.length > 0)
                         setGroupChache([...groupChache, {[`${curr_date}`]: {[`${groupId}`]: obj}}])
                     else
@@ -228,37 +230,6 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
                 })
         }
     }
-
-    const sendStats = () => {
-        let sended_date = new Date(localStorage.getItem("send_data"))
-        if (sended_date.getDate() !== date.getDate()) {
-            const favoritesGroups = JSON.parse(localStorage.getItem("favorites"));
-            const enterCounts = Number.parseInt(localStorage.getItem("count_enter"))
-            const myGroupID = Number.parseInt(localStorage.getItem("my-group"))
-            let myGroupName = ""
-
-            let convertedFavorites = []
-            if (favoritesGroups) {
-                favoritesGroups.forEach((favorites) => {
-                    if (favorites.id === myGroupID) myGroupName = favorites.name
-                    convertedFavorites.push(favorites.name)
-                })
-            }
-
-            axios.post(stats_url, {
-                sg: JSON.parse(localStorage.getItem("searchList")),
-                fav: convertedFavorites,
-                count: enterCounts / 2,
-                group: myGroupName
-            }).then(res => {
-                sended_date = new Date()
-                localStorage.setItem("send_data", sended_date)
-            })
-        } else {
-            console.log("пока рано")
-        }
-    }
-
 
     useEffect(() => {
         // axios
@@ -291,7 +262,7 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
 
     useEffect(() => {
 
-        document.title = info.group?.name + " - Расписание MySecrets";
+        document.title = info.group?.name + " - Я Студент";
         //checkFavorites();
         scrollTo(todayDate)
         let count_enter = Number.parseInt(localStorage.getItem("count_enter"))
@@ -364,7 +335,7 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
                                     {Object.keys(groupedRasp).length > 0 ? (
                                         <>
                                             {Object.keys(groupedRasp).map((gr) => (
-                                                <div id={Number(gr.split("-")[2]).toString()}>
+                                                <div id={Number(gr.split("-")[2]).toString()} style={{minHeight: '20vh'}}>
                                                     <h2 className={gr.split("-")[2] === todayDate.toString() ? "today" : "day"}>
                                                         {Number(gr.split("-")[2])}{" "}
                                                         {month[Number(gr.split("-")[1]) - 1]}{" "}

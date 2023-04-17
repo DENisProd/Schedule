@@ -96,7 +96,7 @@ function DotIndicator({ currentSlide, subjects }) {
         <div className={styles.dot_indicator} key={subjects["код"]}>
             {subjects?.length > 1 &&
                 subjects.map((subject, index) => (
-                    <div
+                    <div key={index + subject["дисциплина"]}
                         className={cn(Math.round(Number(currentSlide), 1) === index && styles.current)}
                     />
                 ))}

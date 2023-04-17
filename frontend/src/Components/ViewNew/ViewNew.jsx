@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchGroups} from "../../asyncActions/groups";
 import {useParams} from "react-router-dom";
@@ -7,31 +7,10 @@ import {getMondayOfWeek, getWeek} from "../../utils/groupHelpers";
 import SwipebleViewTile from "../SwipebleViewTile/SwipebleViewTile";
 import styles from "./view-new.module.scss"
 import cn from "classnames";
-
-const weekDays = {
-    0: "воскресенье",
-    1: "понедельник",
-    2: "вторник",
-    3: "среда",
-    4: "четверг",
-    5: "пятница",
-    6: "суббота",
-}
-
-const month = [
-    "Января",
-    "Февраля",
-    "Марта",
-    "Апреля",
-    "Мая",
-    "Июня",
-    "Июля",
-    "Августа",
-    "Сентября",
-    "Октября",
-    "Ноября",
-    "Декабря",
-];
+import {getInfo} from "../../utils/getInfo";
+import ViewHeaderNew from "./ViewHeaderNew/ViewHeaderNew";
+import {month, weekDays} from "../../utils/dateUtils";
+import {SettingsContext} from "../../providers/SettingsProvider";
 
 function isExists (group, groupId, date) {
     if (group.id === Number(groupId)) {
@@ -48,39 +27,79 @@ function isExists (group, groupId, date) {
 const ViewNew = () => {
 
     const containerRef = useRef(null);
-    const [centeredElement, setCenteredElement] = useState(null);
+
+    const dataFetch = useRef(false)
 
     const {groupId} = useParams();
     const dispatch = useDispatch()
     const groups = useSelector(state => state.groups.groups)
     const [todayDate, setTodayDate] = useState(null)
     const [currentSked, setCurrentSked] = useState({})
+    const [lookAt, setLookAt] = useState([])
+    const [currentWeek, setCurrentWeek] = useState([])
+    // const [isTouchEnd, setIsTouchEnd] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const [mode, setMode] = useState(null)
+    const {settings, setSettings} = useContext(SettingsContext)
+
+    const currentDateString = dayjs().format('YYYY-MM-DD')
 
     const isGroupExists = (groupId, date) => {
         const _date = dayjs(date).startOf('week').add(1, 'day').format('YYYY-MM-DD')
         const group = groups.find(group => isExists(group, groupId, _date))
-        if (group) return true
-        return false
+        return !!group;
+    }
+
+    const dayWatcher = () => {
+        let sunday = currentWeek[0] // trigger to get prev week
+        let monday = currentWeek[8] // trigger to get next week
+        let days = currentWeek.slice(1,8)
+        const targets = currentWeek.map(date => document.getElementById(date))
+        const thresholds = 0.9
+        const callback = (entries, observer) => {
+
+            entries.map(entry => {
+                if (entry.intersectionRatio > thresholds) {
+                        setLookAt(entry.target.id)
+                }
+            })
+        }
+        const options = {
+            root: document.querySelector('#scrollArea'),
+            threshold: thresholds
+        }
+        const observer = new IntersectionObserver(callback, options);
+
+        if (targets) {
+            targets.map(tar => {
+                if (tar) observer.observe(tar)
+            })
+        }
     }
 
     const getIfNotExist = (date) => {
         const isExists = isGroupExists(groupId, date)
         if (!isExists) {
-            console.log("dispatch")
+            // console.log("dispatch")
             dispatch(fetchGroups(groupId, date))
         }
         else {
             const mondayString = getMondayOfWeek(date)
             setTodayDate(mondayString)
-            updateSchedule()
+            // updateSchedule()
+
         }
     }
 
     useEffect(() => {
-        let mondayString = null
+        if (dataFetch.current)
+            return
+        getInfo()
+        setIsLoading(true)
+        let mondayString
         if (!todayDate) {
             mondayString = getMondayOfWeek()
-            console.log(mondayString)
+            // console.log(mondayString)
             setTodayDate(mondayString)
         } else {
             mondayString = getMondayOfWeek(todayDate)
@@ -88,23 +107,25 @@ const ViewNew = () => {
 
 
         const week = getWeek(mondayString)
-        console.log(week)
+        // console.log(week)
         setCurrentSked({sked: week})
 
         document.getElementById('root').classList.remove('scroll-blocked')
 
         getIfNotExist(mondayString)
+        dataFetch.current = true
     }, [])
 
-    const updateSchedule = () => {
+    useEffect(() => {
         if (todayDate) {
             const mondayString = getMondayOfWeek(todayDate)
             const week = getWeek(mondayString)
+
+
             const group = groups.find(group => group.id === Number(groupId) && group.date === mondayString)
             let sked = {}
             Object.assign(sked, week)
-            console.log(group)
-            console.log(todayDate)
+            setCurrentWeek(Object.keys(week))
             if (group) {
                 Object.keys(group.sked).map(date => sked[date] = group.sked[date])
                 setCurrentSked({
@@ -114,56 +135,87 @@ const ViewNew = () => {
                     sked
                 })
             }
-
-            console.log(group)
+            setIsLoading(false)
         }
-
-    }
-
-    useEffect(() => {
-
-        updateSchedule()
-        const day = dayjs().day()
-        console.log(day)
-
-    }, [groups])
+    }, [todayDate, groups])
 
     const getNext = () => {
-        console.log(todayDate)
+        setIsLoading(true)
         const currentDate = dayjs(todayDate).startOf('week').add(1, 'week')
         const dateString = currentDate.startOf('week').format('YYYY-MM-DD')
-        console.log(dateString)
         setTodayDate(dateString)
         getIfNotExist(dateString)
+        setMode('next')
     }
 
     const getPrev = () => {
-        console.log(todayDate)
+        setIsLoading(true)
         const currentDate = dayjs(todayDate).add(-1, 'week')
         const dateString = currentDate.format('YYYY-MM-DD')
-        console.log(dateString)
         setTodayDate(dateString)
         getIfNotExist(dateString)
+        setMode('prev')
+    }
+
+    useEffect(() => {
+        const sunday = currentWeek[0]
+        const monday = currentWeek[8]
+        // if (lookAt === sunday && !isLoading) getPrev()
+        // if (lookAt === monday && !isLoading) getNext()
+        scrollToStart()
+    }, [lookAt])
+
+    useEffect(() => {
+        if (!isLoading)
+            dayWatcher()
+            scrollTo(currentDateString)
+
+    }, [currentWeek])
+
+    const scrollToStart = () => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+    }
+
+    const scrollTo = (to) => {
+        // if (doc) doc.scrollIntoView({behavior: "smooth", block: "start"});
+        let doc = null
+        if (mode === 'prev')
+            doc = document.getElementById(currentWeek[6])
+        else
+            doc = document.getElementById(currentWeek[0])
+
+        if (doc) doc.scrollIntoView(true);
     }
 
     return (
         <div className={styles.container}>
+            <ViewHeaderNew week={currentWeek} info={currentSked} prev={getPrev} next={getNext} lookAt={lookAt}/>
             {groups.length > 0 ?
-                <div className={styles.view_scroll} ref={containerRef}>
+                <div className={cn(styles.view_scroll, settings?.calDir === "top" && styles.top)} ref={containerRef} id={"scrollArea"}
+                     // onTouchEnd={() => setIsTouchEnd(true)}
+                     // onTouchStart={() => setIsTouchEnd(false)}
+                     // onMouseDown={() => setIsTouchEnd(false)}
+                     // onMouseUp={() => setIsTouchEnd(true)}
+                >
                     {currentSked && Object.keys(currentSked).length > 0 ? (
                         <>
                             {Object.keys(currentSked.sked).map((date, index) => (
-                                <div className={styles.day} id={Number(date.split("-")[2])} key={date}>
-                                    {index === 8 &&
-                                        <p>Переход на другую неделю</p>
-                                    }
-                                    {index === 0 &&
-                                        <p>Переход на другую неделю</p>
-                                    }
-                                    <h2 className={cn(styles.day_title, date === todayDate && styles.today)}>
+
+                                <div className={styles.day} id={date} key={date}>
+                                    {/*{index === 8 &&*/}
+                                    {/*    <p>Переход на другую неделю</p>*/}
+                                    {/*}*/}
+                                    {/*{index === 0 &&*/}
+                                    {/*    <p>Переход на другую неделю</p>*/}
+                                    {/*}*/}
+                                    <h2 className={cn(styles.day_title, date === currentDateString && styles.today)}>
                                         {Number(date.split("-")[2])}{" "}
                                         {month[Number(date.split("-")[1]) - 1]}{" "}
-                                        {date.split("-")[2] === todayDate.toString() && " (сегодня)"}
+                                        {date === currentDateString && " (сегодня)"}
                                     </h2>
                                     <h5 className={styles.subtitle}>{weekDays[new Date(date).getDay()]}</h5>
                                     {currentSked.sked[date].length > 0 ?
@@ -175,14 +227,14 @@ const ViewNew = () => {
                                         :
                                         <div>
                                             <h3>Пар нет :)</h3>
-                                            <button onClick={() => {
-                                                if (index === 0) getPrev()
-                                                if (index === 8) getNext()
-                                            }
-                                            }>
-                                                {index === 0 && "Получить расписание предыдущей недели"}
-                                                {index === 8 && "Получить расписание следующей недели"}
-                                            </button>
+                                            {/*<button onClick={() => {*/}
+                                            {/*    if (index === 0) getPrev()*/}
+                                            {/*    if (index === 8) getNext()*/}
+                                            {/*}*/}
+                                            {/*}>*/}
+                                            {/*    {index === 0 && "Получить расписание предыдущей недели"}*/}
+                                            {/*    {index === 8 && "Получить расписание следующей недели"}*/}
+                                            {/*</button>*/}
                                         </div>
                                     }
 

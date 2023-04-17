@@ -33,11 +33,9 @@ function isExists (group, groupId, date) {
         const date1 = dayjs(group.date)
         const date2 = dayjs(date)
         if (date1.isSame(date2)) {
-            console.log('isExist')
             return true
         }
     }
-    console.log('not exist')
 
     return false
 }

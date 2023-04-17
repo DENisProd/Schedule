@@ -40,7 +40,7 @@
       height: 40px;
       border-radius: 1em;
       border: none;
-      background: var(--blue);
+      background: var(--lavanda);
       color: var(--text-color);
       font-weight: 500;
       font-family: "Montserrat", sans-serif;
@@ -64,10 +64,12 @@
     margin: 1em 0;
     padding-bottom: 8em;
     gap: 0.5em;
+    //overflow-y: scroll;
+    //overflow-x: auto;
 
     @media screen and (max-width: 1024px) {
       & {
-        padding-bottom: 8em;
+        padding-bottom: 10em;
       }
     }
 
@@ -80,21 +82,54 @@
       margin-bottom: 1em;
       cursor: pointer;
       display: flex;
-      justify-content: space-evenly;
+      height: 1.4em;
+      //justify-content: space-evenly;
+
+      &.my {
+        box-shadow: 0 0 20px var(--lavanda);
+        color: var(--lavanda);
+      }
 
       & div {
-        height: 1.5em;
+
+        width: 25%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
       }
 
-      & .btn {
-        border: none;
-        height: 1.4em;
-        width: 1.4em;
-        padding: 0;
-        font-size: 0.8em;
-        background: var(--background-color);
-        color: var(--red);
+      & .name {
+        text-align: start;
       }
+
+      & .actions {
+        flex-direction: row;
+        gap: 1em;
+
+        & .btn {
+          border: none;
+          height: 1.8em;
+          width: 1.8em;
+          padding: 0;
+          font-size: 0.8em;
+          background: var(--background-color);
+          color: var(--red);
+          border-radius: 0.4em;
+        }
+
+        & input[type="checkbox"] {
+          appearance: none;
+          margin: 0;
+          outline: 0;
+          font-size: 0.8em;
+          background: var(--background-color);
+          color: var(--red);
+          border-radius: 0.4em;
+        }
+      }
+
+
     }
   }
 }

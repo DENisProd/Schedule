@@ -1,7 +1,8 @@
 import dayjs from "dayjs";
 
 export function groupByDateWithSubgroups (res) {
-    let obj = {}
+    let obj = getWeek(res.data.info.date.split("T")[0])
+    // console.log(obj)
     let rasp1 = res.data.rasp
     for (let i = 0; i < rasp1.length; i++) {
         const raspDate = rasp1[i]["дата"].split("T")
@@ -52,11 +53,16 @@ export function getWeek(date) {
     const monday = dayjs(date).startOf('week')
     let week = {}
     let nextDay = monday
-    for (let i = 0; i < 9; i++) {
-        week = {...week, [nextDay.format('YYYY-MM-DD')]: []}
+    // for (let i = 0; i < 9; i++) {
+    //     week = {...week, [nextDay.format('YYYY-MM-DD')]: []}
+    //     nextDay = nextDay.add(1, 'day')
+    // }
+
+    for (let i = 0; i < 7; i++) {
         nextDay = nextDay.add(1, 'day')
+        week = {...week, [nextDay.format('YYYY-MM-DD')]: []}
     }
 
-
+// console.log(week)
     return week
 }

@@ -1,5 +1,3 @@
-import dayjs from "dayjs";
-
 const defaultState = {
     groups: [],
     lastGroups: [],
@@ -24,22 +22,18 @@ export const searchReducer = (state = defaultState, action) => {
     switch (action.type) {
         case SET_GROUP:
             if (state.groups.length > 0) return state
-            return action.payload
+            return {...state, groups: action.payload}
         case SET_TEACHER:
             if (state.teachers.length > 0) return state
-            return action.payload
+            return {...state, teachers: action.payload}
         case SET_ROOM:
-            if (state.room.length > 0) return state
-        return action.payload
+            if (state.rooms.length > 0) return state
+            return {...state, rooms: action.payload}
         case SET_UNIVERSITY:
             if (state.universities.length > 0) return state
             return action.payload
         case NOTHING:
             return state
-        // case ADD_CUSTOMER:
-        //     return {...state, customers: [...state.customers, action.payload]}
-        // case REMOVE_CUSTOMER:
-        //     return {...state, customers: state.customers.filter(customer => customer.id !== action.payload)}
         default:
             return state
     }

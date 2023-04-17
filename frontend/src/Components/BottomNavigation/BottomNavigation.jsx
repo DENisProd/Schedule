@@ -24,6 +24,20 @@ const BottomNavigation = () => {
     return (
     <>
         <div className={styles.container}>
+            <div className={cn(selected === '/menu/' && isModalOpen && styles.selected)} onClick={() => {
+                setSelected('/menu/')
+                setIsModalOpen(true)
+
+            }}>
+                <svg width="372" height="372" viewBox="0 0 372 372" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clipPath="url(#clip0_612_1891)">
+                        <rect y="151" width="372" height="70" rx="32"/>
+                        <rect y="302" width="372" height="70" rx="32"/>
+                        <rect width="372" height="70" rx="32"/>
+                    </g>
+                </svg>
+                <p>Меню</p>
+            </div>
             <div className={cn(selected === '/' && styles.selected)} onClick={() => {
                 setIsModalOpen(false)
                 navigate("/")
@@ -89,20 +103,7 @@ const BottomNavigation = () => {
             {/*    </svg>*/}
             {/*    <p>Избранное</p>*/}
             {/*</div>*/}
-            <div className={cn(selected === '/menu/' && isModalOpen && styles.selected)} onClick={() => {
-                setSelected('/menu/')
-                setIsModalOpen(true)
 
-            }}>
-                <svg width="372" height="372" viewBox="0 0 372 372" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g clipPath="url(#clip0_612_1891)">
-                        <rect y="151" width="372" height="70" rx="32"/>
-                        <rect y="302" width="372" height="70" rx="32"/>
-                        <rect width="372" height="70" rx="32"/>
-                    </g>
-                </svg>
-                <p>Меню</p>
-            </div>
         </div>
         {isModalOpen && <Menu setIsModalOpen={setIsModalOpen}/>}
     </>

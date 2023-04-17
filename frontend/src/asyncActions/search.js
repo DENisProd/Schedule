@@ -8,7 +8,6 @@ export const SEARCH_TYPES = {
     ROOMS: "ROOMS",
     UNIVERSITY: "UNIVERSITY"
 }
-
 export const fetchSearch = (type) => {
     return function (dispatch, getState) {
         const state = getState()
@@ -20,22 +19,22 @@ export const fetchSearch = (type) => {
         switch (type) {
             case SEARCH_TYPES.GROUPS:
                 url = URLS.GET_GROUPS
-                isExists = state.groups.length > 0
+                isExists = state.search.groups.length > 0
                 dispatchFunction = (json) => setGroupAction(json)
                 break
             case SEARCH_TYPES.TEACHERS:
                 url = URLS.GET_TEACHERS
-                isExists = state.teachers.length > 0
+                isExists = state.search.teachers.length > 0
                 dispatchFunction = (json) => setTeacherAction(json)
                 break
             case SEARCH_TYPES.ROOMS:
                 url = URLS.GET_ROOMS
-                isExists = state.rooms.length > 0
+                isExists = state.search.rooms.length > 0
                 dispatchFunction = (json) => setRoomAction(json)
                 break
             case SEARCH_TYPES.UNIVERSITY:
                 url = URLS.GET_UNIVERSITY
-                isExists = state.universities.length > 0
+                isExists = state.search.universities.length > 0
                 dispatchFunction = (json) => setUniversityAction(json)
                 break
             default:
@@ -50,13 +49,12 @@ export const fetchSearch = (type) => {
             fetch(url)
                 .then(response => response.json())
                 .then(json => {
-                    console.log(json)
-                    dispatch(dispatchFunction(json))
+                    dispatch(dispatchFunction(json.data))
                 })
                 .catch(err => {
                     dispatch(addMessageAction({
                         title: 'Ошибка',
-                        text: err,
+                        text: err.message,
                         type: MESSAGE_TYPES.ERROR
                     }))
                 })

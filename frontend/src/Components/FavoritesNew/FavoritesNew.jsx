@@ -2,9 +2,8 @@ import {useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 
 import styles from "./favorites.module.scss"
-import Home from "../Home";
-import TabBar from "../UIKit/TabBar/TabBar";
 import SearchModule from "./Search/SearchModule";
+import cn from "classnames";
 
 const favoritesList = [
     "группы",
@@ -34,7 +33,7 @@ const FavoritesNew = () => {
     const loadFavorites = () => {
         let data = JSON.parse(localStorage.getItem("favorites"))
         if (data) {
-            let filtered = data.filter(gr => gr.hasOwnProperty('name')===true)
+            let filtered = data.filter(gr => gr.hasOwnProperty('name') === true)
             setGroupList(filtered)
             getMyGroup()
         }
@@ -43,27 +42,26 @@ const FavoritesNew = () => {
 
     window.addEventListener("storage", (event) => {
         //console.log(event);
-    });
+    })
 
     const getMyGroup = () => {
         const myGroupFromStorage = localStorage.getItem("my-group");
         if (myGroupFromStorage) setIsMyGroup(Number(myGroupFromStorage));
-    };
+    }
 
     const chooseButtonHandler = (state) => {
-        if (groupsList.length>0)
+        if (groupsList.length > 0)
             setIsGroupChoose(state)
-    };
+    }
 
     const chooseHandler = (event) => {
         localStorage.setItem("my-group", event.target.name);
         setIsGroupChoose(false)
         getMyGroup()
-    };
+    }
 
     const removeFavorite = (id) => {
-        const data = JSON.parse(localStorage.getItem("favorites"))
-        let groupFromStorage = data
+        let groupFromStorage = JSON.parse(localStorage.getItem("favorites"))
         groupFromStorage = groupFromStorage.filter(gr => gr.id !== id)
         localStorage.setItem("favorites", JSON.stringify(groupFromStorage))
         loadFavorites()
@@ -79,42 +77,46 @@ const FavoritesNew = () => {
                 <>
                     <h2 className={styles.title}>Избранные {favoritesList[activeTab]}</h2>
                     <div className={styles.favorites_container}>
-                        {groupsList.length>0 ? (
+                        {groupsList.length > 0 ? (
                             <>
                                 {groupsList.map((group) => (
                                     <>
                                         {isGroupChoose ? (
-                                            <div className={styles.tile} key={group.id}>
-                                                {/*<td>{group.id}</td>*/}
-                                                {myGroup===group.id && "Моя группа - "}
+                                            <div className={cn(styles.tile, myGroup === group.id && styles.my)}
+                                                 key={group.id}>
+                                                <div className={styles.name}>
+                                                    {group.name}
+                                                </div>
+                                                <div className={styles.faculty}></div>
+                                                <div className={styles.university}></div>
+                                                <div className={styles.actions}>
+                                                    <button name={'btn' + group.id} className={styles.btn}
+                                                            onClick={() => removeFavorite(group.id)}>X
+                                                    </button>
+                                                    <input
+                                                        type="checkbox"
+                                                        className={styles.btn}
+                                                        name={group.id}
+                                                        onChange={(e) =>
+                                                            chooseHandler(e)
+                                                        }
+                                                    />
+                                                </div>
 
-
-                                                <button name={'btn'+group.id} className={styles.btn} onClick={() => removeFavorite(group.id)}>X</button>
-                                                <div>{group.name}</div>
-                                                <input
-                                                    type="checkbox"
-                                                    className={styles.btn}
-                                                    name={group.id}
-                                                    onChange={(e) =>
-                                                        chooseHandler(e)
-                                                    }
-                                                />
 
                                             </div>
                                         ) : (
-                                            <div
-                                                className={styles.tile}
-                                                key={group.id}
-                                                onClick={() =>
-                                                    navigate(
-                                                        "/group/" + group.id
-                                                    )
-                                                }
-                                            >
-                                                {/*<td>{group.id}</td>*/}
-                                                {myGroup===group.id && "Моя группа - "}
+                                            <div className={cn(styles.tile, myGroup === group.id && styles.my)}
+                                                 key={group.id}
+                                                 onClick={() => navigate("/group/" + group.id)}>
+                                                <div className={styles.name}>
+                                                    {group.name}
+                                                </div>
+                                                <div className={styles.faculty}></div>
+                                                <div className={styles.university}></div>
+                                                <div className={styles.actions}></div>
 
-                                                <div>{group.name}</div>
+
                                             </div>
                                         )}
                                     </>

@@ -5,16 +5,29 @@
   margin: 0 auto;
   overflow-x: scroll;
   gap: 20px;
-  padding-bottom: 20vh;
+  padding-top: 1vh;
+  padding-bottom: 29vh;
   scroll-padding-left: 0.3rem;
   scroll-padding-right: 0.3rem;
   scroll-snap-type: x mandatory;
   scroll-snap-stop: always;
   scrollbar-width: none;
 
+  &.top {
+    padding-top: 16vh;
+    padding-bottom: 1vh;
+  }
+
   @media screen and (max-width: 800px) {
     & {
       width: 94%;
+      //padding-bottom: 20vh;
+      //padding-top: 17vh;
+    }
+
+    &.top {
+      padding-top: 16vh;
+      padding-bottom: 10vh;
     }
   }
 
