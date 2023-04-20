@@ -24,7 +24,7 @@ function isExists (group, groupId, date) {
     return false
 }
 
-const ViewNew = () => {
+const ViewNew = ({addToCompare}) => {
 
     const containerRef = useRef(null);
 
@@ -136,6 +136,7 @@ const ViewNew = () => {
                 })
             }
             setIsLoading(false)
+            scrollToStart()
         }
     }, [todayDate, groups])
 
@@ -185,15 +186,18 @@ const ViewNew = () => {
         let doc = null
         if (mode === 'prev')
             doc = document.getElementById(currentWeek[6])
-        else
+        else if (mode === 'next')
             doc = document.getElementById(currentWeek[0])
+        else
+            doc = document.getElementById(to)
 
+        setMode(null)
         if (doc) doc.scrollIntoView(true);
     }
 
     return (
         <div className={styles.container}>
-            <ViewHeaderNew week={currentWeek} info={currentSked} prev={getPrev} next={getNext} lookAt={lookAt}/>
+            <ViewHeaderNew week={currentWeek} info={currentSked} prev={getPrev} next={getNext} lookAt={lookAt} scrollTo={scrollTo} addToCompare={addToCompare}/>
             {groups.length > 0 ?
                 <div className={cn(styles.view_scroll, settings?.calDir === "top" && styles.top)} ref={containerRef} id={"scrollArea"}
                      // onTouchEnd={() => setIsTouchEnd(true)}

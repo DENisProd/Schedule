@@ -8,27 +8,55 @@
     { "color": "light" },
     { "color": "dark", "media": "(prefers-color-scheme: dark)" }
   ],
+  "scope": "./",
   "icons": [
     {
-        "src": "favicon64x64.ico",
-        "sizes": "64x64",
-        "type": "image/ico"
+      "src": "other/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
     },
     {
-        "src": "favicon16x16.ico",
-        "sizes": "16x16",
-        "type": "image/ico"
+      "src": "other/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
     },
     {
-        "src": "logo512.png",
-        "sizes": "512x512",
-        "type": "image/png"
+      "src": "other/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
     },
     {
-        "src": "maskable_icon_x192.png",
-        "sizes": "196x196",
-        "type": "image/png",
-        "purpose":"maskable"
+      "src": "other/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "other/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "other/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "other/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "other/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
     }
-]
+  ]
 }

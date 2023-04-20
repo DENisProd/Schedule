@@ -1,14 +1,10 @@
 import "./App.css";
 import {useEffect, useState} from "react"
 import {BrowserRouter, Route, Routes, useNavigate} from "react-router-dom";
-import Home from "./Components/Home";
 import View from "./Components/View";
-import BottomMenu from "./Components/BottomMenu/BottomMenu";
-import Favorites from "./Components/Favorites/Favorites";
 import Admin from "./Components/Admin/Admin";
 import Navigator from "./Components/Navigator";
 
-import bg from "./assets/8marta.png"
 import Compare from "./Components/Compare/Compare";
 import {ThemeProvider} from "./providers/ThemeProvider";
 import BottomNavigation from "./Components/BottomNavigation/BottomNavigation";
@@ -19,6 +15,8 @@ import ViewNew from "./Components/ViewNew/ViewNew";
 function App() {
     const [isOffline, setIsOffline] = useState(false)
     const [compareList, setCompareList] = useState([])
+    const [groupsList, setGroupsList] = useState({})
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     function IOS() {
         return [
@@ -33,14 +31,19 @@ function App() {
             || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
     }
 
-    const addToCompare = (group) => {
+    const addToCompare = (group, name) => {
         let isExists = false
         compareList.map(gr => {
             if (group===gr) isExists=true
         })
-        if (!isExists)
-            setCompareList((prevState) => [...prevState, group])
+        if (!isExists) {
+            let tmp = JSON.parse(JSON.stringify(groupsList))
+            tmp[group] = name
+            setGroupsList(tmp)
+            setCompareList(prevState => [...prevState, group])
+        }
         console.log(compareList)
+        console.log(groupsList)
     }
 
     useEffect(() => {
@@ -48,7 +51,10 @@ function App() {
         //console.log(href)
         const domainArray = href.slice(0,3)
         const groupId = Number(localStorage.getItem("groupId"));
-        if (groupId && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + groupId
+        const myGroup = Number(localStorage.getItem("my-group"));
+
+        if (myGroup && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + myGroup
+        else if (groupId && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + groupId
 
         if(IOS()) document.getElementById('root').classList.add('ios-detected')
         
@@ -71,7 +77,7 @@ function App() {
                     {/*<Route path="/favorites" element={<FavoritesNew />} />*/}
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/navigator/:audId" element={<Navigator />} />
-                    <Route path="/compare/" element={<Compare compareList={compareList} />} />
+                    <Route path="/compare/" element={<Compare compareList={compareList} groupsList={groupsList}/>} />
                 </Routes>
                 <BottomNavigation />
                 {/*<img className="bg-img" src={bg}/>*/}

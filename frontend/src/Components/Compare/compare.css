@@ -1,10 +1,29 @@
 .compare-container {
     display: block;
     gap: 2em;
-    overflow-y: scroll;
+    overflow: scroll;
+    height: auto;
+}
+
+.compare-container table {
+    margin: 0 auto;
+}
+
+.compare-container h5 {
+    text-align: center;
 }
 
 .compare-horizontal {
     display: flex;
     gap: 2em;
+}
+
+.compare-td {
+    height: 2em;
+    width: 8em;
+    text-align: center;
+}
+
+.compare-td.green {
+    background: var(--green);
 }
