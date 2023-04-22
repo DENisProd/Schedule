@@ -1,5 +1,5 @@
 {
     "serverPort": 5000,
-    "dbUrl": "mongodb://dark-admin:dark123@127.0.0.1:27017/admin",
+    "dbUrl": "mongodb://127.0.0.1:27017/schedule",
     "adminPassword": "123_admin_dark"
 }

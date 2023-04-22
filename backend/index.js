@@ -1,11 +1,14 @@
-const express = require("express")
-const mongoose = require("mongoose")
-const config = require("config")
-const corsMiddleware = require("./middleware/cors.middleware")
-const ClientInfo = require('./models/clientInfo.js')
-const requestIp = require('request-ip')
-const rateLimit = require('express-rate-limit')
+import express from "express"
+import mongoose from "mongoose"
+import config from "config"
+import corsMiddleware from "./middleware/cors.middleware.js"
+import ClientInfo from './models/clientInfo.js'
+import requestIp from 'request-ip'
+import rateLimit from 'express-rate-limit'
+import morgan from 'morgan'
 //const cors from 'cors'
+
+import groupRouter from "./routes/groupRoutes.js"
 
 const app = express()
 const PORT = config.get("serverPort")
@@ -29,11 +32,11 @@ const admin10 = rateLimit({
 app.use(requestIp.mw())
 app.use(corsMiddleware)
 app.use(express.json())
+app.use(morgan('combined'));
 
-const parseIp = (req) =>
-    req.headers['x-forwarded-for']
-    || req.socket.remoteAddress
+const parseIp = (req) => req.headers['x-forwarded-for'] || req.socket.remoteAddress
 
+app.use("/api/group", groupRouter)
 
 app.post('/all/', admin10, async (req, res) => {
     console.log(req.body)
@@ -72,7 +75,8 @@ app.post('/stats/', apiLimiter, async (req, res) => {
 
 const start = async () => {
     try {
-        await mongoose.connect(config.get("dbUrl"), {
+        mongoose.set('strictQuery', false)
+        mongoose.connect(config.get("dbUrl"), {
             useNewUrlParser: true,
         })
             .then(() => console.log('MongoDB connected'))

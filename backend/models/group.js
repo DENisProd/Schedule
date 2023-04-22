@@ -1,25 +1,25 @@
-const {Schema, model, ObjectId} = require("mongoose")
+import {Schema, model, ObjectId} from "mongoose"
 
-const groupInfo = new Schema({
-    aud: {
-        name: {type: String}
-    },
+const groupSchema = new Schema({
+    audName: {type: String},
+    audId: {type: Number},
     curSem: {type: Number},
     curWeekNumber: {type: Number},
     date: {type: Date},
     dateUploadingRasp: {type: Date},
-    group: {
-        name: {type: String}, 
-        groupID: {type: Number}
-    },
-    kafedra: {
+    groupName: {type: String},
+    groupID: {type: Number},
+    department: {
         name: {type: String}
     },
     lastDate: {type: Date},
-    prepod: {
-        name: {type: String}
-    },
-    year: {type: String}
+    teacherName: {type: String},
+    teacherId: {type: Number},
+    year: {type: String},
+    isSubgroup: {type: Boolean, default: false},
+    schedule: {type: ObjectId, ref: 'User', required: true},
 })
 
-module.exports = model("GroupInfo", groupInfo)
+const Group = model("Group", groupSchema)
+
+export default Group

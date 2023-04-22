@@ -6,7 +6,7 @@ import ToggleButton from "../ToggleButton/ToggleButton";
 
 import {SettingsContext} from "../../../providers/SettingsProvider";
 
-const version = "0.83b2"
+const version = "0.9b4"
 
 const SettingsScreen = () => {
     const {settings, setSettings} = useContext(SettingsContext)

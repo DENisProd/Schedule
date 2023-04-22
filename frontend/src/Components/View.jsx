@@ -13,7 +13,7 @@ import cn from "classnames";
 import Calendar from "./View/Calendar/Calendar";
 import EuropeanCalendar from "./View/Calendar/EuropeanCalendar";
 import Calendar2 from "./View/Calendar/Calendar2";
-import {groupByDate, groupByDateWithSubgroups} from "../utils/groupHelpers";
+import {groupByDate, groupByDateWithSubgroups, groupNew, groupSchedule} from "../utils/groupHelpers";
 import {sendStats} from "../utils/sendStats";
 
 const currentVersion = 0.73
@@ -193,6 +193,7 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
                     setInfo(res.data.data.info);
                     console.log("fetched")
                     let obj = scheduleProccessing(res);
+                    let test = groupSchedule(res.data)
                     console.log(obj)
                     try {
                         let objTest = groupByDateWithSubgroups(res.data)
@@ -218,7 +219,7 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
                         setAttempt(attempt + 1)
                         console.log(attempt)
                         if (attempt < 3) {
-                            updateSchedule(currDate)
+                            //updateSchedule(currDate)
                             return
                         } else {
                             setIsError(true)

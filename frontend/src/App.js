@@ -70,7 +70,7 @@ function App() {
                     {/*<Route element={}/>*/}
                     <Route path="/" element={<FavoritesNew />} />
                     {/*<Route path="/group/:groupId" element={<View addToCompare={addToCompare} isGroup={true} />} />*/}
-                    <Route path="/group/:groupId" element={<ViewNew addToCompare={addToCompare} isGroup={true} />} />
+                    <Route path="/group/:groupId" element={<View addToCompare={addToCompare} isGroup={true} />} />
                     <Route path="/group/" element={<FavoritesNew />} />
                     <Route path="/room/:groupId" element={<View isRoom={true}/>} />
                     <Route path="/teacher/:groupId" element={<View isTeachers={true}/>} />
