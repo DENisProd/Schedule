@@ -13,6 +13,7 @@ const SettingsScreen = () => {
     const {theme, setTheme} = useContext(ThemeContext)
 
     const [isOn, toggle] = useState(null)
+    const [isHor, toggleViewOrientation] = useState(null)
 
     const changeCalendarDir = (direction) => {
         setSettings(prev => ({...prev, calDir: direction }))
@@ -21,7 +22,13 @@ const SettingsScreen = () => {
 
     useEffect(() => {
         toggle(theme === themes.dark)
+        toggleViewOrientation(settings?.viewType === 'hor')
     }, [])
+
+    useEffect(() => {
+        if(isHor) setSettings(prev => ({...prev, viewType: 'hor' }))
+        else setSettings(prev => ({...prev, viewType: 'ver' }))
+    }, [isHor])
 
     useEffect(() => {
         if (isOn)setTheme(themes.dark)
@@ -38,6 +45,11 @@ const SettingsScreen = () => {
             <div className={cn(styles.setting_line, styles.setting_container)}>
                 <span>Темная тема</span>
                 <ToggleButton {...{isOn, toggle}} />
+            </div>
+
+            <div className={cn(styles.setting_line, styles.setting_container)}>
+                <span>Тип просмотра расписания (горизонтальный\вертикальный скролл)</span>
+                <ToggleButton isOn={isHor} toggle={toggleViewOrientation} />
             </div>
 
             <div className={cn(styles.choose_mode)}>

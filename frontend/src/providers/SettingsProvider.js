@@ -6,7 +6,8 @@ export const SettingsContext = React.createContext({})
 export const getSettings = () => {
     const settings = JSON.parse(localStorage.getItem('settings'))
     return {
-        calDir: settings?.calDir === "top" ? "top" : "bottom"
+        calDir: settings?.calDir === "top" ? "top" : "bottom",
+        viewType: settings?.viewType === "hor" ? "hor" : "ver"
     }
 }
 

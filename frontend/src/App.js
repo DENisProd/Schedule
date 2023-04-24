@@ -1,5 +1,5 @@
 import "./App.css";
-import {useEffect, useState} from "react"
+import {useContext, useEffect, useState} from "react"
 import {BrowserRouter, Route, Routes, useNavigate} from "react-router-dom";
 import View from "./Components/View";
 import Admin from "./Components/Admin/Admin";
@@ -10,6 +10,7 @@ import {ThemeProvider} from "./providers/ThemeProvider";
 import BottomNavigation from "./Components/BottomNavigation/BottomNavigation";
 import FavoritesNew from "./Components/FavoritesNew/FavoritesNew";
 import ViewNew from "./Components/ViewNew/ViewNew";
+import {SettingsContext} from "./providers/SettingsProvider";
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
     const [compareList, setCompareList] = useState([])
     const [groupsList, setGroupsList] = useState({})
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const {settings, setSettings} = useContext(SettingsContext)
 
     function IOS() {
         return [
@@ -70,7 +72,11 @@ function App() {
                     {/*<Route element={}/>*/}
                     <Route path="/" element={<FavoritesNew />} />
                     {/*<Route path="/group/:groupId" element={<View addToCompare={addToCompare} isGroup={true} />} />*/}
-                    <Route path="/group/:groupId" element={<View addToCompare={addToCompare} isGroup={true} />} />
+                    {settings?.viewType === "hor" ?
+                        <Route path="/group/:groupId" element={<View addToCompare={addToCompare} isGroup={true} />} />
+                        :
+                        <Route path="/group/:groupId" element={<ViewNew addToCompare={addToCompare} isGroup={true} />} />
+                    }
                     <Route path="/group/" element={<FavoritesNew />} />
                     <Route path="/room/:groupId" element={<View isRoom={true}/>} />
                     <Route path="/teacher/:groupId" element={<View isTeachers={true}/>} />
