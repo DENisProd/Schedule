@@ -11,6 +11,7 @@ import {getInfo} from "../../utils/getInfo";
 import ViewHeaderNew from "./ViewHeaderNew/ViewHeaderNew";
 import {month, weekDays} from "../../utils/dateUtils";
 import {SettingsContext} from "../../providers/SettingsProvider";
+import {sendStats} from "../../utils/sendStats";
 
 function isExists (group, groupId, date) {
     if (group.id === Number(groupId)) {
@@ -113,6 +114,16 @@ const ViewNew = ({addToCompare}) => {
         document.getElementById('root').classList.remove('scroll-blocked')
 
         getIfNotExist(mondayString)
+
+
+        let count_enter = Number.parseInt(localStorage.getItem("count_enter"))
+        if (count_enter) count_enter++
+        else count_enter = 1
+        localStorage.setItem("count_enter", count_enter.toString())
+
+        sendStats()
+
+
         dataFetch.current = true
     }, [])
 
