@@ -3,8 +3,10 @@ import Group from "../models/group.js"
 import DstuService from "../services/dstuService.js"
 import {UNIVERSITIES} from "../constants/Universities.js";
 import Week from "../models/weekOfSubjects.js";
+import RsueService from "../services/rsueService.js";
 
 const dstuService = new DstuService()
+const rsueService = new RsueService()
 
 class groupController {
 
@@ -32,6 +34,10 @@ class groupController {
                             res.send({weekSchedule})
                         }
                         break
+                    }
+                    case UNIVERSITIES.RSUE: {
+                        const schedule = await rsueService.parseSchedule(3,3,2)
+                        res.send({schedule})
                     }
                     default:
                         console.log("def")
