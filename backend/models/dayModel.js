@@ -6,6 +6,7 @@ const daySchema = new Schema({
     groupID: {type: Number},
     date: {type: Date},
     subjects: [{type: ObjectId, ref: 'Subject', required: true}],
+    dayNumber: {type: String}
 })
 
 const Day = model("Day", daySchema)

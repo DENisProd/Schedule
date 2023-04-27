@@ -14,7 +14,6 @@ import Week from "../models/weekOfSubjects.js";
 
 class DstuService {
     async fetchGroup(URL, groupId, date) {
-        console.log(URL + groupId)
         const response = await fetch(URL + groupId + "&sdate=" + (date || dayjs().format('YYYY-MM-DD')));
         return await response.json()
     }
@@ -80,7 +79,8 @@ class DstuService {
             groupID: info.group.groupID,
             year: info.year,
             mondayDate: info.date,
-            days: week
+            days: week,
+            university: 'dstu'
         })
 
         await weekObject.save()

@@ -1,12 +1,16 @@
-import Group from "../models/group.js"
-
 import DstuService from "../services/dstuService.js"
 import {UNIVERSITIES} from "../constants/Universities.js";
-import Week from "../models/weekOfSubjects.js";
 import RsueService from "../services/rsueService.js";
 
 const dstuService = new DstuService()
 const rsueService = new RsueService()
+
+Date.prototype.getWeek = function() {
+    const firstDayOfYear = new Date(this.getFullYear(), 0, 1);
+    const daysSinceFirstDayOfYear = (this - firstDayOfYear) / 86400000;
+    return Math.ceil((daysSinceFirstDayOfYear + firstDayOfYear.getDay() + 1) / 7);
+};
+
 
 class groupController {
 
@@ -29,15 +33,30 @@ class groupController {
                         } else {
                             console.log("not exists in db")
                             const week_id = await dstuService.getWeekIdScheduleFromServer(groupId)
-                            const weekSchedule = await dstuService.getWeekScheduleById(week_id)
 
-                            res.send({weekSchedule})
+                            if (week_id) {
+                                const weekSchedule = await dstuService.getWeekScheduleById(week_id)
+                                res.send({weekSchedule})
+                            } else
+                                res.status(404).json({message: 'Группа не найдена'})
+
                         }
                         break
                     }
                     case UNIVERSITIES.RSUE: {
+                        await rsueService.fetchCurses(3)
                         const schedule = await rsueService.parseSchedule(3,3,2)
-                        res.send({schedule})
+                        const date = new Date()
+                        const weekNumber = Number.parseInt(date.getWeek())
+                        console.log(weekNumber)
+                        const sch = await rsueService
+                            // .getSchedule(weekNumber % 2 === 0 ? schedule[1] : schedule[0], groupId)
+                            .getSchedule(weekNumber, groupId)
+
+                        if (sch)
+                            res.send({sch})
+                        else
+                            res.status(404).json({message: 'Группа не найдена'})
                     }
                     default:
                         console.log("def")

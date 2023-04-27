@@ -48,7 +48,7 @@ const SettingsScreen = () => {
             </div>
 
             <div className={cn(styles.setting_line, styles.setting_container)}>
-                <span>Тип просмотра расписания (горизонтальный\вертикальный скролл)</span>
+                <span>Тип просмотра расписания (горизонтальный \ вертикальный скролл)</span>
                 <ToggleButton isOn={isHor} toggle={toggleViewOrientation} />
             </div>
 

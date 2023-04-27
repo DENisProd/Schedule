@@ -8,7 +8,9 @@ const weekSchema = new Schema({
     groupID: {type: Number},
     year: {type: String},
     days: [{type: ObjectId, ref: 'Day', required: true}],
-    mondayDate: {type: String}
+    mondayDate: {type: String},
+    isEven: {type: Boolean, default: false},
+    university: {type: String}
 })
 
 const Week = model("Week", weekSchema)
