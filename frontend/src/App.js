@@ -48,20 +48,6 @@ function App() {
         console.log(groupsList)
     }
 
-    const fetchData = async() => {
-        const formData = new FormData();
-        formData.append('query', 'getKinds');
-        formData.append('type_id', 3);
-        formData.append('kind_id', 3);
-
-        const options = {
-            method: 'POST',
-            body: formData
-        }
-
-        await fetch("https://rsue.ru/raspisanie/query.php", options).then(res => console.log(res))
-    }
-
     useEffect(() => {
         const href = window.location.href.split('/')
         //console.log(href)
@@ -77,8 +63,6 @@ function App() {
         window.addEventListener("offline", function () {
             setIsOffline(true)
         });
-
-        fetchData()
     }, []);
 
     return (

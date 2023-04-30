@@ -1,16 +1,18 @@
 import {URLS} from "../constants/URLS.js";
-
-const GROUP_URLS = {
-    "DSTU": "",
-    "RSUE": ""
-}
-
 import fetch from "node-fetch";
 import Subject from "../models/subject.js";
 import dayjs from "dayjs";
 import Day from "../models/dayModel.js";
 import WeekOfSubjects from "../models/weekOfSubjects.js";
 import Week from "../models/weekOfSubjects.js";
+import AcademicGroup from "../models/academicGroup.js";
+import GroupUploadingSchema from "../models/groupUpdating.js";
+import GroupUploading from "../models/groupUpdating.js";
+
+const GROUP_URLS = {
+    "DSTU": "",
+    "RSUE": ""
+}
 
 class DstuService {
     async fetchGroup(URL, groupId, date) {
@@ -22,7 +24,7 @@ class DstuService {
         try {
             const subj = new Subject({
                 audName: subject["аудитория"],
-                date: subject["дата"],
+                date: dayjs(subject["дата"]).format('YYYY-MM-DD'),
                 startTime: subject["начало"],
                 endTime: subject["конец"],
                 groupName: subject["группа"],
@@ -31,7 +33,8 @@ class DstuService {
                 teacherId: subject["кодПреподавателя"],
                 year: subject["учебныйГод"],
                 isSubgroup: subject["isPodgr"],
-                number: subject["номерЗанятия"]
+                number: subject["номерЗанятия"],
+                name: subject["дисциплина"]
             })
 
             await subj.save()
@@ -83,8 +86,33 @@ class DstuService {
             university: 'dstu'
         })
 
+        await this.subscribeToGroup(info.group.groupID)
+
         await weekObject.save()
         return weekObject.id
+    }
+
+    async subscribeToGroup(groupId) {
+        const groupFromDb = await GroupUploading.findOne({groupID: groupId})
+        if(!groupFromDb) {
+            const group = new GroupUploading({
+                groupID: groupId
+            })
+            await group.save()
+        }
+
+    }
+
+    async removeWeek(monday) {
+        const weeks = await Week.find({ university: 'dstu', mondayDate: monday });
+        const promises = weeks.map((w) => w.remove());
+        return Promise.all(promises)
+            .then(() => {
+                console.log('Все документы удалены');
+            })
+            .catch((err) => {
+                console.error(err);
+            });
     }
 
     async groupSchedule(schedule) {
@@ -155,35 +183,60 @@ class DstuService {
             path: 'days',
             model: 'Day',
             select: {
-                __v: 0
+                __v: 0,
+                _id: 0
             },
             populate: {
                 path: 'subjects',
                 model: 'Subject',
                 select: {
-                    __v: 0
+                    __v: 0,
+                    _id: 0
                 },
             }
         })
     }
 
     async getWeekScheduleByGroupIdAndDate(group_id, date) {
-        const monday = dayjs(date).startOf('week').add(1, 'day').format('YYYY-MM-DD')
+        const monday = dayjs(date).startOf('week').add(1, 'day').format('YYYY-MM-DDTHH:mm:ss')
         console.log(monday)
         return Week.findOne({groupID: group_id, mondayDate: monday}, {__v: 0}).populate({
             path: 'days',
             model: 'Day',
             select: {
-                __v: 0
+                __v: 0,
+                _id: 0
             },
             populate: {
                 path: 'subjects',
                 model: 'Subject',
                 select: {
-                    __v: 0
+                    __v: 0,
+                    _id: 0
                 },
             }
         })
+    }
+
+    async getGroupsFromServer() {
+        const response = await fetch(URLS.GET_GROUPS)
+        const data = await response.json()
+        return Promise.all(data.data.map(async obj => {
+            const group = new AcademicGroup({
+                faculty: obj.facul,
+                name: obj.name,
+                level: Number.parseInt(obj.kurs),
+                university: 'dstu',
+                groupID: obj.id
+            })
+            await group.save()
+        }))
+    }
+
+    async getGroups() {
+        // await this.getGroupsFromServer()
+
+        return AcademicGroup.find({university: 'dstu'}, {_id: 0, __v: 0});
     }
 }
 

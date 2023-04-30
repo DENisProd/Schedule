@@ -25,18 +25,18 @@ class groupController {
             if (groupId) {
                 switch (university) {
                     case UNIVERSITIES.DSTU: {
-                        const week = await dstuService.getWeekScheduleByGroupId(groupId)
+                        const week = await dstuService.getWeekScheduleByGroupIdAndDate(groupId, date)
 
                         if (week) {
                             console.log("is exists in db")
                             res.send({week})
                         } else {
                             console.log("not exists in db")
-                            const week_id = await dstuService.getWeekIdScheduleFromServer(groupId)
+                            const week_id = await dstuService.getWeekIdScheduleFromServer(groupId, date)
 
                             if (week_id) {
                                 const weekSchedule = await dstuService.getWeekScheduleById(week_id)
-                                res.send({weekSchedule})
+                                res.send({week: weekSchedule})
                             } else
                                 res.status(404).json({message: 'Группа не найдена'})
 
@@ -44,7 +44,7 @@ class groupController {
                         break
                     }
                     case UNIVERSITIES.RSUE: {
-                        await rsueService.fetchCurses(3)
+                        await rsueService.getGroups(3)
                         const schedule = await rsueService.parseSchedule(3,3,2)
                         const date = new Date()
                         const weekNumber = Number.parseInt(date.getWeek())
@@ -62,37 +62,39 @@ class groupController {
                         console.log("def")
                         break
                 }
-
-                // Week.findOne({groupID: groupId}, async (err, week) => {
-                //     if (err) {
-                //         console.error(err);
-                //     } else if (week) {
-                //         console.log(week.id);
-                //         const weekSchedule = await dstuService.getWeekScheduleById(week_id)
-                //
-                //         res.send({weekSchedule})
-                //     } else {
-                //         console.log('group not found');
-                //         let data = {}
-                //         switch (university) {
-                //             case UNIVERSITIES.DSTU:
-                //                 console.log("DSTU")
-                //                 const week_id = await dstuService.getWeekIdScheduleFromServer(groupId)
-                //                 const weekSchedule = await dstuService.getWeekScheduleById(week_id)
-                //
-                //                 res.send({weekSchedule})
-                //                 break
-                //             default:
-                //                 console.log("def")
-                //                 break
-                //         }
-                //     }
-                // })
             }
 
         } catch (e) {
             console.log(e)
             return res.status(500).json({message: "Ошибка при получении группы"})
+        }
+    }
+
+    async getAllForUniversity(req,res) {
+        try {
+            const university = req.params.univer.toString().toUpperCase()
+
+            if(university) {
+
+                switch (university) {
+                    case UNIVERSITIES.DSTU: {
+                        const response = await dstuService.getGroups()
+                        res.status(200).json(response)
+                        break
+                    }
+                    case UNIVERSITIES.RSUE: {
+                        const response = await rsueService.getGroups()
+                        res.status(200).json(response)
+                        break
+                    }
+                }
+            } else {
+                return res.status(404).json({message: "Учебное заведение не найдено"})
+            }
+
+        } catch (e) {
+            console.log(e)
+            return res.status(500).json({message: "Ошибка при получении групп"})
         }
     }
 }

@@ -1,5 +1,27 @@
 import dayjs from "dayjs";
 
+export function groupByDate(schedule) {
+    let sked = getWeek(schedule.mondayDate.split("T")[0])
+
+    schedule.days.map(day => {
+        let dayGroup = []
+        day.subjects.map(subject => {
+            if (subject.isSubgroup) dayGroup[dayGroup.length-1].push(subject)
+            else dayGroup.push([subject])
+        })
+        const dayDate = dayjs(day.date).format('YYYY-MM-DD')
+        sked[dayDate] = dayGroup
+    })
+
+    return {
+        id: schedule.groupID,
+        sked,
+        name: schedule.groupName,
+        date: schedule.mondayDate.split("T")[0],
+        university: schedule.university
+    }
+}
+
 export function groupByDateWithSubgroups (res) {
     let obj = getWeek(res.data.info.date.split("T")[0])
     // console.log(obj)

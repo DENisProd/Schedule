@@ -1,13 +1,10 @@
 import fetch from "node-fetch";
-import dayjs from "dayjs";
 import * as cheerio from 'cheerio';
 import Subject from "../models/subject.js";
 import Day from "../models/dayModel.js";
 import Week from "../models/weekOfSubjects.js";
 import {BASE_URL_RSUE} from "../constants/URLS.js";
-
-import zlib from 'zlib'
-import * as pako from "pako";
+import AcademicGroup from "../models/academicGroup.js";
 
 const subjectNumbers = {
     "8:30": 1,
@@ -27,10 +24,30 @@ const daysOfWeek = {
     "Воскресенье": 7,
 }
 
+const faculties = {
+    1: "Менеджмент и предпринимательство",
+    2: "Торговое дело",
+    3: "Компьютерные технологии и информационная безопасность",
+    4: "Учетно-экономический",
+    5: "Экономика и финансы",
+    6: "Юридический",
+    7: "Лингвистика и журналистика",
+}
+
+const shortFaculties = {
+    1: "МиП",
+    2: "ТД",
+    3: "КТиИБ",
+    4: "УэФ'",
+    5: "ФЭиФинансы",
+    6: "Юридический",
+    7: "ФЛиЖ",
+}
+
 class RsueService {
     async fetchRsue(type, facultyId, courseId) {
         const formData = new FormData();
-        formData.append('query', 'getKinds');
+        formData.append('query', type);
         formData.append('type_id', facultyId);
         formData.append('kind_id', courseId);
 
@@ -40,30 +57,10 @@ class RsueService {
         }
 
         const response = await fetch(BASE_URL_RSUE, options)
-        const encoding = response.headers.get('content-encoding');
-        let body = await response.arrayBuffer();
-        if (body[0] !== 0x1f || body[1] !== 0x8b) {
-            console.log("The data is not a valid gzip stream")
-        }
-        if (encoding !== 'gzip') {
-            console.log("The response is not gzip-compressed")
-        }
-        if (encoding === 'gzip') {
-            body = await new Promise((resolve, reject) => {
-                zlib.gunzip(body, (err, decoded) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(decoded);
-                    }
-                });
-                const expectedLength = Number(response.headers.get('content-length'));
-                if (body.byteLength !== expectedLength) {
-                    console.log("The compressed data stream is corrupted or truncated")
-                }
-            });
-        }
-        return body.toString();
+        const compressedData = await response.arrayBuffer();
+        const decoder = new TextDecoder()
+        const str = decoder.decode(compressedData)
+        return JSON.parse(str)
     }
 
     async fetchGroups(courseId, facultyId) {
@@ -72,10 +69,42 @@ class RsueService {
         return await fetch('https://rsue.ru/raspisanie/', options)
     }
 
-    async fetchCurses(facultyId) {
+    concatArrayOfArray(array) {
+        return array.reduce((accumulator, currentValue) => {
+            return accumulator.concat(currentValue);
+        }, []);
+    }
 
-        const response = await this.fetchRsue('getCategories', facultyId)
-        console.log(response)
+    async getGroupsFromServer() {
+             return await Promise.all(Object.keys(faculties).map(async faculty => {
+                const response = await this.fetchRsue('getKinds', faculty)
+                if (response) {
+                    let data = await Promise.all(response.map(async resp => {
+                        const response2 = await this.fetchRsue('getCategories', faculty, resp.kind_id)
+                        // let groups2 = []
+                        response2.map(async obj => {
+                            const group = new AcademicGroup({
+                                faculty: shortFaculties[faculty],
+                                id: obj.category_id,
+                                name: obj.category,
+                                level: Number.parseInt(resp.kind_id),
+                                university: 'rsue'
+                            })
+                            await group.save()
+                        })
+                        // return groups2
+                    }))
+                    // return this.concatArrayOfArray(data)
+
+                }
+            }))
+    }
+
+    async getGroups() {
+        // await this.getGroupsFromServer()
+
+        const groups = await AcademicGroup.find({university: 'rsue'}, {_id: 0, __v: 0})
+        return groups
     }
 
     uuid(length) {
@@ -150,7 +179,7 @@ class RsueService {
             body: formData
         }
 
-        const response = await fetch('https://rsue.ru/raspisanie/', options)
+        return await fetch('https://rsue.ru/raspisanie/', options)
             .then(res => res.text())
             .then(async data => {
                 const $ = cheerio.load(data);
@@ -185,9 +214,7 @@ class RsueService {
                 await evenWeek.save()
 
                 return {oddId: oddWeek.id, evenId: evenWeek.id}
-            });
-
-        return response
+            })
     }
 
     async getSchedule(weekNumber, groupName) {

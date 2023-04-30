@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="index.js" type="NodeJSConfigurationType" path-to-node="$USER_HOME$/AppData/Roaming/npm/nodemon.cmd" nameIsGenerated="true" node-parameters="--inspect-brk" path-to-js-file="index.js" working-dir="$PROJECT_DIR$/backend">
+    <EXTENSION ID="com.jetbrains.nodejs.run.NodeStartBrowserRunConfigurationExtension">
+      <browser with-js-debugger="true" url="http://localhost:5000/" />
+    </EXTENSION>
+    <envs>
+      <env name="NODE_ENV" value="DEV" />
+    </envs>
+    <method v="2" />
+  </configuration>
+</component>

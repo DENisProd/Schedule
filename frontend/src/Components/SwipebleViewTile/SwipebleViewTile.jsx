@@ -73,7 +73,7 @@ export default function SwipebleViewTile({ isGroup, isRoom, isTeachers, subjects
                 key={
                     new Date() +
                     (subjects &&
-                        subjects[0]["номерЗанятия"] + subjects[0]["начало"])
+                        subjects[0].number + subjects[0].startTime)
                 }
             //     ref={tileRef}
                 // onScroll={scrollHandler}
@@ -93,10 +93,10 @@ function DotIndicator({ currentSlide, subjects }) {
 //         console.log(Math.round(currentSlide, 1));
 //     }, []);
     return (
-        <div className={styles.dot_indicator} key={subjects["код"]}>
+        <div className={styles.dot_indicator} key={subjects.groupID}>
             {subjects?.length > 1 &&
                 subjects.map((subject, index) => (
-                    <div key={index + subject["дисциплина"]}
+                    <div key={index + subject.name}
                         className={cn(Math.round(Number(currentSlide), 1) === index && styles.current)}
                     />
                 ))}
@@ -126,22 +126,22 @@ function SubjectTile({ isGroup, isRoom, isTeachers, subject }) {
 
     return (
         <div className={styles.subject_tile}>
-            <div className={cn(styles.subject_tile_left, getStyle(subject["дисциплина"]))}>
-                <h1>{subject["номерЗанятия"]}</h1>
+            <div className={cn(styles.subject_tile_left, getStyle(subject.name))}>
+                <h1>{subject.number}</h1>
                 <h4 className={styles.time_h}>
-                    <span className="time-span">{subject["начало"]}</span>
+                    <span className="time-span">{subject.startTime}</span>
                 </h4>
-                <p>до</p>
+                <p>---</p>
                 <h4 className={styles.time_h}>
-                    <span className="time-span">{subject["конец"]}</span>
+                    <span className="time-span">{subject.endTime}</span>
                 </h4>
             </div>
 
             <div className={styles.subject_tile_right}>
-                <h3>{subject["дисциплина"]}</h3>
-                {!isGroup && <p>Группа {subject["группа"]}</p>}
-                <p>Аудитория {subject["аудитория"]}</p>
-                <p>{subject["преподаватель"]}</p>
+                <h3>{subject.name}</h3>
+                {!isGroup && <p>Группа {subject.groupName}</p>}
+                <p>Аудитория {subject.audName}</p>
+                <p>{subject.teacherName}</p>
             </div>
         </div>
     );

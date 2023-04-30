@@ -9,6 +9,7 @@ import morgan from 'morgan'
 //const cors from 'cors'
 
 import groupRouter from "./routes/groupRoutes.js"
+import CronController from "./controllers/cronController.js";
 
 const app = express()
 const PORT = config.get("serverPort")
@@ -32,7 +33,35 @@ const admin10 = rateLimit({
 app.use(requestIp.mw())
 app.use(corsMiddleware)
 app.use(express.json())
-app.use(morgan('combined'));
+
+import fs from 'fs'
+import path from 'path'
+
+const accessLogStream = fs.createWriteStream(path.join(process.cwd(), 'access.log'), { flags: 'a' });
+
+// Create the file if it doesn't exist
+accessLogStream.on('open', () => {
+    console.log('Access log file opened successfully');
+});
+
+accessLogStream.on('error', (err) => {
+    if (err.code === 'ENOENT') {
+        fs.mkdir(path.dirname(accessLogStream.path), (err) => {
+            if (err) {
+                console.error('Failed to create access log directory', err);
+            } else {
+                console.log('Access log directory created successfully');
+                accessLogStream.end();
+
+            }
+        });
+    } else {
+        console.error('Failed to open access log file', err);
+    }
+});
+const format = ':remote-addr :method :url :status - :response-time ms';
+// Use morgan with the write stream
+app.use(morgan(format, { stream: accessLogStream }));
 
 const parseIp = (req) => req.headers['x-forwarded-for'] || req.socket.remoteAddress
 
@@ -83,6 +112,8 @@ const start = async () => {
             .catch(error => console.log(error));
         app.listen(PORT, ()=> {
             console.log("start", PORT)
+            const cron = new CronController()
+            cron.init()
         })
     } catch (e) {
         console.log("error", e)

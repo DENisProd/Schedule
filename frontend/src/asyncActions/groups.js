@@ -1,10 +1,10 @@
 import {addGroupAction, emptyAction} from "../store/groupReducer";
-import {groupByDateWithSubgroups} from "../utils/groupHelpers";
+import {groupByDate, groupByDateWithSubgroups} from "../utils/groupHelpers";
 import dayjs from "dayjs";
 import {addMessageAction, MESSAGE_TYPES} from "../store/messageReducer";
 import {URLS} from "../utils/urlsUtils";
 
-export const fetchGroups = (groupId, date) => {
+export const fetchGroups = (groupId, date, university = 'DSTU') => {
     return function (dispatch, getState) {
         const state = getState()
         let group = null
@@ -14,10 +14,12 @@ export const fetchGroups = (groupId, date) => {
         }
         if (group) dispatch(emptyAction())
         else {
-            fetch(URLS.GET_GROUP_SCHEDULE + groupId + '&sdate=' + date)
+            fetch(URLS.GET_GROUP_SCHEDULE + groupId + '?date=' + date + "&university=" + university)
                 .then(response => response.json())
                 .then(json => {
-                    const processed = groupByDateWithSubgroups(json)
+                    // const processed = groupByDateWithSubgroups(json)
+                    const processed = groupByDate(json.week)
+                    console.log(processed)
                     dispatch(addGroupAction(processed))
                 })
                 .catch(err => {

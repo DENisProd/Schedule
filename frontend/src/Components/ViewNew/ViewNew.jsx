@@ -128,6 +128,7 @@ const ViewNew = ({addToCompare}) => {
     }, [])
 
     useEffect(() => {
+        console.log(groups)
         if (todayDate) {
             const mondayString = getMondayOfWeek(todayDate)
             const week = getWeek(mondayString)
@@ -137,7 +138,9 @@ const ViewNew = ({addToCompare}) => {
             let sked = {}
             Object.assign(sked, week)
             setCurrentWeek(Object.keys(week))
+
             if (group) {
+                console.log(group)
                 Object.keys(group.sked).map(date => sked[date] = group.sked[date])
                 setCurrentSked({
                     id: group.id,

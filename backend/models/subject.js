@@ -12,7 +12,8 @@ const subjectSchema = new Schema({
     teacherId: {type: Number},
     year: {type: String},
     isSubgroup: {type: Boolean, default: false},
-    number: {type: Number, default: 1}
+    number: {type: Number, default: 1},
+    name: {type: String}
 })
 
 const Subject = model("Subject", subjectSchema)

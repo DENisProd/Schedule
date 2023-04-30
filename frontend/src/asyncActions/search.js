@@ -8,7 +8,7 @@ export const SEARCH_TYPES = {
     ROOMS: "ROOMS",
     UNIVERSITY: "UNIVERSITY"
 }
-export const fetchSearch = (type) => {
+export const fetchSearch = (type, university = 'dstu') => {
     return function (dispatch, getState) {
         const state = getState()
 
@@ -18,7 +18,7 @@ export const fetchSearch = (type) => {
 
         switch (type) {
             case SEARCH_TYPES.GROUPS:
-                url = URLS.GET_GROUPS
+                url = URLS.GET_GROUPS + university
                 isExists = state.search.groups.length > 0
                 dispatchFunction = (json) => setGroupAction(json)
                 break
@@ -49,7 +49,7 @@ export const fetchSearch = (type) => {
             fetch(url)
                 .then(response => response.json())
                 .then(json => {
-                    dispatch(dispatchFunction(json.data))
+                    dispatch(dispatchFunction(json))
                 })
                 .catch(err => {
                     dispatch(addMessageAction({
