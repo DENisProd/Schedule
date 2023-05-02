@@ -44,7 +44,7 @@ class groupController {
                         break
                     }
                     case UNIVERSITIES.RSUE: {
-                        await rsueService.getGroups(3)
+                        // getWeekScheduleByGroupId
                         const schedule = await rsueService.parseSchedule(3,3,2)
                         const date = new Date()
                         const weekNumber = Number.parseInt(date.getWeek())
@@ -54,7 +54,7 @@ class groupController {
                             .getSchedule(weekNumber, groupId)
 
                         if (sch)
-                            res.send({sch})
+                            res.send({week: sch})
                         else
                             res.status(404).json({message: 'Группа не найдена'})
                     }

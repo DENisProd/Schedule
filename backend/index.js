@@ -59,13 +59,21 @@ accessLogStream.on('error', (err) => {
         console.error('Failed to open access log file', err);
     }
 });
-const format = ':remote-addr :method :url :status - :response-time ms';
+function isTrustedIp(addr) {
+    // replace this with your trusted IP addresses
+    const trustedIps = ['10.0.0.1', '192.168.0.1'];
+
+    return trustedIps.includes(addr);
+}
+const format = ':method :url :status - :response-time ms';
 // Use morgan with the write stream
-app.use(morgan(format, { stream: accessLogStream }));
+app.use(morgan(format, {
+    stream: accessLogStream
+}));
 
 const parseIp = (req) => req.headers['x-forwarded-for'] || req.socket.remoteAddress
 
-app.use("/api/group", groupRouter)
+app.use("/group", groupRouter)
 
 app.post('/all/', admin10, async (req, res) => {
     console.log(req.body)

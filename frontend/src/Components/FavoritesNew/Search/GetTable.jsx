@@ -17,7 +17,7 @@ const GetTable = ({tab, groupsList, teachersList, roomsList}) => {
 
                     <tbody>
                     {groupsList.slice(0, 100).map(group =>
-                        <tr key={group.groupID} onClick={() => {
+                        <tr key={group.groupID + Date.now() + group.name} onClick={() => {
                             localStorage.setItem("groupId", group.groupID)
                             let searchList = JSON.parse(localStorage.getItem("searchList"))
                             if (!searchList) searchList = []

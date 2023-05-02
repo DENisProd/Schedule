@@ -108,7 +108,7 @@ class DstuService {
         const promises = weeks.map((w) => w.remove());
         return Promise.all(promises)
             .then(() => {
-                console.log('Все документы удалены');
+                console.log('Все предметы DSTU этой недели удалены');
             })
             .catch((err) => {
                 console.error(err);

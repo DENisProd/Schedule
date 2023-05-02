@@ -85,7 +85,7 @@ class RsueService {
                         response2.map(async obj => {
                             const group = new AcademicGroup({
                                 faculty: shortFaculties[faculty],
-                                id: obj.category_id,
+                                groupID: obj.category_id,
                                 name: obj.category,
                                 level: Number.parseInt(resp.kind_id),
                                 university: 'rsue'
@@ -103,8 +103,7 @@ class RsueService {
     async getGroups() {
         // await this.getGroupsFromServer()
 
-        const groups = await AcademicGroup.find({university: 'rsue'}, {_id: 0, __v: 0})
-        return groups
+        return await AcademicGroup.find({university: 'rsue'}, {_id: 0, __v: 0})
     }
 
     uuid(length) {
@@ -165,6 +164,22 @@ class RsueService {
             arr.push(day.id)
         }
         return arr
+    }
+
+    async removeWeek() {
+        const weeks = await Week.find({ university: 'rsue' });
+        const promises = weeks.map((w) => w.remove());
+        return Promise.all(promises)
+            .then(() => {
+                console.log('Все предметы RSUE удалены');
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    }
+
+    async getAllSchedule() {
+
     }
 
     async parseSchedule(facultyId, kursId, groupId) {
@@ -238,7 +253,7 @@ class RsueService {
     }
 
     async getWeekScheduleByGroupId(group_id) {
-        return Week.findOne({groupID: group_id}, {__v: 0})
+        const schedule = await Week.findOne({groupID: group_id}, {__v: 0})
             .populate({
                 path: 'days',
                 model: 'Day',
@@ -253,6 +268,25 @@ class RsueService {
                     },
                 }
             })
+        if (schedule) return schedule
+        else {
+            const group = await AcademicGroup.findOne({name: group_id, university: 'rsue'})
+            if (group) {
+                // Получаем массивы ключей и значений объекта
+                const keys = Object.keys(shortFaculties);
+                const values = Object.values(shortFaculties);
+
+                // Ищем индекс значения в массиве значений
+                const index = values.indexOf(group.faculty);
+
+                // Получаем ключ по индексу
+                const faculty = keys[index];
+                return await this.parseSchedule(faculty, level, group.groupID)
+            } else {
+                throw new Error(`Group ${group_id} is not exists`)
+            }
+
+        }
     }
 }
 
