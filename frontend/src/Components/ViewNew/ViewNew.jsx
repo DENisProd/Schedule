@@ -11,6 +11,7 @@ import {getInfo} from "../../utils/getInfo";
 import ViewHeaderNew from "./ViewHeaderNew/ViewHeaderNew";
 import {month, weekDays} from "../../utils/dateUtils";
 import {SettingsContext} from "../../providers/SettingsProvider";
+import {sendStats} from "../../utils/sendStats";
 
 function isExists (group, groupId, date) {
     if (group.id === Number(groupId)) {
@@ -24,7 +25,7 @@ function isExists (group, groupId, date) {
     return false
 }
 
-const ViewNew = () => {
+const ViewNew = ({addToCompare}) => {
 
     const containerRef = useRef(null);
 
@@ -113,10 +114,21 @@ const ViewNew = () => {
         document.getElementById('root').classList.remove('scroll-blocked')
 
         getIfNotExist(mondayString)
+
+
+        let count_enter = Number.parseInt(localStorage.getItem("count_enter"))
+        if (count_enter) count_enter++
+        else count_enter = 1
+        localStorage.setItem("count_enter", count_enter.toString())
+
+        sendStats()
+
+
         dataFetch.current = true
     }, [])
 
     useEffect(() => {
+        console.log(groups)
         if (todayDate) {
             const mondayString = getMondayOfWeek(todayDate)
             const week = getWeek(mondayString)
@@ -126,7 +138,9 @@ const ViewNew = () => {
             let sked = {}
             Object.assign(sked, week)
             setCurrentWeek(Object.keys(week))
+
             if (group) {
+                console.log(group)
                 Object.keys(group.sked).map(date => sked[date] = group.sked[date])
                 setCurrentSked({
                     id: group.id,
@@ -136,6 +150,7 @@ const ViewNew = () => {
                 })
             }
             setIsLoading(false)
+            scrollToStart()
         }
     }, [todayDate, groups])
 
@@ -185,15 +200,18 @@ const ViewNew = () => {
         let doc = null
         if (mode === 'prev')
             doc = document.getElementById(currentWeek[6])
-        else
+        else if (mode === 'next')
             doc = document.getElementById(currentWeek[0])
+        else
+            doc = document.getElementById(to)
 
+        setMode(null)
         if (doc) doc.scrollIntoView(true);
     }
 
     return (
         <div className={styles.container}>
-            <ViewHeaderNew week={currentWeek} info={currentSked} prev={getPrev} next={getNext} lookAt={lookAt}/>
+            <ViewHeaderNew week={currentWeek} info={currentSked} prev={getPrev} next={getNext} lookAt={lookAt} scrollTo={scrollTo} addToCompare={addToCompare}/>
             {groups.length > 0 ?
                 <div className={cn(styles.view_scroll, settings?.calDir === "top" && styles.top)} ref={containerRef} id={"scrollArea"}
                      // onTouchEnd={() => setIsTouchEnd(true)}

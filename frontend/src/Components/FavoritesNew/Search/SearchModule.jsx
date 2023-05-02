@@ -100,9 +100,15 @@ function GetInfoAndRender({tab, value}) {
 
     useEffect(() => {
         if (value) {
-            setGroupList(search.groups.filter(group => {
-                return group.name.toLowerCase().includes(value.toLowerCase())
-            }))
+            if (search.groups) {
+                console.log(search.groups)
+                console.log(value)
+                setGroupList([])
+                setGroupList(search.groups.filter(group => {
+                    return group.name.toLowerCase().includes(value.toLowerCase())
+                }))
+            }
+
             setTeachersList(teachersList.filter(teacher => {
                 return teacher.name.toLowerCase().includes(value.toLowerCase())
             }))

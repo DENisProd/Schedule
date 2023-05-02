@@ -1,11 +1,15 @@
-const express = require("express")
-const mongoose = require("mongoose")
-const config = require("config")
-const corsMiddleware = require("./middleware/cors.middleware")
-const ClientInfo = require('./models/clientInfo.js')
-const requestIp = require('request-ip')
-const rateLimit = require('express-rate-limit')
+import express from "express"
+import mongoose from "mongoose"
+import config from "config"
+import corsMiddleware from "./middleware/cors.middleware.js"
+import ClientInfo from './models/clientInfo.js'
+import requestIp from 'request-ip'
+import rateLimit from 'express-rate-limit'
+import morgan from 'morgan'
 //const cors from 'cors'
+
+import groupRouter from "./routes/groupRoutes.js"
+import CronController from "./controllers/cronController.js";
 
 const app = express()
 const PORT = config.get("serverPort")
@@ -30,10 +34,46 @@ app.use(requestIp.mw())
 app.use(corsMiddleware)
 app.use(express.json())
 
-const parseIp = (req) =>
-    req.headers['x-forwarded-for']
-    || req.socket.remoteAddress
+import fs from 'fs'
+import path from 'path'
 
+const accessLogStream = fs.createWriteStream(path.join(process.cwd(), 'access.log'), { flags: 'a' });
+
+// Create the file if it doesn't exist
+accessLogStream.on('open', () => {
+    console.log('Access log file opened successfully');
+});
+
+accessLogStream.on('error', (err) => {
+    if (err.code === 'ENOENT') {
+        fs.mkdir(path.dirname(accessLogStream.path), (err) => {
+            if (err) {
+                console.error('Failed to create access log directory', err);
+            } else {
+                console.log('Access log directory created successfully');
+                accessLogStream.end();
+
+            }
+        });
+    } else {
+        console.error('Failed to open access log file', err);
+    }
+});
+function isTrustedIp(addr) {
+    // replace this with your trusted IP addresses
+    const trustedIps = ['10.0.0.1', '192.168.0.1'];
+
+    return trustedIps.includes(addr);
+}
+const format = ':method :url :status - :response-time ms';
+// Use morgan with the write stream
+app.use(morgan(format, {
+    stream: accessLogStream
+}));
+
+const parseIp = (req) => req.headers['x-forwarded-for'] || req.socket.remoteAddress
+
+app.use("/group", groupRouter)
 
 app.post('/all/', admin10, async (req, res) => {
     console.log(req.body)
@@ -72,13 +112,16 @@ app.post('/stats/', apiLimiter, async (req, res) => {
 
 const start = async () => {
     try {
-        await mongoose.connect(config.get("dbUrl"), {
+        mongoose.set('strictQuery', false)
+        mongoose.connect(config.get("dbUrl"), {
             useNewUrlParser: true,
         })
             .then(() => console.log('MongoDB connected'))
             .catch(error => console.log(error));
         app.listen(PORT, ()=> {
             console.log("start", PORT)
+            const cron = new CronController()
+            cron.init()
         })
     } catch (e) {
         console.log("error", e)

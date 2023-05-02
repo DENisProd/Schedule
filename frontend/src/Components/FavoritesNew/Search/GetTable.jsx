@@ -17,21 +17,20 @@ const GetTable = ({tab, groupsList, teachersList, roomsList}) => {
 
                     <tbody>
                     {groupsList.slice(0, 100).map(group =>
-                        <tr key={group.id} onClick={() => {
-                            localStorage.setItem("groupId", group.id)
+                        <tr key={group.groupID + Date.now() + group.name} onClick={() => {
+                            localStorage.setItem("groupId", group.groupID)
                             let searchList = JSON.parse(localStorage.getItem("searchList"))
                             if (!searchList) searchList = []
                             searchList.push(group.name)
                             localStorage.setItem("searchList", JSON.stringify(searchList))
 
-                            navigate('/group/' + group.id)
+                            navigate('/group/' + group.groupID)
                         }
                         }>
-                            {/*<td>{group.id}</td>*/}
+                            {/*<td>{group.groupID}</td>*/}
                             <td>{group.name}</td>
-                            <td>{group.kurs}</td>
-                            <td>{group.facul}</td>
-                            {/*<td>{group.facultyID}</td>*/}
+                            <td>{group.level}</td>
+                            <td>{group.faculty}</td>
                         </tr>
                     )}
                     </tbody>

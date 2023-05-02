@@ -1,6 +1,6 @@
-const {Schema, model, ObjectId} = require("mongoose")
+import {Schema, model, ObjectId} from "mongoose"
 
-const clientInfo = new Schema({
+const clientInfoSchema = new Schema({
     userAgent: {type: String},
     ipAdress: {type: String},
     group: {type: String},
@@ -10,4 +10,6 @@ const clientInfo = new Schema({
     created: {type: Date, default: Date.now}
 })
 
-module.exports = model("ClientInfo", clientInfo)
+const ClientInfo = model("ClientInfo", clientInfoSchema)
+
+export default ClientInfo

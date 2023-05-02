@@ -15,7 +15,7 @@ const daysOfWeek = [
     "вс",
 ]
 
-function ViewHeaderNew({info, week, prev, next, lookAt}) {
+function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare}) {
 
     const [holidays, setHolidays] = useState([])
     const [favorite, setFavorite] = useState(false)
@@ -43,9 +43,6 @@ function ViewHeaderNew({info, week, prev, next, lookAt}) {
         if (favoritesGroups) {
             favoritesGroups.forEach((favorites) => {
                 if (favorites.id === info.id) {
-                    console.log(favorites.id)
-                    console.log(info.id)
-                    console.log('in fav')
                     setFavorite(true);
                     return
                 }
@@ -81,8 +78,8 @@ function ViewHeaderNew({info, week, prev, next, lookAt}) {
         // props.checkFavorites();
     }
 
-    const addToCompare = () => {
-
+    const dateClick = (date) => {
+        scrollTo(date)
     }
 
     return (
@@ -93,7 +90,7 @@ function ViewHeaderNew({info, week, prev, next, lookAt}) {
                         <div className={styles.title_container}>
                             <div
                                 className={cn(styles.icon_button, inCompareList && styles.compare)}
-                                onClick={addToCompare}>
+                                onClick={() => addToCompare(info.id, info.name)}>
                                 <svg
                                     version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
                                     width="800px" height="800px" viewBox="0 0 25.361 25.361">
@@ -121,7 +118,7 @@ function ViewHeaderNew({info, week, prev, next, lookAt}) {
 
                             <div className={styles.calendar_mini}>
                                 {week.map((day, index) =>
-                                    <div
+                                    <div onClick={() => dateClick(day)}
                                         className={cn(lookAt === day && styles.current, holidays.includes(day) && styles.holiday)}>
                                         <p>{day.split('-')[2]}</p>
                                         <p className={styles.day_name}>{daysOfWeek[index]}</p>
@@ -170,7 +167,7 @@ function ViewHeaderNew({info, week, prev, next, lookAt}) {
 
                             <div className={styles.calendar_mini}>
                                 {week.map((day, index) =>
-                                    <div className={cn(lookAt === day && styles.current, holidays.includes(day) && styles.holiday)}>
+                                    <div onClick={() => dateClick(day)} className={cn(lookAt === day && styles.current, holidays.includes(day) && styles.holiday)}>
                                         <p>{day.split('-')[2]}</p>
                                         <p className={styles.day_name}>{daysOfWeek[index]}</p>
                                     </div>

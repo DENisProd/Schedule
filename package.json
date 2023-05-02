@@ -2,6 +2,7 @@
   "dependencies": {
     "dayjs": "^1.11.7",
     "moment": "^2.29.4",
-    "ua-parser-js": "^1.0.33"
+    "ua-parser-js": "^1.0.33",
+    "zlib": "^1.0.5"
   }
 }

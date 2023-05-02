@@ -1,6 +1,6 @@
 import styles from "./modal.module.scss"
 
-import vkHeader from "../../../assets/vk_header.png"
+import vkHeader from "../../../assets/vk_bg.webp"
 
 const info = {
     "vk": {
