@@ -9,11 +9,17 @@ import {useDispatch, useSelector} from "react-redux";
 import {fetchSearch, SEARCH_TYPES} from "../../../asyncActions/search";
 import ConditionLayer from "./ConditionLayer";
 import GetTable from "./GetTable";
+import {SelectInput} from "../../UIKit/SelectInput/SelectInput";
 
 const searchList = {
     0: "группе",
     1: "преподавателям",
     2: "аудиториям"
+}
+
+const universities = {
+    "dstu": "Донской государственный технический университет (ДГТУ)",
+    "rsue": "Ростовский государственный экономический университет (РГЭУ РИНХ)"
 }
 
 const SearchModule = ({_setActiveTab, _setIsSearching}) => {
@@ -26,6 +32,7 @@ const SearchModule = ({_setActiveTab, _setIsSearching}) => {
     const [activeTab, setTab] = useState(0)
 
     const [value, setValue] = useState('')
+    const [university, setUniversity] = useState("dstu")
 
     const setActiveTab = (tab) => {
         if (isSearching) {
@@ -47,9 +54,15 @@ const SearchModule = ({_setActiveTab, _setIsSearching}) => {
         clearTimeout(timeout)
     }
 
+    const onSelectUniversity = (e) => {
+        console.log(e)
+        setUniversity(e)
+    }
+
     return (
         <>
             {/*<TabBar tabs={searchList}/>*/}
+            <SelectInput options={universities} value={universities[university]} onChange={onSelectUniversity}/>
             <TabGroup className={styles.tab_group} changeState={setActiveTab} header={
                 <input type="text"
                        onFocus={() => {
@@ -67,17 +80,17 @@ const SearchModule = ({_setActiveTab, _setIsSearching}) => {
             }>
                 <TabContent label="Группа">
                     <ConditionLayer state={isSearching}>
-                        <GetInfoAndRender tab={activeTab} value={value}/>
+                        <GetInfoAndRender tab={activeTab} value={value} university={university}/>
                     </ConditionLayer>
                 </TabContent>
                 <TabContent label="Преподаватель">
                     <ConditionLayer state={isSearching}>
-                        <GetInfoAndRender tab={activeTab} value={value}/>
+                        <GetInfoAndRender tab={activeTab} value={value} university={university}/>
                     </ConditionLayer>
                 </TabContent>
                 <TabContent label="Аудитория">
                     <ConditionLayer state={isSearching}>
-                        <GetInfoAndRender tab={activeTab} value={value}/>
+                        <GetInfoAndRender tab={activeTab} value={value} university={university}/>
                     </ConditionLayer>
                 </TabContent>
             </TabGroup>
@@ -88,7 +101,7 @@ const SearchModule = ({_setActiveTab, _setIsSearching}) => {
 export default SearchModule
 
 
-function GetInfoAndRender({tab, value}) {
+function GetInfoAndRender({tab, value, university}) {
     const [groupsList, setGroupList] = useState([])
     const [teachersList, setTeachersList] = useState([])
     const [roomsList, setRoomsList] = useState([])
@@ -101,10 +114,8 @@ function GetInfoAndRender({tab, value}) {
     useEffect(() => {
         if (value) {
             if (search.groups) {
-                console.log(search.groups)
-                console.log(value)
                 setGroupList([])
-                setGroupList(search.groups.filter(group => {
+                setGroupList(search.groups.data.filter(group => {
                     return group.name.toLowerCase().includes(value.toLowerCase())
                 }))
             }
@@ -119,7 +130,7 @@ function GetInfoAndRender({tab, value}) {
     }, [value])
 
     useEffect(() => {
-        setGroupList(search.groups)
+        setGroupList(search.groups.data)
         setIsLoaded(true)
     }, [search.groups, isLoaded])
 
@@ -138,17 +149,17 @@ function GetInfoAndRender({tab, value}) {
         const fetchData = (tab) => {
             switch (tab) {
                 case 0:
-                    dispatch(fetchSearch(SEARCH_TYPES.GROUPS))
+                    dispatch(fetchSearch(SEARCH_TYPES.GROUPS, university))
                     break
                 case 1:
-                    dispatch(fetchSearch(SEARCH_TYPES.TEACHERS))
+                    dispatch(fetchSearch(SEARCH_TYPES.TEACHERS, university))
                     break
                 case 2:
-                    dispatch(fetchSearch(SEARCH_TYPES.ROOMS))
+                    dispatch(fetchSearch(SEARCH_TYPES.ROOMS, university))
                     break
-                default:
-                    dispatch(fetchSearch(SEARCH_TYPES.GROUPS))
-                    break
+                // default:
+                //     dispatch(fetchSearch(SEARCH_TYPES.GROUPS))
+                //     break
             }
         }
 
@@ -167,7 +178,7 @@ function GetInfoAndRender({tab, value}) {
             {/*    <h2>Загрузка...</h2>*/}
             {/*}*/}
             {/*{getTable()}*/}
-            <GetTable tab={tab} groupsList={groupsList} teachersList={teachersList} roomsList={roomsList}/>
+            <GetTable tab={tab} groupsList={groupsList} teachersList={teachersList} roomsList={roomsList} university={university}/>
         </>
     )
 }

@@ -65,7 +65,7 @@ function isTrustedIp(addr) {
 
     return trustedIps.includes(addr);
 }
-const format = ':method :url :status - :response-time ms';
+const format = ':method :url :status - :response-time ms - :user-agent';
 // Use morgan with the write stream
 app.use(morgan(format, {
     stream: accessLogStream

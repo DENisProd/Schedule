@@ -128,7 +128,6 @@ const ViewNew = ({addToCompare}) => {
     }, [])
 
     useEffect(() => {
-        console.log(groups)
         if (todayDate) {
             const mondayString = getMondayOfWeek(todayDate)
             const week = getWeek(mondayString)
@@ -140,7 +139,6 @@ const ViewNew = ({addToCompare}) => {
             setCurrentWeek(Object.keys(week))
 
             if (group) {
-                console.log(group)
                 Object.keys(group.sked).map(date => sked[date] = group.sked[date])
                 setCurrentSked({
                     id: group.id,
@@ -150,7 +148,9 @@ const ViewNew = ({addToCompare}) => {
                 })
             }
             setIsLoading(false)
+            // addScrollLimit()
             scrollToStart()
+            // TODO добавление первой группы в группу пользователя по умолчанию
         }
     }, [todayDate, groups])
 
@@ -194,6 +194,21 @@ const ViewNew = ({addToCompare}) => {
             behavior: 'smooth'
         });
     }
+
+    // const addScrollLimit = () => {
+    //     const element = document.getElementById('scrollArea')
+    //     if (element) {
+    //         element.addEventListener('scroll', () => {
+    //             const maxScroll = element.scrollWidth - element.clientWidth;
+    //             // console.log(element.scrollLeft)
+    //             console.log(element.clientWidth)
+    //             if (element.scrollLeft > maxScroll) {
+    //                 element.scrollLeft = maxScroll;
+    //             }
+    //         });
+    //     }
+    //
+    // }
 
     const scrollTo = (to) => {
         // if (doc) doc.scrollIntoView({behavior: "smooth", block: "start"});
