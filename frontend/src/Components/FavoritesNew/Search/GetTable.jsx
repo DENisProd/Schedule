@@ -1,7 +1,7 @@
 import {useNavigate} from "react-router-dom";
 import React from "react";
 
-const GetTable = ({tab, groupsList, teachersList, roomsList}) => {
+const GetTable = ({tab, groupsList, teachersList, roomsList, university}) => {
     const navigate = useNavigate()
     switch (tab) {
         case 0: {
@@ -16,15 +16,37 @@ const GetTable = ({tab, groupsList, teachersList, roomsList}) => {
                     </thead>
 
                     <tbody>
-                    {groupsList.slice(0, 100).map(group =>
+                    {groupsList?.slice(0, 100).map(group =>
                         <tr key={group.groupID + Date.now() + group.name} onClick={() => {
-                            localStorage.setItem("groupId", group.groupID)
+                            let _group
+
+                            switch (university) {
+                                case 'dstu':
+                                    _group = group
+                                    break
+                                case 'rsue':
+                                    _group = {
+                                        groupID: group.name,
+                                        name: group.name
+                                    }
+                            }
+
+                            localStorage.setItem("groupId", _group.groupID)
                             let searchList = JSON.parse(localStorage.getItem("searchList"))
                             if (!searchList) searchList = []
-                            searchList.push(group.name)
+                            searchList.push(_group.name)
                             localStorage.setItem("searchList", JSON.stringify(searchList))
+                            const myGroup = localStorage.getItem('my-group')
+                            if (!myGroup) {
+                                const fav = [{
+                                    name: _group.name,
+                                    id: _group.groupID
+                                }]
+                                localStorage.setItem('favorites', JSON.stringify(fav))
+                                localStorage.setItem("my-group", _group.groupID);
+                            }
 
-                            navigate('/group/' + group.groupID)
+                            navigate('/group/' + _group.groupID + '?u=' + university)
                         }
                         }>
                             {/*<td>{group.groupID}</td>*/}
