@@ -4,13 +4,16 @@ import dayjs from "dayjs";
 import {addMessageAction, MESSAGE_TYPES} from "../store/messageReducer";
 import {URLS} from "../utils/urlsUtils";
 
-export const fetchGroups = (groupId, date, university = 'DSTU') => {
+export const fetchGroups = (groupId, date, university = 'dstu') => {
+    console.log(university)
+    if (!university) university = 'dstu'
     return function (dispatch, getState) {
         const state = getState()
         let group = null
         const _date = dayjs(date).startOf('week').add(1, 'day').format('YYYY-MM-DD')
+        console.log(_date)
         if (state.groups) {
-            group = state.groups.groups.find(group => isExists(group, groupId, _date))
+            group = state.groups.groups.find(group => isExists(group, groupId, _date, university))
         }
         if (group) dispatch(emptyAction())
         else {
@@ -33,14 +36,25 @@ export const fetchGroups = (groupId, date, university = 'DSTU') => {
     }
 }
 
-function isExists (group, groupId, date) {
-    if (group.id === Number(groupId)) {
-        const date1 = dayjs(group.date)
-        const date2 = dayjs(date)
-        if (date1.isSame(date2)) {
-            return true
+function isExists (group, groupId, date, univer) {
+    if (univer === 'dstu') {
+        if (Number(group.id) === Number(groupId)) {
+            const date1 = dayjs(group.date)
+            const date2 = dayjs(date)
+            if (date1.isSame(date2)) {
+                return true
+            }
+        }
+    } else {
+        if (group.id === groupId) {
+            const date1 = dayjs(group.date)
+            const date2 = dayjs(date)
+            if (date1.isSame(date2)) {
+                return true
+            }
         }
     }
+
 
     return false
 }

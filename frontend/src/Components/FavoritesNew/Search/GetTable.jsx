@@ -68,7 +68,7 @@ const GetTable = ({tab, groupsList, teachersList, roomsList, university}) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {teachersList.slice(0, 100).map(teachers =>
+                    {teachersList && teachersList.length>0 && teachersList?.slice(0, 100).map(teachers =>
                         <tr key={teachers.id}
                             onClick={() => {
                                 navigate('/teacher/' + teachers.id)
@@ -90,7 +90,7 @@ const GetTable = ({tab, groupsList, teachersList, roomsList, university}) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {roomsList.slice(0, 100).map(room =>
+                    {roomsList && roomsList.length > 0 && roomsList.slice(0, 100).map(room =>
                             <tr onClick={() => {
                                 navigate('/room/' + room.id)
                             }

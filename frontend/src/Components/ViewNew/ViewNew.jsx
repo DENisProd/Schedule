@@ -1,7 +1,7 @@
 import {useContext, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchGroups} from "../../asyncActions/groups";
-import {useParams} from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
 import dayjs from "dayjs";
 import {getMondayOfWeek, getWeek} from "../../utils/groupHelpers";
 import SwipebleViewTile from "../SwipebleViewTile/SwipebleViewTile";
@@ -13,14 +13,25 @@ import {month, weekDays} from "../../utils/dateUtils";
 import {SettingsContext} from "../../providers/SettingsProvider";
 import {sendStats} from "../../utils/sendStats";
 
-function isExists (group, groupId, date) {
-    if (group.id === Number(groupId)) {
-        const date1 = dayjs(group.date)
-        const date2 = dayjs(date)
-        if (date1.isSame(date2)) {
-            return true
+function isExists (group, groupId, date, univer) {
+    if (univer === 'dstu') {
+        if (Number(group.id) === Number(groupId)) {
+            const date1 = dayjs(group.date)
+            const date2 = dayjs(date)
+            if (date1.isSame(date2)) {
+                return true
+            }
+        }
+    } else {
+        if (group.id === groupId) {
+            const date1 = dayjs(group.date)
+            const date2 = dayjs(date)
+            if (date1.isSame(date2)) {
+                return true
+            }
         }
     }
+
 
     return false
 }
@@ -34,6 +45,7 @@ const ViewNew = ({addToCompare}) => {
     const {groupId} = useParams();
     const dispatch = useDispatch()
     const groups = useSelector(state => state.groups.groups)
+    const [searchParams, setSearchParams] = useSearchParams();
     const [todayDate, setTodayDate] = useState(null)
     const [currentSked, setCurrentSked] = useState({})
     const [lookAt, setLookAt] = useState([])
@@ -45,9 +57,9 @@ const ViewNew = ({addToCompare}) => {
 
     const currentDateString = dayjs().format('YYYY-MM-DD')
 
-    const isGroupExists = (groupId, date) => {
+    const isGroupExists = (groupId, date, univer) => {
         const _date = dayjs(date).startOf('week').add(1, 'day').format('YYYY-MM-DD')
-        const group = groups.find(group => isExists(group, groupId, _date))
+        const group = groups.find(group => isExists(group, groupId, _date, univer))
         return !!group;
     }
 
@@ -78,13 +90,15 @@ const ViewNew = ({addToCompare}) => {
         }
     }
 
-    const getIfNotExist = (date) => {
-        const isExists = isGroupExists(groupId, date)
+    const getIfNotExist = (date, univer) => {
+        const isExists = isGroupExists(groupId, date, univer)
         if (!isExists) {
             // console.log("dispatch")
-            dispatch(fetchGroups(groupId, date))
+            console.log(univer)
+            dispatch(fetchGroups(groupId, date, univer))
         }
         else {
+            console.log('nonono')
             const mondayString = getMondayOfWeek(date)
             setTodayDate(mondayString)
             // updateSchedule()
@@ -106,6 +120,7 @@ const ViewNew = ({addToCompare}) => {
             mondayString = getMondayOfWeek(todayDate)
         }
 
+        const univer = searchParams.get('u')
 
         const week = getWeek(mondayString)
         // console.log(week)
@@ -113,7 +128,7 @@ const ViewNew = ({addToCompare}) => {
 
         document.getElementById('root').classList.remove('scroll-blocked')
 
-        getIfNotExist(mondayString)
+        getIfNotExist(mondayString, univer)
 
 
         let count_enter = Number.parseInt(localStorage.getItem("count_enter"))
@@ -131,13 +146,15 @@ const ViewNew = ({addToCompare}) => {
         if (todayDate) {
             const mondayString = getMondayOfWeek(todayDate)
             const week = getWeek(mondayString)
-
-
-            const group = groups.find(group => group.id === Number(groupId) && group.date === mondayString)
+            console.log(groups)
+            const group = groups.find(group => {
+                console.log(group.id, groupId, group.date)
+                return group.id === groupId && group.date === mondayString
+            })
             let sked = {}
             Object.assign(sked, week)
             setCurrentWeek(Object.keys(week))
-
+            console.log(currentWeek)
             if (group) {
                 Object.keys(group.sked).map(date => sked[date] = group.sked[date])
                 setCurrentSked({
@@ -147,6 +164,7 @@ const ViewNew = ({addToCompare}) => {
                     sked
                 })
             }
+            console.log(currentSked)
             setIsLoading(false)
             // addScrollLimit()
             scrollToStart()
@@ -159,7 +177,8 @@ const ViewNew = ({addToCompare}) => {
         const currentDate = dayjs(todayDate).startOf('week').add(1, 'week')
         const dateString = currentDate.startOf('week').format('YYYY-MM-DD')
         setTodayDate(dateString)
-        getIfNotExist(dateString)
+        const univer = searchParams.get('u')
+        getIfNotExist(dateString, univer)
         setMode('next')
     }
 
@@ -168,7 +187,8 @@ const ViewNew = ({addToCompare}) => {
         const currentDate = dayjs(todayDate).add(-1, 'week')
         const dateString = currentDate.format('YYYY-MM-DD')
         setTodayDate(dateString)
-        getIfNotExist(dateString)
+        const univer = searchParams.get('u')
+        getIfNotExist(dateString, univer)
         setMode('prev')
     }
 
