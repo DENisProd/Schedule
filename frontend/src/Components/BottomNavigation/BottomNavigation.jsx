@@ -8,8 +8,8 @@ const BottomNavigation = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const groupId = Number(localStorage.getItem("groupId"));
-    const myGroup = Number(localStorage.getItem("my-group"));
+    const groupId = JSON.parse(localStorage.getItem("groupId"))
+    const myGroup = JSON.parse(localStorage.getItem("my-group"))
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selected, setSelected] = useState('/')
@@ -64,10 +64,11 @@ const BottomNavigation = () => {
             <div className={cn(selected.indexOf('group') !== -1  && styles.selected)}
                  onClick={() => {
                      setIsModalOpen(false)
+                     console.log(myGroup)
                      if (myGroup) {
-                         navigate("/group/" + myGroup)
+                         navigate("/group/" + myGroup.id + '?u=' + myGroup.university)
                      } else if (groupId) {
-                         navigate("/group/" + groupId)
+                         navigate("/group/" + groupId.id + '?u=' + myGroup.university)
                      } else {
                          navigate("/")
                      }

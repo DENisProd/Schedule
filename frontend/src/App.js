@@ -52,11 +52,11 @@ function App() {
         const href = window.location.href.split('/')
         //console.log(href)
         const domainArray = href.slice(0,3)
-        const groupId = Number(localStorage.getItem("groupId"));
-        const myGroup = Number(localStorage.getItem("my-group"));
+        const groupId = JSON.parse(localStorage.getItem("groupId"))
+        const myGroup = JSON.parse(localStorage.getItem("my-group"))
 
-        if (myGroup && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + myGroup
-        else if (groupId && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + groupId
+        if (myGroup && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + myGroup.id + '?u=' + myGroup.university
+        else if (groupId && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + groupId.id + '?u=' + myGroup.university
 
         if(IOS()) document.getElementById('root').classList.add('ios-detected')
         

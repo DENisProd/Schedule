@@ -113,26 +113,35 @@ function GetInfoAndRender({tab, value, university, setLoaded}) {
 
     const [isLoaded, setIsLoaded] = useState(false)
 
-    useEffect(() => {
+    const searchValue = () => {
         setLoaded(false)
         if (value) {
-            if (search.groups) {
+            if (search.groups.data) {
                 setGroupList([])
                 setGroupList(search.groups.data.filter(group => {
                     return group.name.toLowerCase().includes(value.toLowerCase())
                 }))
             }
-
-            setTeachersList(search.teachers.filter(teacher => {
-                return teacher.name.toLowerCase().includes(value.toLowerCase())
-            }))
-            setRoomsList(search.rooms.filter(room => {
-                return room?.name?.toLowerCase().includes(value.toLowerCase())
-            }))
+            if (search.teachers.data) {
+                setTeachersList(search.teachers.data.filter(teacher => {
+                    return teacher.name.toLowerCase().includes(value.toLowerCase())
+                }))
+            }
+            if (search.rooms.data) {
+                setRoomsList([])
+                setRoomsList(search.rooms.data.filter(room => {
+                    return room.name.toLowerCase().includes(value.toLowerCase())
+                }))
+            }
         }
+    }
+
+    useEffect(() => {
+        searchValue()
     }, [value])
 
     useEffect(() => {
+        searchValue()
         if (search.groups) {
             setGroupList(search.groups.data)
             setIsLoaded(true)
@@ -141,16 +150,18 @@ function GetInfoAndRender({tab, value, university, setLoaded}) {
     }, [search.groups, isLoaded])
 
     useEffect(() => {
+        searchValue()
         if (search.teachers.data) {
-            setTeachersList(search.teachers.data.data)
+            setTeachersList(search.teachers.data)
             setIsLoaded(true)
             setLoaded(true)
         }
     }, [search.teachers, isLoaded])
 
     useEffect(() => {
+        searchValue()
         if (search.rooms.data) {
-            setRoomsList(search.rooms.data.data)
+            setRoomsList(search.rooms.data)
             setIsLoaded(true)
             setLoaded(true)
         }

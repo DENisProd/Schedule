@@ -11,6 +11,11 @@ const favoritesList = [
     "аудитории"
 ]
 
+const universities = {
+    "dstu": "ДГТУ",
+    "rsue": "РГЭУ"
+}
+
 const FavoritesNew = () => {
     const navigate = useNavigate();
 
@@ -46,7 +51,7 @@ const FavoritesNew = () => {
 
     const getMyGroup = () => {
         const myGroupFromStorage = localStorage.getItem("my-group");
-        if (myGroupFromStorage) setIsMyGroup(Number(myGroupFromStorage));
+        if (myGroupFromStorage) setIsMyGroup(myGroupFromStorage);
     }
 
     const chooseButtonHandler = (state) => {
@@ -54,15 +59,15 @@ const FavoritesNew = () => {
             setIsGroupChoose(state)
     }
 
-    const chooseHandler = (event) => {
-        localStorage.setItem("my-group", event.target.name);
+    const chooseHandler = (group) => {
+        localStorage.setItem("my-group", JSON.stringify(group));
         setIsGroupChoose(false)
         getMyGroup()
     }
 
     const removeFavorite = (id) => {
         let groupFromStorage = JSON.parse(localStorage.getItem("favorites"))
-        groupFromStorage = groupFromStorage.filter(gr => gr.id !== id)
+        groupFromStorage = groupFromStorage.filter(gr => (gr.id !== id))
         localStorage.setItem("favorites", JSON.stringify(groupFromStorage))
         loadFavorites()
         setIsGroupChoose(false)
@@ -88,7 +93,10 @@ const FavoritesNew = () => {
                                                     {group.name}
                                                 </div>
                                                 <div className={styles.faculty}></div>
-                                                <div className={styles.university}></div>
+                                                {/*<div className={styles.university}>*/}
+                                                <div>
+                                                    {universities[group.university]}
+                                                </div>
                                                 <div className={styles.actions}>
                                                     <button name={'btn' + group.id} className={styles.btn}
                                                             onClick={() => removeFavorite(group.id)}>X
@@ -98,7 +106,7 @@ const FavoritesNew = () => {
                                                         className={styles.btn}
                                                         name={group.id}
                                                         onChange={(e) =>
-                                                            chooseHandler(e)
+                                                            chooseHandler(group)
                                                         }
                                                     />
                                                 </div>
@@ -108,12 +116,14 @@ const FavoritesNew = () => {
                                         ) : (
                                             <div className={cn(styles.tile, myGroup === group.id && styles.my)}
                                                  key={group.id}
-                                                 onClick={() => navigate("/group/" + group.id)}>
+                                                 onClick={() => navigate("/group/" + group.id + '?u=' + group.university)}>
                                                 <div className={styles.name}>
                                                     {group.name}
                                                 </div>
                                                 <div className={styles.faculty}></div>
-                                                <div className={styles.university}></div>
+                                                <div className={styles.university}>
+                                                    {universities[group.university]}
+                                                </div>
                                                 <div className={styles.actions}></div>
 
 

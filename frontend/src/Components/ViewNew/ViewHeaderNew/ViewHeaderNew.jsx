@@ -15,7 +15,7 @@ const daysOfWeek = [
     "вс",
 ]
 
-function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare}) {
+function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, university}) {
 
     const [holidays, setHolidays] = useState([])
     const [favorite, setFavorite] = useState(false)
@@ -67,7 +67,9 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare})
             if (favoritesGroups === null) favoritesGroups = [];
             favoritesGroups.push({
                 name: info.name,
-                id: info.id
+                id: info.id,
+                faculty: info?.faculty,
+                university: university
             })
             let favoritesFiltered = favoritesGroups.filter(gr => gr.hasOwnProperty('name') === true)
             localStorage.removeItem("favorites");

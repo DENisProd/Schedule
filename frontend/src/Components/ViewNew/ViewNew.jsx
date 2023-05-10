@@ -54,6 +54,7 @@ const ViewNew = ({addToCompare}) => {
     const [isLoading, setIsLoading] = useState(false)
     const [mode, setMode] = useState(null)
     const {settings, setSettings} = useContext(SettingsContext)
+    const [university, setUniversity] = useState(searchParams.get('u'))
 
     const currentDateString = dayjs().format('YYYY-MM-DD')
 
@@ -93,16 +94,12 @@ const ViewNew = ({addToCompare}) => {
     const getIfNotExist = (date, univer) => {
         const isExists = isGroupExists(groupId, date, univer)
         if (!isExists) {
-            // console.log("dispatch")
-            console.log(univer)
             dispatch(fetchGroups(groupId, date, univer))
         }
         else {
-            console.log('nonono')
             const mondayString = getMondayOfWeek(date)
             setTodayDate(mondayString)
             // updateSchedule()
-
         }
     }
 
@@ -112,6 +109,7 @@ const ViewNew = ({addToCompare}) => {
         getInfo()
         setIsLoading(true)
         let mondayString
+
         if (!todayDate) {
             mondayString = getMondayOfWeek()
             // console.log(mondayString)
@@ -123,7 +121,7 @@ const ViewNew = ({addToCompare}) => {
         const univer = searchParams.get('u')
 
         const week = getWeek(mondayString)
-        // console.log(week)
+
         setCurrentSked({sked: week})
 
         document.getElementById('root').classList.remove('scroll-blocked')
@@ -146,15 +144,14 @@ const ViewNew = ({addToCompare}) => {
         if (todayDate) {
             const mondayString = getMondayOfWeek(todayDate)
             const week = getWeek(mondayString)
-            console.log(groups)
+
             const group = groups.find(group => {
-                console.log(group.id, groupId, group.date)
                 return group.id === groupId && group.date === mondayString
             })
             let sked = {}
             Object.assign(sked, week)
             setCurrentWeek(Object.keys(week))
-            console.log(currentWeek)
+
             if (group) {
                 Object.keys(group.sked).map(date => sked[date] = group.sked[date])
                 setCurrentSked({
@@ -164,7 +161,6 @@ const ViewNew = ({addToCompare}) => {
                     sked
                 })
             }
-            console.log(currentSked)
             setIsLoading(false)
             // addScrollLimit()
             scrollToStart()
@@ -246,7 +242,7 @@ const ViewNew = ({addToCompare}) => {
 
     return (
         <div className={styles.container}>
-            <ViewHeaderNew week={currentWeek} info={currentSked} prev={getPrev} next={getNext} lookAt={lookAt} scrollTo={scrollTo} addToCompare={addToCompare}/>
+            <ViewHeaderNew university={university} week={currentWeek} info={currentSked} prev={getPrev} next={getNext} lookAt={lookAt} scrollTo={scrollTo} addToCompare={addToCompare}/>
             {groups.length > 0 ?
                 <div className={cn(styles.view_scroll, settings?.calDir === "top" && styles.top)} ref={containerRef} id={"scrollArea"}
                      // onTouchEnd={() => setIsTouchEnd(true)}
