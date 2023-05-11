@@ -93,8 +93,9 @@
         background: var(--background-tile);
         //padding: 2%;
         border-radius: 1em;
-        height: 4em;
+        height: 4.5rem;
         overflow: hidden;
+
 
         @media screen and (max-width: 1024px) {
           & {
@@ -105,11 +106,15 @@
         & div {
           display: flex;
           flex-direction: column;
-          justify-content: space-evenly;
+          //justify-content: space-evenly;
+          padding-top: 0.5rem;
+          gap: 0.4rem;
           text-align: center;
           flex-grow: 1;
           cursor: pointer;
           font-weight: 600;
+          position: relative;
+          user-select: none;
           //background: #D62648;
 
           &.current {
@@ -119,12 +124,30 @@
               color: var(--text-color);
               background: var(--red);
             }
+
+            & .subject_number {
+              background: var(--red);
+              font-weight: 700;
+            }
           }
 
           &.holiday {
             color: var(--red);
           }
+
+          & .subject_number {
+            background: var(--lavanda);
+            position: absolute;
+            right: 0.2rem;
+            bottom: 0.2rem;
+            //text-align: right;
+            padding: 0.2rem 0.4rem;
+            font-size: 0.7rem;
+            border-radius: 1rem;
+          }
         }
+
+
 
         & p {
           margin: 0;

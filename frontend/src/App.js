@@ -11,7 +11,7 @@ import BottomNavigation from "./Components/BottomNavigation/BottomNavigation";
 import FavoritesNew from "./Components/FavoritesNew/FavoritesNew";
 import ViewNew from "./Components/ViewNew/ViewNew";
 import {SettingsContext} from "./providers/SettingsProvider";
-
+import {checkGroups} from "./utils/localStorageHelpers";
 
 function App() {
     const [isOffline, setIsOffline] = useState(false)
@@ -48,12 +48,16 @@ function App() {
         console.log(groupsList)
     }
 
+
+
     useEffect(() => {
         const href = window.location.href.split('/')
         //console.log(href)
+        const groupId = checkGroups("groupId")
+        const myGroup = checkGroups("my-group")
         const domainArray = href.slice(0,3)
-        const groupId = JSON.parse(localStorage.getItem("groupId"))
-        const myGroup = JSON.parse(localStorage.getItem("my-group"))
+
+        // const myGroup = JSON.parse(localStorage.getItem("my-group"))
 
         if (myGroup && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + myGroup.id + '?u=' + myGroup.university
         else if (groupId && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + groupId.id + '?u=' + myGroup.university

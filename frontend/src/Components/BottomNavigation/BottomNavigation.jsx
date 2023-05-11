@@ -3,13 +3,14 @@ import cn from "classnames"
 import {useEffect, useState} from "react";
 import Menu from "../Menu/Menu";
 import {useLocation, useNavigate} from "react-router-dom";
+import {checkGroups} from "../../utils/localStorageHelpers";
 
 const BottomNavigation = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const groupId = JSON.parse(localStorage.getItem("groupId"))
-    const myGroup = JSON.parse(localStorage.getItem("my-group"))
+    const groupId = checkGroups("groupId")
+    const myGroup = checkGroups("my-group")
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selected, setSelected] = useState('/')

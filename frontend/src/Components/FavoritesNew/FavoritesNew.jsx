@@ -4,6 +4,7 @@ import React, {useEffect, useState} from "react";
 import styles from "./favorites.module.scss"
 import SearchModule from "./Search/SearchModule";
 import cn from "classnames";
+import {checkGroups} from "../../utils/localStorageHelpers";
 
 const favoritesList = [
     "группы",
@@ -50,7 +51,7 @@ const FavoritesNew = () => {
     })
 
     const getMyGroup = () => {
-        const myGroupFromStorage = localStorage.getItem("my-group");
+        const myGroupFromStorage = checkGroups("my-group")
         if (myGroupFromStorage) setIsMyGroup(myGroupFromStorage);
     }
 
@@ -87,12 +88,13 @@ const FavoritesNew = () => {
                                 {groupsList.map((group) => (
                                     <>
                                         {isGroupChoose ? (
-                                            <div className={cn(styles.tile, myGroup === group.id && styles.my)}
+                                            <div className={cn(styles.tile, myGroup.id === group.id && styles.my)}
                                                  key={group.id}>
                                                 <div className={styles.name}>
                                                     {group.name}
                                                 </div>
-                                                <div className={styles.faculty}></div>
+                                                <div className={styles.faculty}>{group.faculty}</div>
+
                                                 {/*<div className={styles.university}>*/}
                                                 <div>
                                                     {universities[group.university]}
@@ -114,17 +116,17 @@ const FavoritesNew = () => {
 
                                             </div>
                                         ) : (
-                                            <div className={cn(styles.tile, myGroup === group.id && styles.my)}
+                                            <div className={cn(styles.tile, myGroup.id === group.id && styles.my)}
                                                  key={group.id}
                                                  onClick={() => navigate("/group/" + group.id + '?u=' + group.university)}>
                                                 <div className={styles.name}>
                                                     {group.name}
                                                 </div>
-                                                <div className={styles.faculty}></div>
+                                                <div className={styles.actions}></div>
+                                                <div className={styles.faculty}>{group.faculty}</div>
                                                 <div className={styles.university}>
                                                     {universities[group.university]}
                                                 </div>
-                                                <div className={styles.actions}></div>
 
 
                                             </div>

@@ -124,6 +124,7 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, 
                                         className={cn(lookAt === day && styles.current, holidays.includes(day) && styles.holiday)}>
                                         <p>{day.split('-')[2]}</p>
                                         <p className={styles.day_name}>{daysOfWeek[index]}</p>
+                                        {info.sked[day] && info.sked[day].length>0 && <span className={styles.subject_number}>{info.sked[day].length}</span>}
                                     </div>
                                 )}
                             </div>
@@ -172,6 +173,7 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, 
                                     <div onClick={() => dateClick(day)} className={cn(lookAt === day && styles.current, holidays.includes(day) && styles.holiday)}>
                                         <p>{day.split('-')[2]}</p>
                                         <p className={styles.day_name}>{daysOfWeek[index]}</p>
+                                        {info.sked[day] && info.sked[day].length>0 && <span className={styles.subject_number}>{info.sked[day].length}</span>}
                                     </div>
                                 )}
                             </div>

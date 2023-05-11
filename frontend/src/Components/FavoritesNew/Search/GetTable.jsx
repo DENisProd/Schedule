@@ -1,5 +1,6 @@
 import {useNavigate} from "react-router-dom";
 import React from "react";
+import {checkGroups} from "../../../utils/localStorageHelpers";
 
 const GetTable = ({tab, groupsList, teachersList, roomsList, university}) => {
     const navigate = useNavigate()
@@ -16,7 +17,7 @@ const GetTable = ({tab, groupsList, teachersList, roomsList, university}) => {
                     </thead>
 
                     <tbody>
-                    {groupsList.length>0 ? groupsList.slice(0, 100).map(group =>
+                    {groupsList && groupsList.length>0 ? groupsList.slice(0, 100).map(group =>
                         <tr key={group.groupID + group.name} onClick={() => {
                             let _group
 
@@ -44,7 +45,8 @@ const GetTable = ({tab, groupsList, teachersList, roomsList, university}) => {
                             if (!searchList) searchList = []
                             searchList.push(_group)
                             localStorage.setItem("searchList", JSON.stringify(searchList))
-                            const myGroup = localStorage.getItem('my-group')
+                            // const myGroup = localStorage.getItem('my-group')
+                            const myGroup = checkGroups("my-group")
                             if (!myGroup) {
                                 const fav = [_group]
                                 localStorage.setItem('favorites', JSON.stringify(fav))
@@ -75,7 +77,7 @@ const GetTable = ({tab, groupsList, teachersList, roomsList, university}) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {teachersList.length>0 ? teachersList?.slice(0, 100).map(teachers =>
+                    {teachersList && teachersList.length>0 ? teachersList?.slice(0, 100).map(teachers =>
                         <tr key={teachers.id}
                             onClick={() => {
                                 navigate('/teacher/' + teachers.id)
@@ -100,7 +102,7 @@ const GetTable = ({tab, groupsList, teachersList, roomsList, university}) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {roomsList.length > 0 ? roomsList.slice(0, 100).map(room =>
+                    {roomsList && roomsList.length > 0 ? roomsList.slice(0, 100).map(room =>
                             <tr onClick={() => {
                                 navigate('/room/' + room.id)
                             }
