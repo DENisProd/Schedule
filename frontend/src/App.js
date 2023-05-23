@@ -12,6 +12,9 @@ import FavoritesNew from "./Components/FavoritesNew/FavoritesNew";
 import ViewNew from "./Components/ViewNew/ViewNew";
 import {SettingsContext} from "./providers/SettingsProvider";
 import {checkGroups} from "./utils/localStorageHelpers";
+import ModalWindow from "./Components/Menu/Modal/ModalWindow";
+
+export const ver = "1.0.3"
 
 function App() {
     const [isOffline, setIsOffline] = useState(false)
@@ -19,6 +22,8 @@ function App() {
     const [groupsList, setGroupsList] = useState({})
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     const {settings, setSettings} = useContext(SettingsContext)
+
+    const [updateNewsShow, setUpdateNewsShow] = useState(false)
 
     function IOS() {
         return [
@@ -59,19 +64,25 @@ function App() {
 
         // const myGroup = JSON.parse(localStorage.getItem("my-group"))
 
-        if (myGroup && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + myGroup.id + '?u=' + myGroup.university
-        else if (groupId && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + groupId.id + '?u=' + myGroup.university
+        if (myGroup && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + myGroup.id + '?u=' + (myGroup?.university || 'dstu')
+        else if (groupId && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + groupId.id + '?u=' + (myGroup?.university || 'dstu')
 
         if(IOS()) document.getElementById('root').classList.add('ios-detected')
+
+        const version = localStorage.getItem("version")
+        if (version !== ver) setUpdateNewsShow(true)
         
         window.addEventListener("offline", function () {
             setIsOffline(true)
         });
     }, []);
 
+    try {
+
     return (
             <BrowserRouter>
                 {isOffline && <div>offline</div>}
+                { updateNewsShow && <ModalWindow setIsModalOpen={setUpdateNewsShow}/>}
                 <Routes>
                     {/*<Route element={}/>*/}
                     <Route path="/" element={<FavoritesNew />} />
@@ -93,6 +104,12 @@ function App() {
                 {/*<img className="bg-img" src={bg}/>*/}
             </BrowserRouter>
     )
+
+    } catch (e) {
+        return(
+            <h3>{e.toString()}</h3>
+        )
+    }
 }
 
 export default App;

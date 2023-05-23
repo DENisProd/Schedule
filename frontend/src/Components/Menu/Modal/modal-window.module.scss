@@ -1,0 +1,195 @@
+@import "../../../colors";
+@import "../../../animations";
+
+$small: 600px;
+$medium: 1200px;
+
+.menu_container {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 7;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(4);
+  font-family: 'Open Sans', sans-serif;
+
+  & h2 {
+    margin-block-start: 0;
+    margin: 0;
+    font-weight: 600;
+    text-align: center;
+    user-select: none;
+
+    @media screen and (max-width: $small) {
+      font-size: 1.4em;
+    }
+    @media screen and (min-width: $medium) {
+      font-size: 1.6em;
+    }
+  }
+
+  & .background {
+    //background: rgba(0,0,0,0.35);
+    position: fixed;
+    backdrop-filter: blur(5px);
+    width: 100vw;
+    height: 100%;
+    z-index: 8;
+    animation: 0.4s show2 ease-in-out;
+    user-select: none;
+
+    .menu_container.closed & {
+      animation: 0.3s closeAnim2 ease-in-out;
+    }
+  }
+
+  & .content {
+    position: fixed;
+    //transform: translateX(35%);
+    bottom: calc(var(--nav-height) - 50px);
+    z-index: 100;
+    max-width: 600px;
+    width: 88%;
+    height: 65vh;
+    background: var(--menu-bg);
+    color: var(--text-color);
+    border-radius: 20px 20px 0 0;
+    padding: 30px 6%;
+    margin: 0 auto;
+    animation: 0.3s show ease-in-out;
+    transition: all 0.3s ease-in-out;
+
+    &.settings {
+      height: 80vh;
+    }
+
+    & p {
+      text-align: justify;
+    }
+    & .img{
+      text-align: center;
+    }
+    & .img svg{
+      align-self: center;
+      width: 50%;
+      height: 10rem;
+      fill: var(--background-color);
+    }
+
+    @media screen and (max-width: $small) {
+
+    }
+    @media screen and (min-width: $medium) {
+      left: 24%
+    }
+
+    & .setting_icon {
+      position: absolute;
+      //bottom: 0;
+      //position: fixed;
+      gap: 1em;
+      align-items: end;
+      bottom: 4.2em;
+      //left: 0;
+      //width: 88%;
+      width: 86%;
+      height: 3em;
+      //padding: 0 6% 1em 6%;
+      display: flex;
+      justify-content: space-between;
+      background: linear-gradient(0deg, var(--menu-bg) 50%, rgba(244,66,98,0) 100%);
+
+      & svg {
+        fill: var(--background-color);
+        width: 3em;
+        height: 3em;
+        transition: all 0.3s ease-in-out;
+
+        &.active {
+          fill: $lavanda;
+        }
+      }
+    }
+
+
+    &.closed {
+      animation: 0.3s closeAnim ease-in-out;
+    }
+
+    & .exit_btn {
+      background: none;
+      //border: 2px solid $light-gray;
+      border: none;
+      color: var(--background-color);
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 1.5em;
+      cursor: pointer;
+      user-select: none;
+      vertical-align: middle;
+      padding-bottom: 0.2em;
+    }
+
+    & .card_wrapper {
+      display: flex;
+      gap: 1em;
+      flex-wrap: wrap;
+      width: 90%;
+      margin: 1em auto 0 auto;
+      -webkit-touch-callout: none !important;
+      flex-flow: wrap;
+      justify-content: center;
+      transition: all 0.3s ease-in-out;
+
+      @media screen and (max-width: $small) {
+        //width: 20em;
+      }
+      @media screen and (min-width: $medium) {
+        //left: 24%
+      }
+
+
+      & .card {
+        width: 6em;
+        height: 6em;
+        //background: $light-pink;
+        text-align: center;
+        //pointer-events: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        -ms-user-select: none;
+        user-select: none;
+        cursor: pointer;
+        background: none;
+        border: none;
+
+
+        & img {
+          width: 4em;
+          height: 4em;
+          -moz-user-select: none;
+          -webkit-user-select: none !important;
+          -webkit-touch-callout: none !important;
+          -ms-user-select: none;
+          user-select: none;
+          pointer-events: none;
+
+        }
+
+        & h4 {
+          margin-block-start: 0.1em;
+          text-align: center;
+          position: relative;
+          bottom: 0;
+          font-weight: 500;
+          color: var(--text-color);
+        }
+      }
+    }
+  }
+}
+
+

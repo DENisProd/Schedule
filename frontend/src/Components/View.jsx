@@ -15,6 +15,7 @@ import EuropeanCalendar from "./View/Calendar/EuropeanCalendar";
 import Calendar2 from "./View/Calendar/Calendar2";
 import {groupByDate, groupByDateWithSubgroups, groupNew, groupSchedule} from "../utils/groupHelpers";
 import {sendStats} from "../utils/sendStats";
+import Loader2 from "./Loader/Loader2";
 
 const currentVersion = 0.73
 
@@ -353,9 +354,9 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
                                     )}
                                 </>
                             ) : (
-                                <>
-                                    <Loader/>
-                                </>
+                                <div style={{marginTop: '10rem'}}>
+                                    <Loader2/>
+                                </div>
                             )}
                         </>
                         :

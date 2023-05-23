@@ -10,5 +10,6 @@ export const URLS = {
     GET_TEACHERS: BASE_URL + "raspTeacherlist",
     GET_ROOMS: BASE_URL + "raspAudlist",
     GET_UNIVERSITY: BASE_URL + "",
-    STATS: "https://schedule.darksecrets.ru/api/stats/"
+    STATS: "https://schedule.darksecrets.ru/api/stats/",
+    ERRORS_LOG: "https://schedule.darksecrets.ru/api/error/"
 }

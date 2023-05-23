@@ -5,8 +5,7 @@ import cn from "classnames";
 import ToggleButton from "../ToggleButton/ToggleButton";
 
 import {SettingsContext} from "../../../providers/SettingsProvider";
-
-const version = "0.9b4"
+import {ver} from "../../../App";
 
 const SettingsScreen = () => {
     const {settings, setSettings} = useContext(SettingsContext)
@@ -39,7 +38,7 @@ const SettingsScreen = () => {
         <div className={styles.settings_cont}>
             <h5>Настройки</h5>
             <div className={cn(styles.setting_line, styles.setting_container)}>
-                <span>Версия приложения: {version}</span>
+                <span>Версия приложения: {ver}</span>
             </div>
 
             <div className={cn(styles.setting_line, styles.setting_container)}>

@@ -3,6 +3,8 @@ import {useCallback, useEffect, useState} from "react"
 import axios from "axios"
 import User from "./User"
 import UAParser from "ua-parser-js"
+import Dashboard from "./Dashboard/Dashboard";
+import ErrorBoundary from "../../utils/ErrorBoundary";
 
 const get_url = "https://schedule.darksecrets.ru/api/all/"
 
@@ -34,6 +36,30 @@ export default function Admin() {
 
 
         })
+    }
+
+    const GetCountByDay = () => {
+        let object = {}
+        let sum = 0
+        data.map(user => {
+            const date = user.created.split('T')[0]
+            if (object[date]) {
+                object[date]++
+            } else {
+                object[date] = 1
+            }
+        })
+
+        Object.keys(object).map(val => {
+            sum += Number.parseInt(object[val])
+        })
+        console.log(object)
+        console.log(sum)
+
+        return (
+            // <Dashboard _data={object}/>
+            <div>DashBoard</div>
+        )
     }
 
     const frequencies = arr =>
@@ -115,7 +141,8 @@ export default function Admin() {
         console.log(devices)
 
         let filteredTopVisits = topVisits.filter(value =>  value.enterCount > 20)
-        console.log(filteredTopVisits)
+        let filteredTopVisits2 = filteredTopVisits.map(({_id, userAgent, ipAdress, ...obj}) => obj)
+        console.log(filteredTopVisits2)
         const uniqByUserAgent = uniqByProp(setUniqueData,'userAgent')
         const getUniqAndPrint = compose(uniqByUserAgent)
         //setData(filteredTopVisits)
@@ -134,31 +161,33 @@ export default function Admin() {
             <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" name="password"/>
             <button onClick={enter}>Вход</button>
             {isDataLoaded &&
-
-                <div className="tiles-main-container" id={"admin_container"}>
-                    <h4>Уникальных пользователей: {eniqueUsers}</h4>
-                    <h4>Количество групп, которые искали: {searchUnion.length}</h4>
-                    {isFreqCalculated && <div><h5>Частота Найденных</h5><ul>{topArrToLi(freqSearchUnion)}</ul></div>}
-                    <h4>Количество групп, которые добавили в избранное: {favoritesUnion.length}</h4>
-                    {isFreqCalculated && <div><h5>Частота Добавленных в избранное</h5><ul>{topArrToLi(freqFavoritesUnion)}</ul></div>}
-                    <table>
-                        <thead>
-                        <tr>
-                            {/*<td>ID</td>*/}
-                            <td>User Agent</td>
-                            <td>IP</td>
-                            <td>searchedGroups</td>
-                            <td>favoriteGroups</td>
-                            <td>enterCount</td>
-                            <td>group</td>
-                            <td>created</td>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {data.map((user) => <User user={user}/>)}
-                        </tbody>
-                    </table>
-                </div>
+<ErrorBoundary>
+    <div className="tiles-main-container" id={"admin_container"}>
+        <h4>Уникальных пользователей: {eniqueUsers}</h4>
+        <h4>Количество групп, которые искали: {searchUnion.length}</h4>
+        <GetCountByDay/>
+        {isFreqCalculated && <div><h5>Частота Найденных</h5><ul>{topArrToLi(freqSearchUnion)}</ul></div>}
+        <h4>Количество групп, которые добавили в избранное: {favoritesUnion.length}</h4>
+        {isFreqCalculated && <div><h5>Частота Добавленных в избранное</h5><ul>{topArrToLi(freqFavoritesUnion)}</ul></div>}
+        <table>
+            <thead>
+            <tr>
+                {/*<td>ID</td>*/}
+                <td>User Agent</td>
+                <td>IP</td>
+                <td>searchedGroups</td>
+                <td>favoriteGroups</td>
+                <td>enterCount</td>
+                <td>group</td>
+                <td>created</td>
+            </tr>
+            </thead>
+            <tbody>
+            {data.map((user) => <User user={user}/>)}
+            </tbody>
+        </table>
+    </div>
+</ErrorBoundary>
             }
         </div>
     )

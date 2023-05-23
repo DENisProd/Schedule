@@ -1,6 +1,6 @@
 .container_wrapper {
   position: fixed;
-  height: 10em;
+  height: 11em;
   width: 100%;
   bottom: calc(var(--nav-height) - 2px);
   backdrop-filter: blur(6px);
@@ -67,6 +67,10 @@
           height: 1.5rem;
         }
 
+        &.compare svg{
+          fill: var(--green);
+        }
+
         &.favorite {
           fill: var(--red);
         }
@@ -78,6 +82,7 @@
       width: 100%;
       justify-content: space-evenly;
       gap: 2%;
+      margin-bottom: 0.5rem;
 
       & button {
         background: none;
@@ -90,11 +95,14 @@
         display: flex;
         width: 90%;
         justify-content: space-evenly;
-        background: var(--background-tile);
+        //background: var(--background-tile);
+        border: 2px var(--background-tile) solid;
+        box-shadow: var(--box-shadow-light);
         //padding: 2%;
         border-radius: 1em;
         height: 4.5rem;
         overflow: hidden;
+
 
 
         @media screen and (max-width: 1024px) {
@@ -118,11 +126,11 @@
           //background: #D62648;
 
           &.current {
-            background: var(--lavanda);
+            background: var(--light-lavanda);
 
             &.holiday {
               color: var(--text-color);
-              background: var(--red);
+              background: var(--light-red);
             }
 
             & .subject_number {
@@ -163,7 +171,7 @@
 
   &.top {
     top: 0;
-    height: 9em;
+    height: 9.7rem;
 
     & .container {
       border-bottom: var(--background-tile) 2px solid;

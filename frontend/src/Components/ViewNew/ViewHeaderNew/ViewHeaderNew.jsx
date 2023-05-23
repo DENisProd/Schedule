@@ -92,7 +92,11 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, 
                         <div className={styles.title_container}>
                             <div
                                 className={cn(styles.icon_button, inCompareList && styles.compare)}
-                                onClick={() => addToCompare(info.id, info.name)}>
+                                onClick={() => {
+                                    addToCompare(info.id, info.name)
+                                    setInCompareList(true)
+                                }
+                                }>
                                 <svg
                                     version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
                                     width="800px" height="800px" viewBox="0 0 25.361 25.361">
@@ -116,7 +120,11 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, 
                             </div>
                         </div>
                         <div className={styles.calendar_container}>
-                            <button onClick={prev}>{"<"}</button>
+                            <button onClick={prev}>
+                                <svg width="11" height="17" viewBox="0 0 11 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9 2L2.77524 8.01134C2.35679 8.41544 2.37025 9.09005 2.80448 9.47714L9 15" stroke="var(--menu-bg)" strokeWidth="3" strokeLinecap="round"/>
+                                </svg>
+                            </button>
 
                             <div className={styles.calendar_mini}>
                                 {week.map((day, index) =>
@@ -129,7 +137,11 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, 
                                 )}
                             </div>
 
-                            <button onClick={next}>{">"}</button>
+                            <button onClick={next}>
+                                <svg width="11" height="17" viewBox="0 0 11 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 2L8.22476 8.01134C8.64321 8.41544 8.62975 9.09005 8.19552 9.47714L2 15" stroke="var(--menu-bg)" strokeWidth="3" strokeLinecap="round"/>
+                                </svg>
+                            </button>
                         </div>
                         <div className={styles.bottom}>
                             <button>{getMonth(week[0])}</button>
@@ -140,7 +152,11 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, 
                         <div className={styles.title_container}>
                             <div
                                 className={cn(styles.icon_button, inCompareList && styles.compare)}
-                                onClick={addToCompare}>
+                                onClick={() => {
+                                    addToCompare(info.id, info.name)
+                                    setInCompareList(true)
+                                }
+                                }>
                                 <svg
                                     version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
                                     width="800px" height="800px" viewBox="0 0 25.361 25.361">
@@ -166,7 +182,11 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, 
                             <button>{getMonth(week[0])}</button>
                         </div>
                         <div className={styles.calendar_container}>
-                            <button onClick={prev}>{"<"}</button>
+                            <button onClick={prev}>
+                                <svg width="11" height="17" viewBox="0 0 11 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9 2L2.77524 8.01134C2.35679 8.41544 2.37025 9.09005 2.80448 9.47714L9 15" stroke="var(--menu-bg)" strokeWidth="3" strokeLinecap="round"/>
+                                </svg>
+                            </button>
 
                             <div className={styles.calendar_mini}>
                                 {week.map((day, index) =>
@@ -178,7 +198,11 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, 
                                 )}
                             </div>
 
-                            <button onClick={next}>{">"}</button>
+                            <button onClick={next}>
+                                <svg width="11" height="17" viewBox="0 0 11 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 2L8.22476 8.01134C8.64321 8.41544 8.62975 9.09005 8.19552 9.47714L2 15" stroke="var(--menu-bg)" strokeWidth="3" strokeLinecap="round"/>
+                                </svg>
+                            </button>
                         </div>
                     </>
                 }
