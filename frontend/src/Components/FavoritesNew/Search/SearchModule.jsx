@@ -22,9 +22,15 @@ const universities = {
     "rsue": "Ростовский государственный экономический университет (РГЭУ РИНХ)"
 }
 
+const univerTabs = {
+    'dstu': {0: true, 1: true, 2: true},
+    'rsue': {0: true, 1: false, 2: false},
+}
+
 const SearchModule = ({_setActiveTab, _setIsSearching}) => {
 
     const [isSearching, setIsSearching] = useState(false)
+    const [isLoaded, setIsLoaded] = useState(false)
     const searchInput = createRef()
 
     let timeout = null
@@ -50,14 +56,9 @@ const SearchModule = ({_setActiveTab, _setIsSearching}) => {
         }, 200)
     }
 
-    const cancelTimeout = () => {
-        clearTimeout(timeout)
-    }
+    const cancelTimeout = () => clearTimeout(timeout)
+    const onSelectUniversity = (e) => setUniversity(e)
 
-    const onSelectUniversity = (e) => {
-        console.log(e)
-        setUniversity(e)
-    }
 
     return (
         <>
@@ -70,6 +71,7 @@ const SearchModule = ({_setActiveTab, _setIsSearching}) => {
                            _setIsSearching(true)
                        }
                        }
+                       // disabled={isLoaded}
                        onBlur={() => blurWithTimeout()}
                        className={styles.search_input}
                        placeholder={"Поиск по " + searchList[activeTab]}
@@ -78,19 +80,19 @@ const SearchModule = ({_setActiveTab, _setIsSearching}) => {
                        ref={searchInput}
                 />
             }>
-                <TabContent label="Группа">
-                    <ConditionLayer state={isSearching}>
-                        <GetInfoAndRender tab={activeTab} value={value} university={university}/>
+                <TabContent label="Группа" enabled={univerTabs[university][0]}>
+                    <ConditionLayer state={isSearching} enabled={univerTabs[university][0]}>
+                        <GetInfoAndRender setLoaded={setIsLoaded} tab={activeTab} value={value} university={university}/>
                     </ConditionLayer>
                 </TabContent>
-                <TabContent label="Преподаватель">
-                    <ConditionLayer state={isSearching}>
-                        <GetInfoAndRender tab={activeTab} value={value} university={university}/>
+                <TabContent label="Преподаватель" enabled={univerTabs[university][1]}>
+                    <ConditionLayer state={isSearching} enabled={univerTabs[university][1]}>
+                        <GetInfoAndRender setLoaded={setIsLoaded} tab={activeTab} value={value} university={university}/>
                     </ConditionLayer>
                 </TabContent>
-                <TabContent label="Аудитория">
-                    <ConditionLayer state={isSearching}>
-                        <GetInfoAndRender tab={activeTab} value={value} university={university}/>
+                <TabContent label="Аудитория" enabled={univerTabs[university][2]}>
+                    <ConditionLayer state={isSearching} enabled={univerTabs[university][2]}>
+                        <GetInfoAndRender setLoaded={setIsLoaded} tab={activeTab} value={value} university={university}/>
                     </ConditionLayer>
                 </TabContent>
             </TabGroup>
@@ -101,7 +103,7 @@ const SearchModule = ({_setActiveTab, _setIsSearching}) => {
 export default SearchModule
 
 
-function GetInfoAndRender({tab, value, university}) {
+function GetInfoAndRender({tab, value, university, setLoaded}) {
     const [groupsList, setGroupList] = useState([])
     const [teachersList, setTeachersList] = useState([])
     const [roomsList, setRoomsList] = useState([])
@@ -111,41 +113,63 @@ function GetInfoAndRender({tab, value, university}) {
 
     const [isLoaded, setIsLoaded] = useState(false)
 
-    useEffect(() => {
+    const searchValue = () => {
+        setLoaded(false)
         if (value) {
-            if (search.groups) {
+            if (search.groups.data) {
                 setGroupList([])
                 setGroupList(search.groups.data.filter(group => {
                     return group.name.toLowerCase().includes(value.toLowerCase())
                 }))
             }
-
-            setTeachersList(teachersList.filter(teacher => {
-                return teacher.name.toLowerCase().includes(value.toLowerCase())
-            }))
-            setRoomsList(roomsList.filter(room => {
-                return room?.name?.toLowerCase().includes(value.toLowerCase())
-            }))
+            if (search.teachers.data) {
+                setTeachersList(search.teachers.data.filter(teacher => {
+                    return teacher.name.toLowerCase().includes(value.toLowerCase())
+                }))
+            }
+            if (search.rooms.data) {
+                setRoomsList([])
+                setRoomsList(search.rooms.data.filter(room => {
+                    return room.name.toLowerCase().includes(value.toLowerCase())
+                }))
+            }
         }
+    }
+
+    useEffect(() => {
+        searchValue()
     }, [value])
 
     useEffect(() => {
-        setGroupList(search.groups.data)
-        setIsLoaded(true)
+        searchValue()
+        if (search.groups) {
+            setGroupList(search.groups.data)
+            setIsLoaded(true)
+            setLoaded(true)
+        }
     }, [search.groups, isLoaded])
 
     useEffect(() => {
-        setTeachersList(search.teachers)
-        setIsLoaded(true)
+        searchValue()
+        if (search.teachers.data) {
+            setTeachersList(search.teachers.data)
+            setIsLoaded(true)
+            setLoaded(true)
+        }
     }, [search.teachers, isLoaded])
 
     useEffect(() => {
-        setRoomsList(search.rooms)
-        setIsLoaded(true)
+        searchValue()
+        if (search.rooms.data) {
+            setRoomsList(search.rooms.data)
+            setIsLoaded(true)
+            setLoaded(true)
+        }
     }, [search.rooms, isLoaded])
 
     useEffect(() => {
         setIsLoaded(false)
+        setLoaded(false)
         const fetchData = (tab) => {
             switch (tab) {
                 case 0:

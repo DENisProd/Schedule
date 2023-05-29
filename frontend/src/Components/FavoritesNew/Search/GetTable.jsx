@@ -1,5 +1,6 @@
 import {useNavigate} from "react-router-dom";
 import React from "react";
+import {checkGroups} from "../../../utils/localStorageHelpers";
 
 const GetTable = ({tab, groupsList, teachersList, roomsList, university}) => {
     const navigate = useNavigate()
@@ -16,37 +17,42 @@ const GetTable = ({tab, groupsList, teachersList, roomsList, university}) => {
                     </thead>
 
                     <tbody>
-                    {groupsList?.slice(0, 100).map(group =>
-                        <tr key={group.groupID + Date.now() + group.name} onClick={() => {
+                    {groupsList && groupsList.length>0 ? groupsList.slice(0, 100).map(group =>
+                        <tr key={group.groupID + group.name} onClick={() => {
                             let _group
 
                             switch (university) {
                                 case 'dstu':
-                                    _group = group
+                                    _group = {
+                                        id: group.groupID,
+                                        name: group.name,
+                                        university: 'dstu',
+                                        faculty: group.faculty
+                                }
                                     break
                                 case 'rsue':
                                     _group = {
-                                        groupID: group.name,
-                                        name: group.name
+                                        id: group.name,
+                                        name: group.name,
+                                        university: 'rsue',
+                                        faculty: group.faculty
                                     }
+                                    break
                             }
 
-                            localStorage.setItem("groupId", _group.groupID)
+                            localStorage.setItem("groupId", JSON.stringify(_group))
                             let searchList = JSON.parse(localStorage.getItem("searchList"))
                             if (!searchList) searchList = []
-                            searchList.push(_group.name)
+                            searchList.push(_group)
                             localStorage.setItem("searchList", JSON.stringify(searchList))
-                            const myGroup = localStorage.getItem('my-group')
+                            // const myGroup = localStorage.getItem('my-group')
+                            const myGroup = checkGroups("my-group")
                             if (!myGroup) {
-                                const fav = [{
-                                    name: _group.name,
-                                    id: _group.groupID
-                                }]
+                                const fav = [_group]
                                 localStorage.setItem('favorites', JSON.stringify(fav))
-                                localStorage.setItem("my-group", _group.groupID);
+                                localStorage.setItem("my-group", JSON.stringify(_group));
                             }
-
-                            navigate('/group/' + _group.groupID + '?u=' + university)
+                            navigate('/group/' + _group.id + '?u=' + university)
                         }
                         }>
                             {/*<td>{group.groupID}</td>*/}
@@ -54,7 +60,10 @@ const GetTable = ({tab, groupsList, teachersList, roomsList, university}) => {
                             <td>{group.level}</td>
                             <td>{group.faculty}</td>
                         </tr>
-                    )}
+                    )
+                        :
+                        <h3>Ничего не найдено</h3>
+                    }
                     </tbody>
                 </table>
             )
@@ -68,7 +77,7 @@ const GetTable = ({tab, groupsList, teachersList, roomsList, university}) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {teachersList.slice(0, 100).map(teachers =>
+                    {teachersList && teachersList.length>0 ? teachersList?.slice(0, 100).map(teachers =>
                         <tr key={teachers.id}
                             onClick={() => {
                                 navigate('/teacher/' + teachers.id)
@@ -76,7 +85,10 @@ const GetTable = ({tab, groupsList, teachersList, roomsList, university}) => {
                             }>
                             <td>{teachers.name}</td>
                         </tr>
-                    )}
+                    )
+                        :
+                        <h3>Ничего не найдено</h3>
+                    }
                     </tbody>
                 </table>
             )
@@ -90,7 +102,7 @@ const GetTable = ({tab, groupsList, teachersList, roomsList, university}) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {roomsList.slice(0, 100).map(room =>
+                    {roomsList && roomsList.length > 0 ? roomsList.slice(0, 100).map(room =>
                             <tr onClick={() => {
                                 navigate('/room/' + room.id)
                             }
@@ -99,7 +111,10 @@ const GetTable = ({tab, groupsList, teachersList, roomsList, university}) => {
                                 <td>{room.name}</td>
                             </tr>
                         // <tr>{teacher.name}</tr>
-                    )}
+                    )
+                    :
+                    <h3>Ничего не найдено</h3>
+                    }
                     </tbody>
                 </table>
             )

@@ -58,6 +58,7 @@ const Menu = ({children, setIsModalOpen}) => {
                                     document.location.href = "https://vk.com/public218030183"
                                 }} setIsModalOpened={setIsModalOpened} setInspectName={setInspectName} name="vk" img={VkIcon} title={"Группа VK"}/>
                                 <MenuButton onClick={() => navTo(() => navigate('/compare/'))} setIsModalOpened={setIsModalOpened} setInspectName={setInspectName} name="compare" img={CompareIcon} title={"Сравнение"}/>
+                                <MenuButton onClick={() => navTo(() => navigate('/navigator/10'))} setIsModalOpened={setIsModalOpened} setInspectName={setInspectName} name="navigator" img={CompareIcon} title={"Карта корпусов"}/>
                             </div>
                         </>
                     }

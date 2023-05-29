@@ -3,7 +3,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useCallback, useContext, useEffect, useState} from "react";
 
 import axios from "axios";
-import SwipebleViewTile from "./SwipebleViewTile/SwipebleViewTile";
+import SwipebleViewTileOld from "./SwipebleViewTile/SwipebleViewTileOld";
 import Loader from "./Loader/Loader";
 import ViewHeader from "./View/ViewHeader";
 import ViewHeaderTitle from "./View/ViewHeader";
@@ -15,6 +15,7 @@ import EuropeanCalendar from "./View/Calendar/EuropeanCalendar";
 import Calendar2 from "./View/Calendar/Calendar2";
 import {groupByDate, groupByDateWithSubgroups, groupNew, groupSchedule} from "../utils/groupHelpers";
 import {sendStats} from "../utils/sendStats";
+import Loader2 from "./Loader/Loader2";
 
 const currentVersion = 0.73
 
@@ -191,13 +192,12 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
                 .then((res) => {
                     // setRasp(res.data.data.rasp);
                     setInfo(res.data.data.info);
-                    console.log("fetched")
                     let obj = scheduleProccessing(res);
                     let test = groupSchedule(res.data)
-                    console.log(obj)
+
                     try {
                         let objTest = groupByDateWithSubgroups(res.data)
-                        console.log(objTest)
+
                         setGroupedRasp(objTest.sked);
                     } catch (e) {
                         console.log(e)
@@ -217,7 +217,7 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
                     //console.log(err)
                     setTimeout(() => {
                         setAttempt(attempt + 1)
-                        console.log(attempt)
+
                         if (attempt < 3) {
                             //updateSchedule(currDate)
                             return
@@ -344,7 +344,7 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
                                                     </h2>
                                                     <h5>{weekDays[new Date(gr).getDay()]}</h5>
                                                     {groupedRasp[gr].map((subjects) => (
-                                                        <SwipebleViewTile isGroup={isGroup} subjects={subjects}/>
+                                                        <SwipebleViewTileOld isGroup={isGroup} subjects={subjects}/>
                                                     ))}
                                                 </div>
                                             ))}
@@ -354,9 +354,9 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
                                     )}
                                 </>
                             ) : (
-                                <>
-                                    <Loader/>
-                                </>
+                                <div style={{marginTop: '10rem'}}>
+                                    <Loader2/>
+                                </div>
                             )}
                         </>
                         :

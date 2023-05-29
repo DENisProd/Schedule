@@ -4,6 +4,8 @@ import {month2} from "../../../utils/dateUtils";
 import cn from "classnames";
 import {useContext, useEffect, useState} from "react";
 import {SettingsContext} from "../../../providers/SettingsProvider";
+import {useDispatch, useSelector} from "react-redux";
+import {addGroupToCompare} from "../../../store/compareReducer";
 
 const daysOfWeek = [
     "пн",
@@ -15,7 +17,11 @@ const daysOfWeek = [
     "вс",
 ]
 
-function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare}) {
+function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, university}) {
+
+    const dispatch = useDispatch()
+    const groups = useSelector(state => state.compare)
+    console.log(groups)
 
     const [holidays, setHolidays] = useState([])
     const [favorite, setFavorite] = useState(false)
@@ -39,14 +45,36 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare})
 
     const checkFavorites = () => {
         setFavorite(false);
-        const favoritesGroups = JSON.parse(localStorage.getItem("favorites"));
-        if (favoritesGroups) {
+        let favoritesGroups = JSON.parse(localStorage.getItem("favorites"));
+        let _fav = []
+
+        console.log(favoritesGroups)
+        if (favoritesGroups && info.id) {
             favoritesGroups.forEach((favorites) => {
-                if (favorites.id === info.id) {
+                let isOld = false
+                console.log(favorites.id)
+
+                if (favorites.id.toString() === info.id) {
+                    let fav = JSON.parse(JSON.stringify(favorites))
+                    if (!fav["university"] || fav["university"] === "undefined") {
+                        fav["university"] = (university === "undefined" ? 'dstu' : university)
+                        isOld = true
+                        console.log(fav)
+                        _fav.push(fav)
+                    }
+                    // [{"name":"ВИБ31","id":44464,"university":""},{"name":"МКИС14","id":"44432"},{"name":"ВПР34","id":"44454","university":"dstu"}]
+
                     setFavorite(true);
                     return
                 }
+                if (!isOld)
+                    _fav.push(favorites)
+
+                console.log(_fav)
+
             });
+
+                //localStorage.setItem("favorites", JSON.stringify(_fav))
         }
     };
 
@@ -65,18 +93,31 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare})
             }
         } else {
             if (favoritesGroups === null) favoritesGroups = [];
-            favoritesGroups.push({
-                name: info.name,
-                id: info.id
+            let isExists = false
+            favoritesGroups.map(gr => {
+                if (gr.id === info.id) isExists = true
             })
-            let favoritesFiltered = favoritesGroups.filter(gr => gr.hasOwnProperty('name') === true)
-            localStorage.removeItem("favorites");
-            localStorage.setItem("favorites", JSON.stringify(favoritesFiltered));
+
+            if (!isExists) {
+                favoritesGroups.push({
+                    name: info.name,
+                    id: info.id,
+                    faculty: info?.faculty,
+                    university: (university === "undefined" ? 'dstu' : university)
+                })
+                let favoritesFiltered = favoritesGroups.filter(gr => gr.hasOwnProperty('name') === true)
+                localStorage.removeItem("favorites");
+                localStorage.setItem("favorites", JSON.stringify(favoritesFiltered));
+            }
         }
 
         checkFavorites()
         // props.checkFavorites();
     }
+
+    useEffect(() => {
+        console.log(groups)
+    }, [groups])
 
     const dateClick = (date) => {
         scrollTo(date)
@@ -90,7 +131,12 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare})
                         <div className={styles.title_container}>
                             <div
                                 className={cn(styles.icon_button, inCompareList && styles.compare)}
-                                onClick={() => addToCompare(info.id, info.name)}>
+                                onClick={() => {
+                                    addToCompare(info.id, info.name, (university === "undefined" ? 'dstu' : university))
+                                    dispatch(addGroupToCompare({id: info.id, name: info.name, univer: (university==="undefined" ? 'dstu' : university)}))
+                                    setInCompareList(true)
+                                }
+                                }>
                                 <svg
                                     version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
                                     width="800px" height="800px" viewBox="0 0 25.361 25.361">
@@ -114,7 +160,11 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare})
                             </div>
                         </div>
                         <div className={styles.calendar_container}>
-                            <button onClick={prev}>{"<"}</button>
+                            <button onClick={prev}>
+                                <svg width="11" height="17" viewBox="0 0 11 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9 2L2.77524 8.01134C2.35679 8.41544 2.37025 9.09005 2.80448 9.47714L9 15" stroke="var(--menu-bg)" strokeWidth="3" strokeLinecap="round"/>
+                                </svg>
+                            </button>
 
                             <div className={styles.calendar_mini}>
                                 {week.map((day, index) =>
@@ -122,11 +172,16 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare})
                                         className={cn(lookAt === day && styles.current, holidays.includes(day) && styles.holiday)}>
                                         <p>{day.split('-')[2]}</p>
                                         <p className={styles.day_name}>{daysOfWeek[index]}</p>
+                                        {info.sked[day] && info.sked[day].length>0 && <span className={styles.subject_number}>{info.sked[day].length}</span>}
                                     </div>
                                 )}
                             </div>
 
-                            <button onClick={next}>{">"}</button>
+                            <button onClick={next}>
+                                <svg width="11" height="17" viewBox="0 0 11 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 2L8.22476 8.01134C8.64321 8.41544 8.62975 9.09005 8.19552 9.47714L2 15" stroke="var(--menu-bg)" strokeWidth="3" strokeLinecap="round"/>
+                                </svg>
+                            </button>
                         </div>
                         <div className={styles.bottom}>
                             <button>{getMonth(week[0])}</button>
@@ -137,7 +192,12 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare})
                         <div className={styles.title_container}>
                             <div
                                 className={cn(styles.icon_button, inCompareList && styles.compare)}
-                                onClick={addToCompare}>
+                                onClick={() => {
+                                    addToCompare(info.id, info.name)
+                                    dispatch(addGroupToCompare({id: info.id, name: info.name, univer: (university || 'dstu')}))
+                                    setInCompareList(true)
+                                }
+                                }>
                                 <svg
                                     version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
                                     width="800px" height="800px" viewBox="0 0 25.361 25.361">
@@ -163,18 +223,27 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare})
                             <button>{getMonth(week[0])}</button>
                         </div>
                         <div className={styles.calendar_container}>
-                            <button onClick={prev}>{"<"}</button>
+                            <button onClick={prev}>
+                                <svg width="11" height="17" viewBox="0 0 11 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9 2L2.77524 8.01134C2.35679 8.41544 2.37025 9.09005 2.80448 9.47714L9 15" stroke="var(--menu-bg)" strokeWidth="3" strokeLinecap="round"/>
+                                </svg>
+                            </button>
 
                             <div className={styles.calendar_mini}>
                                 {week.map((day, index) =>
                                     <div onClick={() => dateClick(day)} className={cn(lookAt === day && styles.current, holidays.includes(day) && styles.holiday)}>
                                         <p>{day.split('-')[2]}</p>
                                         <p className={styles.day_name}>{daysOfWeek[index]}</p>
+                                        {info.sked[day] && info.sked[day].length>0 && <span className={styles.subject_number}>{info.sked[day].length}</span>}
                                     </div>
                                 )}
                             </div>
 
-                            <button onClick={next}>{">"}</button>
+                            <button onClick={next}>
+                                <svg width="11" height="17" viewBox="0 0 11 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 2L8.22476 8.01134C8.64321 8.41544 8.62975 9.09005 8.19552 9.47714L2 15" stroke="var(--menu-bg)" strokeWidth="3" strokeLinecap="round"/>
+                                </svg>
+                            </button>
                         </div>
                     </>
                 }

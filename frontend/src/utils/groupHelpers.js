@@ -2,12 +2,16 @@ import dayjs from "dayjs";
 
 export function groupByDate(schedule) {
     let sked = getWeek(schedule.mondayDate.split("T")[0])
-
     schedule.days.map(day => {
         let dayGroup = []
         day.subjects.map(subject => {
-            if (subject.isSubgroup) dayGroup[dayGroup.length-1].push(subject)
+            if (subject.isSubgroup) {
+                if (dayGroup.length > 0)
+                    dayGroup[dayGroup.length - 1].push(subject)
+                else dayGroup[dayGroup.length - 1] = [subject]
+            }
             else dayGroup.push([subject])
+
         })
         const dayDate = dayjs(day.date).format('YYYY-MM-DD')
         sked[dayDate] = dayGroup

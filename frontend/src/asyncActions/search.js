@@ -20,7 +20,7 @@ export const fetchSearch = (type, university = 'dstu') => {
             case SEARCH_TYPES.GROUPS:
                 url = URLS.GET_GROUPS + university
                 if (state.search.groups.university === university) {
-                    isExists = state.search.groups.data.length > 0
+                    isExists = state.search.groups.data?.length > 0
                 }
 
                 dispatchFunction = (json) => setGroupAction(json)
@@ -52,7 +52,14 @@ export const fetchSearch = (type, university = 'dstu') => {
             fetch(url)
                 .then(response => response.json())
                 .then(json => {
-                    dispatch(dispatchFunction({university: university, data: json}))
+                    switch (type) {
+                        case SEARCH_TYPES.GROUPS:
+                            dispatch(dispatchFunction({university: university, data: json}))
+                            break
+                        default:
+                            dispatch(dispatchFunction({university: university, data: json.data}))
+                            break
+                    }
                 })
                 .catch(err => {
                     dispatch(addMessageAction({

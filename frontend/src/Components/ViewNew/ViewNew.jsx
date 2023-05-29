@@ -1,7 +1,7 @@
 import {useContext, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchGroups} from "../../asyncActions/groups";
-import {useParams} from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
 import dayjs from "dayjs";
 import {getMondayOfWeek, getWeek} from "../../utils/groupHelpers";
 import SwipebleViewTile from "../SwipebleViewTile/SwipebleViewTile";
@@ -12,15 +12,29 @@ import ViewHeaderNew from "./ViewHeaderNew/ViewHeaderNew";
 import {month, weekDays} from "../../utils/dateUtils";
 import {SettingsContext} from "../../providers/SettingsProvider";
 import {sendStats} from "../../utils/sendStats";
+import SmileSVG from "../../assets/SmileSVG";
+import Loader2 from "../Loader/Loader2";
+import ErrorBoundary from "../../utils/ErrorBoundary";
 
-function isExists (group, groupId, date) {
-    if (group.id === Number(groupId)) {
-        const date1 = dayjs(group.date)
-        const date2 = dayjs(date)
-        if (date1.isSame(date2)) {
-            return true
+function isExists (group, groupId, date, univer) {
+    if (univer === 'dstu') {
+        if (Number(group.id) === Number(groupId)) {
+            const date1 = dayjs(group.date)
+            const date2 = dayjs(date)
+            if (date1.isSame(date2)) {
+                return true
+            }
+        }
+    } else {
+        if (group.id === groupId) {
+            const date1 = dayjs(group.date)
+            const date2 = dayjs(date)
+            if (date1.isSame(date2)) {
+                return true
+            }
         }
     }
+
 
     return false
 }
@@ -34,6 +48,7 @@ const ViewNew = ({addToCompare}) => {
     const {groupId} = useParams();
     const dispatch = useDispatch()
     const groups = useSelector(state => state.groups.groups)
+    const [searchParams, setSearchParams] = useSearchParams();
     const [todayDate, setTodayDate] = useState(null)
     const [currentSked, setCurrentSked] = useState({})
     const [lookAt, setLookAt] = useState([])
@@ -42,12 +57,13 @@ const ViewNew = ({addToCompare}) => {
     const [isLoading, setIsLoading] = useState(false)
     const [mode, setMode] = useState(null)
     const {settings, setSettings} = useContext(SettingsContext)
+    const [university, setUniversity] = useState(searchParams.get('u'))
 
     const currentDateString = dayjs().format('YYYY-MM-DD')
 
-    const isGroupExists = (groupId, date) => {
+    const isGroupExists = (groupId, date, univer) => {
         const _date = dayjs(date).startOf('week').add(1, 'day').format('YYYY-MM-DD')
-        const group = groups.find(group => isExists(group, groupId, _date))
+        const group = groups.find(group => isExists(group, groupId, _date, univer))
         return !!group;
     }
 
@@ -78,17 +94,15 @@ const ViewNew = ({addToCompare}) => {
         }
     }
 
-    const getIfNotExist = (date) => {
-        const isExists = isGroupExists(groupId, date)
+    const getIfNotExist = (date, univer) => {
+        const isExists = isGroupExists(groupId, date, univer)
         if (!isExists) {
-            // console.log("dispatch")
-            dispatch(fetchGroups(groupId, date))
+            dispatch(fetchGroups(groupId, date, univer))
         }
         else {
             const mondayString = getMondayOfWeek(date)
             setTodayDate(mondayString)
             // updateSchedule()
-
         }
     }
 
@@ -98,6 +112,7 @@ const ViewNew = ({addToCompare}) => {
         getInfo()
         setIsLoading(true)
         let mondayString
+
         if (!todayDate) {
             mondayString = getMondayOfWeek()
             // console.log(mondayString)
@@ -106,14 +121,15 @@ const ViewNew = ({addToCompare}) => {
             mondayString = getMondayOfWeek(todayDate)
         }
 
-
+        let univer = searchParams.get('u')
+        if (univer === "undefined") univer = 'dstu'
         const week = getWeek(mondayString)
-        // console.log(week)
+
         setCurrentSked({sked: week})
 
         document.getElementById('root').classList.remove('scroll-blocked')
 
-        getIfNotExist(mondayString)
+        getIfNotExist(mondayString, univer)
 
 
         let count_enter = Number.parseInt(localStorage.getItem("count_enter"))
@@ -132,8 +148,9 @@ const ViewNew = ({addToCompare}) => {
             const mondayString = getMondayOfWeek(todayDate)
             const week = getWeek(mondayString)
 
-
-            const group = groups.find(group => group.id === Number(groupId) && group.date === mondayString)
+            const group = groups.find(group => {
+                return group.id === groupId && group.date === mondayString
+            })
             let sked = {}
             Object.assign(sked, week)
             setCurrentWeek(Object.keys(week))
@@ -159,7 +176,9 @@ const ViewNew = ({addToCompare}) => {
         const currentDate = dayjs(todayDate).startOf('week').add(1, 'week')
         const dateString = currentDate.startOf('week').format('YYYY-MM-DD')
         setTodayDate(dateString)
-        getIfNotExist(dateString)
+        let univer = searchParams.get('u')
+        if (!univer) univer = 'dstu'
+        getIfNotExist(dateString, univer)
         setMode('next')
     }
 
@@ -168,7 +187,8 @@ const ViewNew = ({addToCompare}) => {
         const currentDate = dayjs(todayDate).add(-1, 'week')
         const dateString = currentDate.format('YYYY-MM-DD')
         setTodayDate(dateString)
-        getIfNotExist(dateString)
+        let univer = searchParams.get('u')
+        getIfNotExist(dateString, univer)
         setMode('prev')
     }
 
@@ -225,74 +245,80 @@ const ViewNew = ({addToCompare}) => {
     }
 
     return (
-        <div className={styles.container}>
-            <ViewHeaderNew week={currentWeek} info={currentSked} prev={getPrev} next={getNext} lookAt={lookAt} scrollTo={scrollTo} addToCompare={addToCompare}/>
-            {groups.length > 0 ?
-                <div className={cn(styles.view_scroll, settings?.calDir === "top" && styles.top)} ref={containerRef} id={"scrollArea"}
-                     // onTouchEnd={() => setIsTouchEnd(true)}
-                     // onTouchStart={() => setIsTouchEnd(false)}
-                     // onMouseDown={() => setIsTouchEnd(false)}
-                     // onMouseUp={() => setIsTouchEnd(true)}
-                >
-                    {currentSked && Object.keys(currentSked).length > 0 ? (
-                        <>
-                            {Object.keys(currentSked.sked).map((date, index) => (
+        <ErrorBoundary>
+            <div className={styles.container}>
+                <ViewHeaderNew university={university} week={currentWeek} info={currentSked} prev={getPrev} next={getNext} lookAt={lookAt} scrollTo={scrollTo} addToCompare={addToCompare}/>
+                {groups.length > 0 && currentSked.sked && !isLoading ?
+                    <div className={cn(styles.view_scroll, settings?.calDir === "top" && styles.top)} ref={containerRef} id={"scrollArea"}
+                        // onTouchEnd={() => setIsTouchEnd(true)}
+                        // onTouchStart={() => setIsTouchEnd(false)}
+                        // onMouseDown={() => setIsTouchEnd(false)}
+                        // onMouseUp={() => setIsTouchEnd(true)}
+                    >
+                        {currentSked && Object.keys(currentSked).length > 0 ? (
+                            <>
+                                {Object.keys(currentSked.sked).map((date, index) => (
 
-                                <div className={styles.day} id={date} key={date}>
-                                    {/*{index === 8 &&*/}
-                                    {/*    <p>Переход на другую неделю</p>*/}
-                                    {/*}*/}
-                                    {/*{index === 0 &&*/}
-                                    {/*    <p>Переход на другую неделю</p>*/}
-                                    {/*}*/}
-                                    <h2 className={cn(styles.day_title, date === currentDateString && styles.today)}>
-                                        {Number(date.split("-")[2])}{" "}
-                                        {month[Number(date.split("-")[1]) - 1]}{" "}
-                                        {date === currentDateString && " (сегодня)"}
-                                    </h2>
-                                    <h5 className={styles.subtitle}>{weekDays[new Date(date).getDay()]}</h5>
-                                    {currentSked.sked[date].length > 0 ?
-                                        <>
-                                            {currentSked.sked[date].map((subjects) => (
-                                                <SwipebleViewTile isGroup={false} subjects={subjects}/>
-                                            ))}
-                                        </>
-                                        :
-                                        <div>
-                                            <h3>Пар нет :)</h3>
-                                            {/*<button onClick={() => {*/}
-                                            {/*    if (index === 0) getPrev()*/}
-                                            {/*    if (index === 8) getNext()*/}
-                                            {/*}*/}
-                                            {/*}>*/}
-                                            {/*    {index === 0 && "Получить расписание предыдущей недели"}*/}
-                                            {/*    {index === 8 && "Получить расписание следующей недели"}*/}
-                                            {/*</button>*/}
-                                        </div>
-                                    }
+                                    <div className={styles.day} id={date} key={date}>
+                                        {/*{index === 8 &&*/}
+                                        {/*    <p>Переход на другую неделю</p>*/}
+                                        {/*}*/}
+                                        {/*{index === 0 &&*/}
+                                        {/*    <p>Переход на другую неделю</p>*/}
+                                        {/*}*/}
+                                        <h2 className={cn(styles.day_title, date === currentDateString && styles.today)}>
+                                            {Number(date.split("-")[2])}{" "}
+                                            {month[Number(date.split("-")[1]) - 1]}{" "}
+                                            {date === currentDateString && " (сегодня)"}
+                                        </h2>
+                                        <h5 className={styles.subtitle}>{weekDays[new Date(date).getDay()]}</h5>
+                                        {currentSked.sked[date].length > 0 ?
+                                            <>
+                                                {currentSked.sked[date].map((subjects) => (
+                                                    <SwipebleViewTile isGroup={false} subjects={subjects}/>
+                                                ))}
+                                            </>
+                                            :
+                                            <div>
 
-                                </div>
-                                // <div id={Number(gr.split("-")[2]).toString()}>
-                                //     <h2 className={gr.split("-")[2] === todayDate ? "today" : "day"}>
-                                //         {Number(gr.split("-")[2])}{" "}
-                                //         {month[Number(gr.split("-")[1]) - 1]}{" "}
-                                //         {gr.split("-")[2] === todayDate.toString() && " (сегодня)"}
-                                //     </h2>
-                                //     <h5>{weekDays[new Date(gr).getDay()]}</h5>
-                                //     {currentSked.sked][gr].map((subjects) => (
-                                //         <SwipebleViewTile isGroup={false} subjects={subjects}/>
-                                //     ))}
-                                // </div>
-                            ))}
-                        </>
-                    ) : (
-                        <h3>На данную неделю нет расписания</h3>
-                    )}
-                </div>
-                :
-                <div>Пусто</div>
-            }
-        </div>
+                                                <div className={styles.art}><SmileSVG/></div>
+                                                <h3>Пар нет :)</h3>
+                                                {/*<button onClick={() => {*/}
+                                                {/*    if (index === 0) getPrev()*/}
+                                                {/*    if (index === 8) getNext()*/}
+                                                {/*}*/}
+                                                {/*}>*/}
+                                                {/*    {index === 0 && "Получить расписание предыдущей недели"}*/}
+                                                {/*    {index === 8 && "Получить расписание следующей недели"}*/}
+                                                {/*</button>*/}
+                                            </div>
+                                        }
+
+                                    </div>
+                                    // <div id={Number(gr.split("-")[2]).toString()}>
+                                    //     <h2 className={gr.split("-")[2] === todayDate ? "today" : "day"}>
+                                    //         {Number(gr.split("-")[2])}{" "}
+                                    //         {month[Number(gr.split("-")[1]) - 1]}{" "}
+                                    //         {gr.split("-")[2] === todayDate.toString() && " (сегодня)"}
+                                    //     </h2>
+                                    //     <h5>{weekDays[new Date(gr).getDay()]}</h5>
+                                    //     {currentSked.sked][gr].map((subjects) => (
+                                    //         <SwipebleViewTile isGroup={false} subjects={subjects}/>
+                                    //     ))}
+                                    // </div>
+                                ))}
+                            </>
+                        ) : (
+                            <h3>На данную неделю нет расписания</h3>
+                        )}
+                    </div>
+                    :
+                    <div style={{marginTop: '10rem', textAlign: 'center'}}>
+                        <Loader2/>
+                    </div>
+                }
+            </div>
+        </ErrorBoundary>
     )
 }
 

@@ -1,0 +1,27 @@
+.container {
+  padding-bottom: 5rem;
+
+  & g {
+    cursor: pointer;
+  }
+  & .selected .background {
+    fill: var(--red);
+  }
+  & g:hover .background{
+    fill: var(--green);
+  }
+
+  & svg .unknown .background{
+    fill: #D9D9D9;
+  }
+  & svg .stroke {
+    stroke: var(--text-color);
+    fill: none;
+  }
+  & svg .background {
+    fill: var(--menu-bg);
+  }
+  & svg .foreground {
+    fill: var(--text-color);
+  }
+}

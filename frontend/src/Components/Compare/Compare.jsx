@@ -46,9 +46,8 @@ function createMatrix (merged, groupList, groupNameList) {
     obj.map(date => {
         table = []
         let grs = []
-        console.log(groupNameList)
+
         groupList.map(e => grs.push(groupNameList[e]))
-        console.log(grs)
         table[0] = grs || groupList
 
             const groups = merged[date]
