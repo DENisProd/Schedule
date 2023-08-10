@@ -27,6 +27,7 @@ export function sendStats() {
             sended_date = new Date()
             localStorage.setItem("send_data", sended_date)
         })
+        
     } else {
         console.log("пока рано")
     }

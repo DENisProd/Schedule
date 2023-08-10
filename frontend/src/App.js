@@ -14,6 +14,10 @@ import {SettingsContext} from "./providers/SettingsProvider";
 import {checkGroups} from "./utils/localStorageHelpers";
 import ModalWindow from "./Components/Menu/Modal/ModalWindow";
 import Compare2 from "./Components/Compare/Compare2";
+import {Tasks} from "./Components/Tasks/Tasks";
+import {Queue} from "./Components/Queue/Queue";
+import {CreateSchedule} from "./Components/CreateSchedule/CreateSchedule";
+import {checkId} from "./utils/checkId";
 
 export const ver = "1.0.3"
 
@@ -62,6 +66,7 @@ function App() {
 
 
     useEffect(() => {
+        checkId()
         const href = window.location.href.split('/')
         //console.log(href)
         const groupId = checkGroups("groupId")
@@ -70,8 +75,8 @@ function App() {
 
         // const myGroup = JSON.parse(localStorage.getItem("my-group"))
 
-        if (myGroup && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + myGroup.id + '?u=' + (myGroup?.university || 'dstu')
-        else if (groupId && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + groupId.id + '?u=' + (myGroup?.university || 'dstu')
+        if (myGroup && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + myGroup.id + '?u=' + (myGroup?.university === undefined ? 'dstu' : myGroup?.university)
+        else if (groupId && href.length===4) window.location.href = domainArray[0] + '//' + domainArray[2] + '/group/' + groupId.id + '?u=' + (myGroup?.university === undefined ? 'dstu' : myGroup?.university)
 
         if(IOS()) document.getElementById('root').classList.add('ios-detected')
 
@@ -87,6 +92,7 @@ function App() {
 
     return (
             <BrowserRouter>
+
                 {isOffline && <div>offline</div>}
                 { updateNewsShow && <ModalWindow setIsModalOpen={setUpdateNewsShow}/>}
                 <Routes>
@@ -96,10 +102,15 @@ function App() {
                     {settings?.viewType === "hor" ?
                         <Route path="/group/:groupId" element={<View addToCompare={addToCompare} isGroup={true} />} />
                         :
-                        <Route path="/group/:groupId" element={<ViewNew addToCompare={addToCompare} isGroup={true} />} />
+                        <Route path="/group/:groupId" element={<ViewNew isMobile={isMobile} addToCompare={addToCompare} isGroup={true} />} />
                     }
                     <Route path="/group/" element={<FavoritesNew />} />
                     <Route path="/room/:groupId" element={<View isRoom={true}/>} />
+                    <Route path="/tasks/:groupId" element={<Tasks/>} />
+                    <Route path="/tasks/" element={<Tasks/>} />
+                    <Route path="/queue/:groupId" element={<Queue/>} />
+                    <Route path="/queue/" element={<Queue/>} />
+                    <Route path="/create/" element={<CreateSchedule/>} />
                     <Route path="/teacher/:groupId" element={<View isTeachers={true}/>} />
                     {/*<Route path="/favorites" element={<FavoritesNew />} />*/}
                     <Route path="/admin" element={<Admin />} />

@@ -62,6 +62,14 @@ export default function Favorites() {
         setIsGroupChoose(false)
     }
 
+    const wantChooseGroup = () => {
+        if (groupsList.length > 0) {
+            chooseButtonHandler(true)
+        } else {
+
+        }
+    }
+
     return (
         <>
             <div className="favorites-main-container">
@@ -132,7 +140,7 @@ export default function Favorites() {
                         Отмена
                     </button>
                 ) : (
-                    <button onClick={() => chooseButtonHandler(true)}>
+                    <button onClick={wantChooseGroup}>
                         Выбрать мою группу
                     </button>
                 )}

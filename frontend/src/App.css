@@ -1,12 +1,13 @@
 :root[data-theme="light"] {
-    --background-color: #f2f2f8;
+    --background-color: #F4F6F8;
     --bg-semi-transperent: rgba(242, 242, 248, 0.6);
     --text-color: #131336;
-    --background-secondary: #FDFDFE;
+    --background-secondary: #23242A;
     --background-tile: #ffffff;
+    --background-tile2: #e7e7e7;
     --background-tile-border: #FDFDFE;
     --menu-bg: #C7CDDD;
-    --text-color-secondary: #E7E7E7;
+    --text-color-secondary: #23242A;
     --text-color-secondary2: #131336;
     --green: #A2EAB6;
     --blue: #A2D2FF;
@@ -18,19 +19,31 @@
     --nav-color-secondary: #DFE5F5;
     --lavanda: #7B7AFF;
     --light-lavanda: #D5D4FF;
+    /*--primary-color: #717EEE;*/
     --box-shadow-light: 4px 4px 8px rgba(159, 159, 159, 0.25), -4px -4px 15px rgba(234, 234, 234, 0.91);
+
+    --primary-color: #717EEE;
+    --primary-white: #FFFFFF;
+    --primary-cyan: #57C5FE;
+    --primary-orange: #FEC166;
+    --primary-red: #FE848F;
+    --primary-green: #90D6A0;
+    --primary-gray: #C9C9C9;
+    --primary-dark: #23242A;
+    --primary-dark2: #26272E;
 }
 
 :root[data-theme="dark"] {
-    --background-color: #080C14;
+    --background-color: #3A3D41;
     --bg-semi-transperent: rgba(8, 12, 20, 0.6);
     --text-color: #FCFFFF;
-    --background-secondary: #0D121E;
-    --background-tile: #313131;
+    --background-secondary: #23242A;
+    --background-tile: #2A2C30;
+    --background-tile2: #36393d;
     --background-tile-border: #363636;
-    --menu-bg: #2D2D2D;
+    --menu-bg: #2A2C30;
     /*--menu-bg: #2D2D2D;*/
-    --text-color-secondary: #6e6e6e;
+    --text-color-secondary: #F4F6F8;
     --text-color-secondary2: #6e6e6e;
     --green: #74E092;
     --blue: #73BCFF;
@@ -42,6 +55,102 @@
     --light-lavanda: #2F2E6D;
     --nav-color: #2D2D2D;
     --nav-color-secondary: #3D3D3D;
+
+    --primary-color: #717EEE;
+    --primary-white: #FFFFFF;
+    --primary-cyan: #57C5FE;
+    --primary-orange: #FEC166;
+    --primary-red: #FE848F;
+    --primary-green: #90D6A0;
+    --primary-gray: #C9C9C9;
+    --primary-dark: #23242A;
+    --primary-dark2: #26272E;
+}
+
+:root[data-theme="pink"] {
+    --background-color: #FE7676;
+    --bg-semi-transperent: rgba(8, 12, 20, 0.6);
+    --text-color: #FCFFFF;
+    --background-secondary: #FF9190;
+    --background-tile: #FF9190;
+    --background-tile2: #ff9b9a;
+    --background-tile-border: #F6ADAE;
+    --menu-bg: #f8b3cf;
+    /*--menu-bg: #2D2D2D;*/
+    --text-color-secondary: #F4F6F8;
+    --text-color-secondary2: #6e6e6e;
+    --green: #74E092;
+    --blue: #73BCFF;
+    --pink: #FA8D8D;
+    --orange: #F8F99B;
+    --red: #F74141;
+    --light-red: #6D2E2E;
+    --lavanda: #7B7AFF;
+    --light-lavanda: #2F2E6D;
+    --nav-color: #2D2D2D;
+    --nav-color-secondary: #3D3D3D;
+
+    --primary-color: #802E5D;
+    --primary-white: #F7E6E5;
+    --primary-cyan: #57C5FE;
+    --primary-orange: #F9DD6A;
+    --primary-red: #FE848F;
+    --primary-green: #3da83f;
+    --primary-gray: #ffffff;
+    --primary-dark: #23242A;
+    --primary-dark2: #26272E;
+}
+
+:root[data-theme="yellow"] {
+    --background-color: #F9953A;
+    --bg-semi-transperent: rgba(242, 242, 248, 0.6);
+    --text-color: #131336;
+    --background-secondary: #23242A;
+    --background-tile: #ffffff;
+    --background-tile2: #e7e7e7;
+    --background-tile-border: #FDFDFE;
+    --menu-bg: #C7CDDD;
+    --text-color-secondary: #23242A;
+    --text-color-secondary2: #131336;
+    --green: #A2EAB6;
+    --blue: #A2D2FF;
+    --pink: #FCB3B3;
+    --orange: #FFD9AB;
+    --red: #F74141;
+    --light-red: #FFD4D4;
+    --nav-color: #C7CDDD;
+    --nav-color-secondary: #DFE5F5;
+    --lavanda: #7B7AFF;
+    --light-lavanda: #D5D4FF;
+    /*--primary-color: #717EEE;*/
+    --box-shadow-light: 4px 4px 8px rgba(159, 159, 159, 0.25), -4px -4px 15px rgba(234, 234, 234, 0.91);
+
+    --primary-color: #717EEE;
+    --primary-white: #FFFFFF;
+    --primary-cyan: #57C5FE;
+    --primary-orange: #FEC166;
+    --primary-red: #FE848F;
+    --primary-green: #90D6A0;
+    --primary-gray: #C9C9C9;
+    --primary-dark: #23242A;
+    --primary-dark2: #26272E;
+}
+
+* {
+    scrollbar-width: 3px;
+    scrollbar-color: #ccc transparent;
+}
+*::-webkit-scrollbar {
+    height: 3px;
+    width: 3px;
+}
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 5px;
+    border: none;
 }
 
 html {
@@ -53,7 +162,7 @@ body {
     padding: 0;
     background: var(--background-color);
     color: var(--text-color);
-    font-family: "Roboto", sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 
@@ -61,11 +170,11 @@ body {
     /*background: #FAFAFD;*/
     height: 96vh;
     /*overflow-y: hidden;*/
-    --nav-height: 50px;
+    --nav-height: 20px;
 }
 
 #root.ios-detected {
-    --nav-height: 70px;
+    --nav-height: 40px;
 }
 
 #root.scroll-blocked {
@@ -191,17 +300,17 @@ body {
     width: 100%;
     text-align: center;
     background: var(--background-tile);
-    box-shadow: 0 4px 20px rgba(197, 197, 197, 0.15);
+    /*box-shadow: 0 4px 20px rgba(197, 197, 197, 0.15);*/
     border-collapse: collapse;
 }
 
 table tr:nth-child(even) {
-    background: var(--background-secondary);
+    background: var(--background-tile2);
 }
 
 table thead {
     background: var(--lavanda);
-    color: var(--text-color);
+    color: #FFFFFF;
     font-size: 1.2em;
 }
 table thead th {
@@ -214,7 +323,7 @@ table tbody td {
     padding: 5px;
     font-size: 1em;
     text-align: center;
-    border: 1px solid var(--text-color-secondary);
+    /*border: 1px solid var(--text-color-secondary);*/
 }
 
 table tbody td:first-child {

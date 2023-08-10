@@ -1,14 +1,18 @@
 
 .container {
   position: fixed;
-  width: 100%;
-  height: var(--nav-height);
-  bottom: 0;
-  background: var(--background-color);
+  width: 90%;
+  max-width: 400px;
+  transform: translateX(-50%);
+  left: 50%;
+  height: 4rem;
+  bottom: var(--nav-height);
+  background: var(--background-secondary);
+  border-radius: 2rem;
   display: flex;
   justify-content: center;
-  vertical-align: middle;
-  z-index: 100;
+  align-items: center;
+  z-index: 98;
   //border-top: 1px var(--menu-bg) solid;
   user-select: none;
 
@@ -31,35 +35,47 @@
       }
     }
 
-    & p {
-      position: absolute;
-      font-size: 0.6em;
-      bottom: -5px;
-      color: var(--text-color-secondary2)
-    }
+    //& p {
+    //  position: absolute;
+    //  font-size: 0.6em;
+    //  bottom: -5px;
+    //  color: var(--text-color-secondary2)
+    //}
 
     & svg{
-      margin-top: -9px;
-      width: 20px;
-      height: 20px;
+      margin-top: -3px;
+      width: 26px;
+      height: 26px;
       //transform: translateY(35%);
-      /* fill: #7ec1ff; */
-      fill: var(--nav-color);
+      ///* fill: #7ec1ff; */
       padding: 0 25px;
+
+      & path {
+        fill: var(--primary-white);
+        stroke: var(--primary-white);
+
+        &.stroke_only {
+          fill: none;
+          stroke: var(--primary-white);
+        }
+      }
     }
 
     &:hover svg{
-      fill: var(--blue);
+      //fill: var(--blue);
     }
 
     &.selected {
-      background: var(--menu-bg);
-      //border-radius: 0 0 1.5em 1.5em;
-
-      //overflow-y: hidden;
-
       & svg{
-        fill: var(--background-color)
+        & path {
+          fill: var(--primary-color);
+          stroke: var(--primary-color);
+
+          &.stroke_only {
+            fill: none;
+            stroke: var(--primary-color);
+          }
+        }
       }
     }
 

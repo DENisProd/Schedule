@@ -1,20 +1,25 @@
 .custom_select {
   position: relative;
   width: 100%;
-  font-size: 16px;
+  font-size: 14px;
   margin-bottom: 1em;
   color: var(--text-color);
 }
 
 .selected_value {
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px;
+  padding: 1rem 1.5rem;
   background-color: var(--background-tile);
-  border: 2px solid var(--background-secondary);
-  border-radius: 1em;
+  //border: 2px solid var(--background-secondary);
+  border-radius: 2rem;
   cursor: pointer;
+
+  &.is_open {
+    border-radius: 2rem 2rem 0 0;
+  }
 }
 
 .arrow {
@@ -22,15 +27,16 @@
 }
 
 .options {
+  font-weight: 400;
   position: absolute;
   top: 100%;
   left: 0;
-  width: 100%;
-  padding: 0;
+  width: calc(100% - 1.6rem);
+  padding: 0 0.8rem 0.8rem 0.8rem;
   margin: 0;
   background-color: var(--background-tile);
-  border: 2px solid var(--background-secondary);
-  border-radius: 0 0 1em 1em;
+  //border: 2px solid var(--background-secondary);
+  border-radius: 0 0 2rem 2rem;
   list-style: none;
 
   & li {
@@ -38,7 +44,7 @@
     cursor: pointer;
 
     &:hover {
-      background-color: var(--background-secondary);
+      background-color: var(--background-tile2);
       border-radius: 1em;
     }
   }

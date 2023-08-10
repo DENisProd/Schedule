@@ -1,4 +1,4 @@
-export const FourthFloor10 = () => {
+export const FourthFloor10 = ({handleButtonClick}) => {
     return (
         <></>
     )

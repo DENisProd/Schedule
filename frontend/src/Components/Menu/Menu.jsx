@@ -3,8 +3,10 @@ import {useContext, useEffect, useState} from "react";
 import cn from "classnames"
 import {ThemeContext, themes} from "../../contexts/ThemeContext";
 
-import CompareIcon from "../../assets/compare.png"
-import VkIcon from "../../assets/vk.png"
+import CompareIcon from "../../assets/compare_icon.svg"
+import VkIcon from "../../assets/vk_icon.svg"
+import MapIcon from "../../assets/map_icon.svg"
+
 import Modal from "./Modal/Modal";
 import MenuButton from "./MenuButton/MenuButton";
 import {useNavigate} from "react-router-dom";
@@ -55,10 +57,10 @@ const Menu = ({children, setIsModalOpen}) => {
                             <h5>Зажмите, чтобы узнать подробнее</h5>
                             <div className={styles.card_wrapper} contextMenu={e => e.preventDefault()}>
                                 <MenuButton onClick={() => {
-                                    document.location.href = "https://vk.com/public218030183"
+                                    document.location.href = "https://vk.com/i.students"
                                 }} setIsModalOpened={setIsModalOpened} setInspectName={setInspectName} name="vk" img={VkIcon} title={"Группа VK"}/>
                                 <MenuButton onClick={() => navTo(() => navigate('/compare/'))} setIsModalOpened={setIsModalOpened} setInspectName={setInspectName} name="compare" img={CompareIcon} title={"Сравнение"}/>
-                                <MenuButton onClick={() => navTo(() => navigate('/navigator/10'))} setIsModalOpened={setIsModalOpened} setInspectName={setInspectName} name="navigator" img={CompareIcon} title={"Карта корпусов"}/>
+                                <MenuButton onClick={() => navTo(() => navigate('/navigator/10'))} setIsModalOpened={setIsModalOpened} setInspectName={setInspectName} name="navigator" img={MapIcon} title={"Карта корпусов"}/>
                             </div>
                         </>
                     }

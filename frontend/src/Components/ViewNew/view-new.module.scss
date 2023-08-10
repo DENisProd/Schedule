@@ -1,38 +1,67 @@
+//body {
+//  background: var(--primary-dark);
+//}
+
 .view_scroll {
   display: flex;
-  width: 600px;
-  min-height: 50vh;
+  max-width: 500px;
+  width: calc(100%);
+  height: 49vh;
   margin: 0 auto;
   overflow-x: scroll;
   gap: 20px;
-  padding-top: 1vh;
-  padding-bottom: 29vh;
   scroll-padding-left: 0.3rem;
   scroll-padding-right: 0.3rem;
   scroll-snap-type: x mandatory;
   scroll-snap-stop: always;
   scrollbar-width: none;
+  //background: var(--background-tile);
+  padding: 0.5rem 0.3rem 0 0.6rem;
+  border-radius: 0 0 35px 35px;
+  background: var(--background-tile);
+  z-index: 2;
+  //position: fixed;
+  left: 50%;
+  //transform: translateX(-50%);
+  box-sizing: border-box;
+  overflow-y: hidden;
 
   &.top {
-    padding-top: 20vh;
-    padding-bottom: 1vh;
+    top: 29vh;
+    border-radius: 35px 35px 0 0;
+    height: 69vh;
   }
 
-  & .art svg{
-    width: 30vw;
-    height: 30vh;
+  &.desktop {
+
+  }
+
+  & .art img{
+    width: 15rem;
+    height: 15rem;
+    object-fit: cover;
+    margin-top: 2rem;
+    //opacity: 0; /* Устанавливаем начальную прозрачность 0 */
   }
 
   @media screen and (max-width: 800px) {
     & {
-      width: 98%;
+      //width: 98%;
       //padding-bottom: 20vh;
-      //padding-top: 17vh;
+      height: 60vh;
+      bottom: 40vh;
     }
 
     &.top {
-      padding-top: 20vh;
-      padding-bottom: 10vh;
+      top: 25vh;
+      height: 75vh;
+    }
+
+    & .day {
+
+      & .day_title {
+        margin-block-start: 0.2rem;
+      }
     }
   }
 
@@ -41,13 +70,16 @@
     min-height: 30vh;
     text-align: center;
     scroll-snap-align: center;
+    padding-bottom: 6rem;
+    overflow-y: auto;
 
     & .day_title {
       margin-block-end: 0.2em;
       color: var(--text-color);
 
       &.today {
-        color: var(--lavanda);
+        color: var(--primary-color);
+        font-size: 1rem;
       }
     }
 
@@ -59,15 +91,16 @@
 
     @media screen and (max-width: 800px) {
       & .day_title{
-        font-size: 1em;
+        font-size: 1rem;
       }
 
       & .subtitle {
-        font-size: 0.7em;
+        font-size: 1rem;
       }
     }
   }
 }
 .container {
-
+  background: var(--primary-dark);
+  height: 100vh;
 }

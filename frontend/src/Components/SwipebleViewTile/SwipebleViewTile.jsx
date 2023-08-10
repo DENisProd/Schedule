@@ -1,14 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 
 // import "../../App.css";
 
 import styles from "./swipeble-view-tile.module.scss"
 import cn from "classnames"
+import {CollapseButton} from "./CollapseButton/CollapseButton";
 
-export default function SwipebleViewTile({ isGroup, isRoom, isTeachers, subjects }) {
+export default function SwipebleViewTile({isGroup, isRoom, isTeachers, subjects}) {
     const tileRef = useRef(null);
 
     const [currentSlide, setCurrentSlide] = useState(0);
+
 
 //     let childs = null;
 //     let rect = null;
@@ -17,7 +19,7 @@ export default function SwipebleViewTile({ isGroup, isRoom, isTeachers, subjects
 // const isScrolled = useRef(false)
 
 //     const scrollHandler2 = () => {
-      
+
 //         const scrollLeft = tileRef.current.scrollLeft;
 //         console.log(scrollLeft)
 //         //if (childs?.length > 1) {
@@ -74,20 +76,21 @@ export default function SwipebleViewTile({ isGroup, isRoom, isTeachers, subjects
                     subjects &&
                     (subjects[0]?.name + subjects[1]?.name) + subjects[0].startTime
                 }
-            //     ref={tileRef}
+                //     ref={tileRef}
                 // onScroll={scrollHandler}
-            //     onScroll={scrollHandler}
+                //     onScroll={scrollHandler}
             >
                 {subjects?.map((subject) => (
-                    <SubjectTile isGroup={isGroup} isTeachers={isTeachers} isRoom={isRoom} subject={subject} key={subject._id + subject.name}/>
+                    <SubjectTile isGroup={isGroup} isTeachers={isTeachers} isRoom={isRoom} subject={subject}
+                                 key={subject._id + subject.name}/>
                 ))}
             </div>
-            <DotIndicator currentSlide={currentSlide} subjects={subjects} />
+            <DotIndicator currentSlide={currentSlide} subjects={subjects}/>
         </>
     );
 }
 
-function DotIndicator({ currentSlide, subjects }) {
+function DotIndicator({currentSlide, subjects}) {
 //     useEffect(() => {
 //         console.log(Math.round(currentSlide, 1));
 //     }, []);
@@ -96,24 +99,26 @@ function DotIndicator({ currentSlide, subjects }) {
             {subjects?.length > 1 &&
                 subjects.map((subject, index) => (
                     <div key={index + subject.name + subject.teacherName}
-                        className={cn(Math.round(Number(currentSlide), 1) === index && styles.current)}
+                         className={cn(Math.round(Number(currentSlide), 1) === index && styles.current)}
                     />
                 ))}
         </div>
     );
 }
 
-function SubjectTile({ isGroup, isRoom, isTeachers, subject }) {
+function SubjectTile({isGroup, isRoom, isTeachers, subject}) {
+    const [isFullView, setIsFullView] = useState(false)
+
     const types = [
-        { name: "Военная кафедра", color: styles.green },
-        { name: "лаб", color: styles.blue },
-        { name: "лек", color: styles.green },
-        { name: "пр.", color: styles.pink },
-        { name: "пер", color: styles.pink },
-        { name: "фв", color: styles.blue },
-        { name: "экз", color: "#AADAFF" },
-        { name: "зач", color: styles.orange },
-        { name: "зчО", color: styles.orange },
+        {name: "Военная кафедра", color: styles.green},
+        {name: "лаб", color: styles.blue},
+        {name: "лек", color: styles.green},
+        {name: "пр.", color: styles.pink},
+        {name: "пер", color: styles.pink},
+        {name: "фв", color: styles.blue},
+        {name: "экз", color: styles.blue},
+        {name: "зач", color: styles.orange},
+        {name: "зчО", color: styles.orange},
     ];
 
     const getStyle = (name) => {
@@ -124,23 +129,47 @@ function SubjectTile({ isGroup, isRoom, isTeachers, subject }) {
     };
 
     return (
-        <div className={styles.subject_tile} key={subject.name + (subject.isSubgroup ? "yes" : "no") + subject.teacherName}>
-            <div className={cn(styles.subject_tile_left, getStyle(subject.name))}>
-                <h1>{subject.number}</h1>
-                <h4 className={styles.time_h}>
-                    <span className="time-span">{subject.startTime}</span>
-                </h4>
-                <p>---</p>
-                <h4 className={styles.time_h}>
-                    <span className="time-span">{subject.endTime}</span>
-                </h4>
-            </div>
+        <div className={cn(styles.subject_tile, getStyle(subject.name))}
+             key={subject.name + (subject.isSubgroup ? "yes" : "no") + subject.teacherName}>
+            {/*<div className={cn(styles.subject_tile_left)}>*/}
+            {/*    <h1>{subject.number}</h1>*/}
+            {/*    <h4 className={styles.time_h}>*/}
+            {/*        <span className="time-span">{subject.startTime}</span>*/}
+            {/*    </h4>*/}
+            {/*    <h4 className={styles.time_h}>*/}
+            {/*        <span className="time-span">{subject.endTime}</span>*/}
+            {/*    </h4>*/}
+            {/*</div>*/}
 
             <div className={styles.subject_tile_right}>
                 <h3>{subject.name}</h3>
                 {!isGroup && <p>Группа {subject.groupName}</p>}
-                <p>Аудитория {subject.audName}</p>
-                <p>{subject.teacherName}</p>
+
+                <div className={styles.full_container}>
+                    {isFullView ?
+                        <div>
+                            <p>Аудитория {subject.audName.replace('Подгруппа', '')}</p>
+                            <p>{subject.startTime}{' - '}{subject.endTime}</p>
+                            <p>{subject.teacherName}</p>
+                        </div>
+                        :
+                        <>
+                            <div>Аудитория {subject.audName.replace('Подгруппа', '')}</div>
+                            <div>{subject.startTime}{' - '}{subject.endTime}</div>
+                        </>
+                    }
+                    <div className={styles.buttons}>
+                        {isFullView &&
+                            <svg className={styles.details} width="26" height="6" viewBox="0 0 26 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M26 3C26 4.65685 24.6569 6 23 6C21.3431 6 20 4.65685 20 3C20 1.34315 21.3431 0 23 0C24.6569 0 26 1.34315 26 3Z" fill="#F4F6F8"/>
+                                <path d="M16 3C16 4.65685 14.6569 6 13 6C11.3431 6 10 4.65685 10 3C10 1.34315 11.3431 0 13 0C14.6569 0 16 1.34315 16 3Z" fill="#F4F6F8"/>
+                                <path d="M6 3C6 4.65685 4.65685 6 3 6C1.34315 6 0 4.65685 0 3C0 1.34315 1.34315 0 3 0C4.65685 0 6 1.34315 6 3Z" fill="#F4F6F8"/>
+                            </svg>
+                        }
+                        <CollapseButton isFullView={isFullView} setIsFullView={setIsFullView}/>
+                    </div>
+                </div>
+
             </div>
         </div>
     );

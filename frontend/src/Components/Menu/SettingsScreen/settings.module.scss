@@ -24,6 +24,27 @@
     }
   }
 
+  & .theme_btn {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    border: none;
+    border-radius: 1rem;
+
+    &.light_theme_btn {
+      background: #FFFFFF;
+    }
+    &.dark_theme_btn {
+      background: var(--primary-dark);
+    }
+    &.pink_theme_btn {
+      background: var(--primary-red);
+    }
+    &.yellow_theme_btn {
+      background: var(--primary-orange);
+    }
+  }
+
   & .choose_mode {
     margin-top: 1em;
     width: 100%;

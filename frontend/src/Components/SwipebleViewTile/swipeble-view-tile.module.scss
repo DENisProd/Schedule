@@ -22,18 +22,59 @@
     min-width: 99%;
     scroll-snap-align: center;
     //margin-left: 1em;
-    margin: 0.8em 0;
-    background: var(--background-tile);
-    border-radius: 15px;
+    margin: 0.4em 0;
+    background: var(--primary-green);
+    color: #FFFFFF;
+    border-radius: 1.2rem;
     text-align: start;
     display: flex;
     overflow: hidden;
+    transition: all 0.2s ease-out;
     //box-shadow: 0px 4px 20px rgba(197, 197, 197, 0.15);
     border: var(--background-tile-border) 1px solid;
+
+    &.green {
+      background: var(--primary-green);
+    }
+
+    &.blue {
+      background: var(--primary-cyan);
+    }
+
+    &.pink {
+      background: var(--primary-red);
+    }
+
+    &.orange {
+      background: var(--primary-orange);
+    }
 
     @media screen and (max-width: 800px) {
       & {
         margin: 0.5em 0;
+      }
+    }
+
+    & .short_container {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    & .full_container {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+
+      & .buttons {
+        display: flex;
+        flex-direction: column;
+        justify-content: end;
+        gap: 1rem;
+        align-items: center;
+
+        & .details {
+
+        }
       }
     }
 
@@ -60,35 +101,19 @@
       & h1 {
         margin-block-start: 0.2em;
         margin-block-end: 0.2em;
-        font-size: 1.4em;
+        font-size: 14px;
       }
 
       & h4 {
         margin-block-end: 0;
         margin-block-start: 0;
-        font-size: 0.9em;
+        font-size: 14px;
       }
 
       & p {
         margin-block-start: 0;
         margin-block-end: 0.2em;
-        font-size: 0.8em;
-      }
-
-      &.green {
-        background: var(--green);
-      }
-
-      &.blue {
-        background: var(--blue);
-      }
-
-      &.pink {
-        background: var(--pink);
-      }
-
-      &.orange {
-        background: var(--orange);
+        font-size: 14px;
       }
 
       @media screen and (max-width: 800px) {
@@ -97,11 +122,11 @@
         & h1 {
           margin-block-start: 0.3em;
           margin-block-end: 0.3em;
-          font-size: 1.2em;
+          font-size: 14px;
         }
 
         & h4 {
-          font-size: 0.8em;
+          font-size: 14px;
         }
       }
     }
@@ -110,8 +135,8 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 1.5%;
-      width: 77%;
+      padding: 1rem;
+      width: calc(100% - 2rem);
 
       & h3 {
         margin-block-start: 0;
@@ -127,13 +152,13 @@
 
       @media screen and (max-width: 800px) {
         & h3 {
-          font-size: 0.8em;
+          font-size: 14px;
           margin-block-start: 0;
           margin-block-end: 0.2em;
         }
 
         & p {
-          font-size: 0.7em;
+          font-size: 14px;
           margin-block-start: 0.2em;
           margin-block-end: 0;
         }
@@ -152,11 +177,11 @@
     width: 5px;
     height: 5px;
     margin: 0 5px;
-    background: #dedede;
+    background: var(--primary-gray);
     border-radius: 1em;
 
     &.current {
-      background: #333399;
+      background: var(--primary-color);
     }
   }
 }

@@ -1,5 +1,5 @@
 import {useNavigate} from "react-router-dom";
-import React, {useEffect, useState, Children, createRef} from "react";
+import React, {useEffect, useState, Children, createRef, useRef, forwardRef, useImperativeHandle} from "react";
 import axios from "axios";
 import styles from "./search.module.scss"
 import Loader from "../../Loader/Loader";
@@ -27,11 +27,11 @@ const univerTabs = {
     'rsue': {0: true, 1: false, 2: false},
 }
 
-const SearchModule = ({_setActiveTab, _setIsSearching}) => {
+const SearchModule = forwardRef(({_setActiveTab, _setIsSearching}, ref) => {
 
     const [isSearching, setIsSearching] = useState(false)
     const [isLoaded, setIsLoaded] = useState(false)
-    const searchInput = createRef()
+    const searchInput = useRef(null);
 
     let timeout = null
 
@@ -59,6 +59,13 @@ const SearchModule = ({_setActiveTab, _setIsSearching}) => {
     const cancelTimeout = () => clearTimeout(timeout)
     const onSelectUniversity = (e) => setUniversity(e)
 
+    // Expose the focusSearchInput function to the parent component
+    useImperativeHandle(ref, () => ({
+        focusSearchInput() {
+            searchInput.current.focus();
+            console.log('что-то происходит')
+        }
+    }));
 
     return (
         <>
@@ -98,7 +105,7 @@ const SearchModule = ({_setActiveTab, _setIsSearching}) => {
             </TabGroup>
         </>
     )
-}
+})
 
 export default SearchModule
 

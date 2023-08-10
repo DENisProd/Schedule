@@ -16,6 +16,11 @@ import SmileSVG from "../../assets/SmileSVG";
 import Loader2 from "../Loader/Loader2";
 import ErrorBoundary from "../../utils/ErrorBoundary";
 
+import Art1 from '../../assets/arts/Art1.svg'
+import Art2 from '../../assets/arts/Art2.svg'
+import Art3 from '../../assets/arts/Art3.svg'
+import Art4 from '../../assets/arts/Art4.svg'
+
 function isExists (group, groupId, date, univer) {
     if (univer === 'dstu') {
         if (Number(group.id) === Number(groupId)) {
@@ -39,7 +44,17 @@ function isExists (group, groupId, date, univer) {
     return false
 }
 
-const ViewNew = ({addToCompare}) => {
+const arts = [
+    Art1,
+    Art2,
+    Art3,
+    Art4
+]
+
+const ViewNew = ({isTeachers, isRoom, isGroup, isMobile, addToCompare}) => {
+
+    const randomIndex = Math.floor(Math.random() * arts.length);
+    const art = arts[randomIndex];
 
     const containerRef = useRef(null);
 
@@ -247,14 +262,21 @@ const ViewNew = ({addToCompare}) => {
     return (
         <ErrorBoundary>
             <div className={styles.container}>
-                <ViewHeaderNew university={university} week={currentWeek} info={currentSked} prev={getPrev} next={getNext} lookAt={lookAt} scrollTo={scrollTo} addToCompare={addToCompare}/>
+                {settings?.calDir === "top" && <ViewHeaderNew university={university} week={currentWeek} info={currentSked} prev={getPrev}
+                                next={getNext} lookAt={lookAt} scrollTo={scrollTo} addToCompare={addToCompare}/>}
                 {groups.length > 0 && currentSked.sked && !isLoading ?
-                    <div className={cn(styles.view_scroll, settings?.calDir === "top" && styles.top)} ref={containerRef} id={"scrollArea"}
+                    <div className={cn(styles.view_scroll, settings?.calDir === "top" && styles.top, !isMobile && styles.desktop)} ref={containerRef} id={"scrollArea"}
                         // onTouchEnd={() => setIsTouchEnd(true)}
                         // onTouchStart={() => setIsTouchEnd(false)}
                         // onMouseDown={() => setIsTouchEnd(false)}
                         // onMouseUp={() => setIsTouchEnd(true)}
                     >
+                        {!isMobile &&
+                            <>
+                                {/*<div className={styles.right}/>*/}
+                                {/*<div className={styles.left}/>*/}
+                            </>
+                        }
                         {currentSked && Object.keys(currentSked).length > 0 ? (
                             <>
                                 {Object.keys(currentSked.sked).map((date, index) => (
@@ -271,18 +293,22 @@ const ViewNew = ({addToCompare}) => {
                                             {month[Number(date.split("-")[1]) - 1]}{" "}
                                             {date === currentDateString && " (сегодня)"}
                                         </h2>
-                                        <h5 className={styles.subtitle}>{weekDays[new Date(date).getDay()]}</h5>
+                                        {/*<h5 className={styles.subtitle}>{weekDays[new Date(date).getDay()]}</h5>*/}
                                         {currentSked.sked[date].length > 0 ?
                                             <>
                                                 {currentSked.sked[date].map((subjects) => (
-                                                    <SwipebleViewTile isGroup={false} subjects={subjects}/>
+                                                    <SwipebleViewTile isGroup={isGroup} subjects={subjects}/>
                                                 ))}
                                             </>
                                             :
                                             <div>
 
-                                                <div className={styles.art}><SmileSVG/></div>
-                                                <h3>Пар нет :)</h3>
+                                                <div className={styles.art}>
+                                                    <img src={art}/>
+                                                </div>
+                                                <h3 style={{
+                                                    userSelect: 'none'
+                                                }}>Пар нет</h3>
                                                 {/*<button onClick={() => {*/}
                                                 {/*    if (index === 0) getPrev()*/}
                                                 {/*    if (index === 8) getNext()*/}
@@ -295,17 +321,6 @@ const ViewNew = ({addToCompare}) => {
                                         }
 
                                     </div>
-                                    // <div id={Number(gr.split("-")[2]).toString()}>
-                                    //     <h2 className={gr.split("-")[2] === todayDate ? "today" : "day"}>
-                                    //         {Number(gr.split("-")[2])}{" "}
-                                    //         {month[Number(gr.split("-")[1]) - 1]}{" "}
-                                    //         {gr.split("-")[2] === todayDate.toString() && " (сегодня)"}
-                                    //     </h2>
-                                    //     <h5>{weekDays[new Date(gr).getDay()]}</h5>
-                                    //     {currentSked.sked][gr].map((subjects) => (
-                                    //         <SwipebleViewTile isGroup={false} subjects={subjects}/>
-                                    //     ))}
-                                    // </div>
                                 ))}
                             </>
                         ) : (
@@ -313,10 +328,14 @@ const ViewNew = ({addToCompare}) => {
                         )}
                     </div>
                     :
-                    <div style={{marginTop: '10rem', textAlign: 'center'}}>
-                        <Loader2/>
+                    <div className={styles.view_scroll}>
+                        <div style={{margin: '8rem auto 0 auto',}}>
+                            <Loader2/>
+                        </div>
                     </div>
                 }
+                {settings?.calDir !== "top" && <ViewHeaderNew university={university} week={currentWeek} info={currentSked} prev={getPrev}
+                                                              next={getNext} lookAt={lookAt} scrollTo={scrollTo} addToCompare={addToCompare}/>}
             </div>
         </ErrorBoundary>
     )

@@ -5,7 +5,7 @@ const defaultState = {
     compares: []
 }
 
-const ADD2_GROUP = "ADD_GROUP"
+const ADD2_GROUP = "ADD2_GROUP"
 const SET_COMPARE = "SET_COMPARE"
 const NOTHING = "NOTHING"
 

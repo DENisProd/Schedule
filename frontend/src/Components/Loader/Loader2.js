@@ -1,6 +1,9 @@
 export default function Loader2() {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="64px" height="64px" viewBox="0 0 128 128">
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="64px" height="64px" viewBox="0 0 128 128" style={{
+            margin: '0 auto',
+            width: '64px',
+        }}>
             <g>
                 <circle cx="16" cy="64" r="16" fill={'var(--text-color)'}/>
                 <circle cx="16" cy="64" r="14.344" fill={'var(--text-color)'} transform="rotate(45 64 64)"/>

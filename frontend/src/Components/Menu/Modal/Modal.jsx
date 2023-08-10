@@ -1,6 +1,7 @@
 import styles from "./modal.module.scss"
 
 import vkHeader from "../../../assets/vk_bg.webp"
+import mapHeader from "../../../assets/map_header.png"
 
 const info = {
     "vk": {
@@ -10,6 +11,10 @@ const info = {
     "compare": {
         img: vkHeader,
         text: "Хотите провести собрание, но не можете найти время, когда все свободны? Сравнение расписаний групп вам поможет!"
+    },
+    "navigator": {
+        img: mapHeader,
+        text: "Не можете найти аудиторию или столовую? Карта корпусов вам в этом поможет!"
     }
 }
 

@@ -50,10 +50,6 @@ const DateAndTimePicker = ({ setParentValue}) => {
                 <label htmlFor="time">Время окончания: </label>
                 <input type="time" id="time2" name="time" value={endTime} onChange={handleEndTimeChange} />
             </p>
-            {/* Можно использовать значения состояний для обработки данных */}
-            <p>Выбранная дата: {selectedDate}</p>
-            <p>Время начала: {startTime}</p>
-            <p>Время окончания: {endTime}</p>
         </div>
     );
 };

@@ -29,10 +29,10 @@ const SettingsScreen = () => {
         else setSettings(prev => ({...prev, viewType: 'ver' }))
     }, [isHor])
 
-    useEffect(() => {
-        if (isOn)setTheme(themes.dark)
-        else setTheme(themes.light)
-    }, [isOn])
+    // useEffect(() => {
+    //     if (isOn)setTheme(themes.dark)
+    //     else setTheme(themes.light)
+    // }, [isOn])
 
     return (
         <div className={styles.settings_cont}>
@@ -42,14 +42,28 @@ const SettingsScreen = () => {
             </div>
 
             <div className={cn(styles.setting_line, styles.setting_container)}>
-                <span>Темная тема</span>
-                <ToggleButton {...{isOn, toggle}} />
+                <span>Тема</span>
+                {/*<ToggleButton {...{isOn, toggle}} />*/}
+                <div style={{display: 'flex', gap: '1rem'}}>
+                    <button className={cn(styles.theme_btn, styles.light_theme_btn)} onClick={() => {
+                        setTheme(themes.light)
+                    }}></button>
+                    <button className={cn(styles.theme_btn, styles.dark_theme_btn)} onClick={() => {
+                        setTheme(themes.dark)
+                    }}></button>
+                    <button className={cn(styles.theme_btn, styles.pink_theme_btn)} onClick={() => {
+                        setTheme(themes.pink)
+                    }}></button>
+                    {/*<button className={cn(styles.theme_btn, styles.yellow_theme_btn)} onClick={() => {*/}
+                    {/*    setTheme(themes.yellow)*/}
+                    {/*}}></button>*/}
+                </div>
             </div>
 
-            <div className={cn(styles.setting_line, styles.setting_container)}>
-                <span>Тип просмотра расписания (горизонтальный \ вертикальный скролл)</span>
-                <ToggleButton isOn={isHor} toggle={toggleViewOrientation} />
-            </div>
+            {/*<div className={cn(styles.setting_line, styles.setting_container)}>*/}
+            {/*    <span>Тип просмотра расписания (горизонтальный \ вертикальный скролл)</span>*/}
+            {/*    <ToggleButton isOn={isHor} toggle={toggleViewOrientation} />*/}
+            {/*</div>*/}
 
             <div className={cn(styles.choose_mode)}>
                 <span>Расположения календаря</span>

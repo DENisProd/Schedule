@@ -1,11 +1,11 @@
+import styles from './collapse-button.module.scss'
+import cn from 'classnames'
+
 export const CollapseButton = ({isFullView, setIsFullView}) => {
     return (
         <>
-            <svg onClick={() => setIsFullView(!isFullView)} width="16" height="10" viewBox="0 0 16 10"
-                 fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M2.2153 1.07179L2.21548 1.07158L2.20958 1.06704C1.88758 0.819464 1.43024 0.847316 1.13897 1.14914C0.820342 1.47932 0.820342 2.01322 1.13897 2.3434L7.41881 8.85086L7.41861 8.85105L7.42409 8.85595L7.50487 8.92821L7.50468 8.92842L7.51059 8.93296C7.83259 9.18054 8.28993 9.15268 8.58119 8.85086L14.861 2.3434L14.8612 2.34359L14.8659 2.33797L14.9356 2.25427L14.9358 2.25444L14.9401 2.24848C15.1768 1.91796 15.1509 1.44956 14.861 1.14914L14.8612 1.14895L14.8557 1.14405L14.775 1.07179L14.7752 1.07158L14.7692 1.06704C14.4472 0.819464 13.9899 0.847316 13.6986 1.14914L13.7706 1.21858L13.6986 1.14914L8 7.05458L2.30136 1.14914L2.30155 1.14895L2.29607 1.14405L2.2153 1.07179Z"
-                    fill="white" stroke="black" strokeWidth="0.2"/>
+            <svg className={cn(styles.collapse_icon, isFullView && styles.collapse_reversed)} onClick={() => setIsFullView(!isFullView)} width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 10L9.29289 2.70711C9.68342 2.31658 10.3166 2.31658 10.7071 2.70711L18 10" stroke="white" strokeWidth="4" strokeLinecap="round"/>
             </svg>
         </>
     )

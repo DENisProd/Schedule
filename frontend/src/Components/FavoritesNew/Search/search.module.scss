@@ -9,7 +9,7 @@
 
   &:focus {
     outline: none;
-    background: var(--nav-color);
+    background: var(--background-tile);
   }
 }
 
@@ -34,6 +34,7 @@
 
   & table{
     width: 100%;
+    border-collapse: collapse !important;
   }
 }
 

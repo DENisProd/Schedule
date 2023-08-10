@@ -5,8 +5,14 @@ export const getTheme = () => {
     const theme = `${window?.localStorage?.getItem('theme')}`
     if (Object.values(themes).includes(theme)) return theme
 
-    const userMedia = window.matchMedia('(prefers-color-scheme: light)')
+    let userMedia = window.matchMedia('(prefers-color-scheme: light)')
     if (userMedia.matches) return themes.light
+
+    userMedia = window.matchMedia('(prefers-color-scheme: pink)')
+    if (userMedia.matches) return themes.pink
+
+    userMedia = window.matchMedia('(prefers-color-scheme: yellow)')
+    if (userMedia.matches) return themes.yellow
 
     return themes.dark
 }
@@ -43,9 +49,14 @@ function newColor(theme) {
     const head = document.getElementsByTagName('head')[0];
 
 // Create a new meta tag for the theme color
+    let color = "#F4F6F8"
+    if (themes.dark===theme) color = "#26272E"
+    if (themes.pink===theme) color = "#ff7676"
+    if (themes.yellow===theme) color = "#ff7676"
+
     const themeColorMeta = document.createElement('meta');
     themeColorMeta.setAttribute('name', 'theme-color');
-    themeColorMeta.setAttribute('content', themes.light===theme ? "#f2f2f8" : "#080C14");
+    themeColorMeta.setAttribute('content', color);
 
 // Remove any existing theme-color meta tags
     const existingThemeColorMeta = head.querySelector('meta[name="theme-color"]');
@@ -59,7 +70,7 @@ function newColor(theme) {
 
 function changeThemeColor(theme) {
     let metaThemeColor = document.querySelector("meta[name=theme-color]");
-    metaThemeColor.setAttribute("content", themes.light===theme ? "#080C14" : "#f2f2f8");
+    metaThemeColor.setAttribute("content", themes.light===theme ? "#F4F6F8" : "#3A3D41");
     setTimeout(function() {
         changeThemeColor();
     }, 3000);

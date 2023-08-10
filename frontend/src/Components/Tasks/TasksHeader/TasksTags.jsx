@@ -1,28 +1,31 @@
 import styles from './tasks-header.module.scss'
+import {useEffect, useState} from "react";
 
-const tags = [
-    "ДЗ",
-    "Деканат",
-    "Практика",
-    "Курсовая",
-    "Важно"
-]
+export const TasksTags = ({tagsList, setSelectedTag}) => {
+    const [randomTags, setRandomTags] = useState([])
 
-export const TasksHeader = ({setSelectedTag}) => {
+    useEffect(() => {
+        getRandomTags()
+    }, [tagsList])
 
     const getRandomTags = () => {
-        let array = [];
-        let max = tags.length > 0 ? 5 : tags.length;
-        while (array.length < max) {
-            let rand = getRandomNumber(tags.length - 1);
-            if (!array.includes(tags[rand])) {
-                array.push(tags[rand]);
-            }
+        let array = []
+        if (tagsList) array.push("Все")
+
+        if (tagsList.length > 5) {
+            tagsList.map(tag => {
+                let rand = getRandomNumber(tagsList.length - 1);
+                if (!array.includes(tagsList[rand])) {
+                    array.push(tagsList[rand])
+                }
+            })
+        } else {
+            array = [...array, ...tagsList]
         }
-        array.push('Ещё');
-        console.log(array);
-        return array;
-    }
+
+        // array.push('Ещё');
+        setRandomTags(array);
+    };
 
     const selectTag = (tag) => {
         if (setSelectedTag) setSelectedTag(tag)
@@ -34,9 +37,13 @@ export const TasksHeader = ({setSelectedTag}) => {
 
     return (
         <div className={styles.buttons_container}>
-            {getRandomTags().map(tag =>
-                <button onClick={() => selectTag(tag)}>{tag}</button>
-            )}
+            {tagsList.length > 0 &&
+                <>
+                    {randomTags.map(tag =>
+                        <button onClick={() => selectTag(tag)}>{tag}</button>
+                    )}
+                </>
+            }
         </div>
     )
 }

@@ -1,0 +1,11 @@
+.collapse_icon {
+  width: 20px;
+  height: 20px;
+  transition: all 0.2s ease-out;
+  cursor: pointer;
+  transform: rotate(-180deg);
+
+  &.collapse_reversed {
+    transform: rotate(0deg);
+  }
+}

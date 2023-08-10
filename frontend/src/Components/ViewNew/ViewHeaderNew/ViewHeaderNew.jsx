@@ -6,6 +6,7 @@ import {useContext, useEffect, useState} from "react";
 import {SettingsContext} from "../../../providers/SettingsProvider";
 import {useDispatch, useSelector} from "react-redux";
 import {addGroupToCompare} from "../../../store/compareReducer";
+import {useNavigate} from "react-router-dom";
 
 const daysOfWeek = [
     "пн",
@@ -18,10 +19,9 @@ const daysOfWeek = [
 ]
 
 function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, university}) {
-
+    const navigate = useNavigate()
     const dispatch = useDispatch()
     const groups = useSelector(state => state.compare)
-    console.log(groups)
 
     const [holidays, setHolidays] = useState([])
     const [favorite, setFavorite] = useState(false)
@@ -48,18 +48,16 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, 
         let favoritesGroups = JSON.parse(localStorage.getItem("favorites"));
         let _fav = []
 
-        console.log(favoritesGroups)
+
         if (favoritesGroups && info.id) {
             favoritesGroups.forEach((favorites) => {
                 let isOld = false
-                console.log(favorites.id)
 
-                if (favorites.id.toString() === info.id) {
+                if (favorites?.id && favorites.id.toString() === info.id) {
                     let fav = JSON.parse(JSON.stringify(favorites))
                     if (!fav["university"] || fav["university"] === "undefined") {
                         fav["university"] = (university === "undefined" ? 'dstu' : university)
                         isOld = true
-                        console.log(fav)
                         _fav.push(fav)
                     }
                     // [{"name":"ВИБ31","id":44464,"university":""},{"name":"МКИС14","id":"44432"},{"name":"ВПР34","id":"44454","university":"dstu"}]
@@ -69,9 +67,6 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, 
                 }
                 if (!isOld)
                     _fav.push(favorites)
-
-                console.log(_fav)
-
             });
 
                 //localStorage.setItem("favorites", JSON.stringify(_fav))
@@ -116,7 +111,7 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, 
     }
 
     useEffect(() => {
-        console.log(groups)
+        // console.log(groups)
     }, [groups])
 
     const dateClick = (date) => {
@@ -126,74 +121,73 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, 
     return (
         <div className={cn(styles.container_wrapper, settings?.calDir === "top" && styles.top)}>
             <div className={styles.container}>
-                {settings?.calDir === "top" ?
-                    <>
+                {/*{settings?.calDir === "top" ?*/}
+                {/*     <>*/}
+                    {/*    <div className={styles.title_container}>*/}
+                    {/*        <div*/}
+                    {/*            className={cn(styles.icon_button, inCompareList && styles.compare)}*/}
+                    {/*            onClick={() => {*/}
+                    {/*                // addToCompare(info.id, info.name, (university === "undefined" ? 'dstu' : university))*/}
+                    {/*                dispatch(addGroupToCompare({id: info.id, name: info.name, univer: (university==="undefined" ? 'dstu' : university)}))*/}
+                    {/*                setInCompareList(true)*/}
+                    {/*            }*/}
+                    {/*            }>*/}
+                    {/*            <svg*/}
+                    {/*                version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"*/}
+                    {/*                width="800px" height="800px" viewBox="0 0 25.361 25.361">*/}
+                    {/*                <g>*/}
+                    {/*                    <path d="M23.86,0H1.5C0.673,0,0,0.671,0,1.5v22.361c0,0.828,0.672,1.5,1.5,1.5h22.36c0.828,0,1.5-0.672,1.5-1.5V1.5*/}
+                    {/*                C25.36,0.671,24.688,0,23.86,0z M19.306,14.182h-5.125v5.125c0,0.83-0.672,1.5-1.5,1.5c-0.828,0-1.5-0.67-1.5-1.5v-5.125H6.056*/}
+                    {/*                c-0.828,0-1.5-0.67-1.5-1.5c0-0.829,0.672-1.5,1.5-1.5h5.125V6.057c0-0.829,0.672-1.5,1.5-1.5c0.83,0,1.5,0.671,1.5,1.5v5.125*/}
+                    {/*                h5.125c0.828,0,1.5,0.671,1.5,1.5C20.806,13.512,20.134,14.182,19.306,14.182z"/>*/}
+                    {/*                </g>*/}
+                    {/*            </svg>*/}
+                    {/*        </div>*/}
+                    {/*        <div className={styles.title}>{info.name}</div>*/}
+                    {/*        <div*/}
+                    {/*            className={cn(styles.icon_button, favorite && styles.favorite)}*/}
+                    {/*            onClick={addToFavorites}>*/}
+                    {/*            <svg width="800px" height="800px" viewBox="-5.5 0 24 24"*/}
+                    {/*                 xmlns="http://www.w3.org/2000/svg">*/}
+                    {/*                <path*/}
+                    {/*                    d="m0 2.089v21.912l6.546-6.26 6.545 6.26v-21.912c-.012-1.156-.952-2.089-2.109-2.089-.026 0-.051 0-.077.001h.004-8.726c-.022-.001-.047-.001-.073-.001-1.158 0-2.098.933-2.109 2.088v.001z"/>*/}
+                    {/*            </svg>*/}
+                    {/*        </div>*/}
+                    {/*    </div>*/}
+                    {/*    <div className={styles.calendar_container}>*/}
+                    {/*        <button onClick={prev}>*/}
+                    {/*            <svg width="11" height="17" viewBox="0 0 11 17" fill="none" xmlns="http://www.w3.org/2000/svg">*/}
+                    {/*                <path d="M9 2L2.77524 8.01134C2.35679 8.41544 2.37025 9.09005 2.80448 9.47714L9 15" stroke="var(--menu-bg)" strokeWidth="3" strokeLinecap="round"/>*/}
+                    {/*            </svg>*/}
+                    {/*        </button>*/}
+
+                    {/*        <div className={styles.calendar_mini}>*/}
+                    {/*            {week.map((day, index) =>*/}
+                    {/*                <div onClick={() => dateClick(day)} className={cn(styles.day_cont, lookAt === day && styles.current, holidays.includes(day) && styles.holiday)}>*/}
+                    {/*                    <p>{day.split('-')[2]}</p>*/}
+                    {/*                    <p className={styles.day_name}>{daysOfWeek[index]}</p>*/}
+                    {/*                    <span className={styles.subject_number}>{info.sked[day] && info.sked[day].length>0 && <>{info.sked[day].map(n => <div className={styles.number_dot}/>)}</>}</span>*/}
+                    {/*                </div>*/}
+                    {/*            )}*/}
+                    {/*        </div>*/}
+
+                    {/*        <button onClick={next}>*/}
+                    {/*            <svg width="11" height="17" viewBox="0 0 11 17" fill="none" xmlns="http://www.w3.org/2000/svg">*/}
+                    {/*                <path d="M2 2L8.22476 8.01134C8.64321 8.41544 8.62975 9.09005 8.19552 9.47714L2 15" stroke="var(--menu-bg)" strokeWidth="3" strokeLinecap="round"/>*/}
+                    {/*            </svg>*/}
+                    {/*        </button>*/}
+                    {/*    </div>*/}
+                    {/*    <div className={styles.bottom}>*/}
+                    {/*        <button>{getMonth(week[0])}</button>*/}
+                    {/*    </div>*/}
+                    {/*</>*/}
+                    {/*:*/}
+                    {/*<>*/}
                         <div className={styles.title_container}>
                             <div
                                 className={cn(styles.icon_button, inCompareList && styles.compare)}
                                 onClick={() => {
-                                    addToCompare(info.id, info.name, (university === "undefined" ? 'dstu' : university))
-                                    dispatch(addGroupToCompare({id: info.id, name: info.name, univer: (university==="undefined" ? 'dstu' : university)}))
-                                    setInCompareList(true)
-                                }
-                                }>
-                                <svg
-                                    version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
-                                    width="800px" height="800px" viewBox="0 0 25.361 25.361">
-                                    <g>
-                                        <path d="M23.86,0H1.5C0.673,0,0,0.671,0,1.5v22.361c0,0.828,0.672,1.5,1.5,1.5h22.36c0.828,0,1.5-0.672,1.5-1.5V1.5
-                                    C25.36,0.671,24.688,0,23.86,0z M19.306,14.182h-5.125v5.125c0,0.83-0.672,1.5-1.5,1.5c-0.828,0-1.5-0.67-1.5-1.5v-5.125H6.056
-                                    c-0.828,0-1.5-0.67-1.5-1.5c0-0.829,0.672-1.5,1.5-1.5h5.125V6.057c0-0.829,0.672-1.5,1.5-1.5c0.83,0,1.5,0.671,1.5,1.5v5.125
-                                    h5.125c0.828,0,1.5,0.671,1.5,1.5C20.806,13.512,20.134,14.182,19.306,14.182z"/>
-                                    </g>
-                                </svg>
-                            </div>
-                            <div className={styles.title}>{info.name}</div>
-                            <div
-                                className={cn(styles.icon_button, favorite && styles.favorite)}
-                                onClick={addToFavorites}>
-                                <svg width="800px" height="800px" viewBox="-5.5 0 24 24"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="m0 2.089v21.912l6.546-6.26 6.545 6.26v-21.912c-.012-1.156-.952-2.089-2.109-2.089-.026 0-.051 0-.077.001h.004-8.726c-.022-.001-.047-.001-.073-.001-1.158 0-2.098.933-2.109 2.088v.001z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div className={styles.calendar_container}>
-                            <button onClick={prev}>
-                                <svg width="11" height="17" viewBox="0 0 11 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M9 2L2.77524 8.01134C2.35679 8.41544 2.37025 9.09005 2.80448 9.47714L9 15" stroke="var(--menu-bg)" strokeWidth="3" strokeLinecap="round"/>
-                                </svg>
-                            </button>
-
-                            <div className={styles.calendar_mini}>
-                                {week.map((day, index) =>
-                                    <div onClick={() => dateClick(day)}
-                                        className={cn(lookAt === day && styles.current, holidays.includes(day) && styles.holiday)}>
-                                        <p>{day.split('-')[2]}</p>
-                                        <p className={styles.day_name}>{daysOfWeek[index]}</p>
-                                        {info.sked[day] && info.sked[day].length>0 && <span className={styles.subject_number}>{info.sked[day].length}</span>}
-                                    </div>
-                                )}
-                            </div>
-
-                            <button onClick={next}>
-                                <svg width="11" height="17" viewBox="0 0 11 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M2 2L8.22476 8.01134C8.64321 8.41544 8.62975 9.09005 8.19552 9.47714L2 15" stroke="var(--menu-bg)" strokeWidth="3" strokeLinecap="round"/>
-                                </svg>
-                            </button>
-                        </div>
-                        <div className={styles.bottom}>
-                            <button>{getMonth(week[0])}</button>
-                        </div>
-                    </>
-                    :
-                    <>
-                        <div className={styles.title_container}>
-                            <div
-                                className={cn(styles.icon_button, inCompareList && styles.compare)}
-                                onClick={() => {
-                                    addToCompare(info.id, info.name)
+                                    // addToCompare(info.id, info.name)
                                     dispatch(addGroupToCompare({id: info.id, name: info.name, univer: (university || 'dstu')}))
                                     setInCompareList(true)
                                 }
@@ -231,10 +225,10 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, 
 
                             <div className={styles.calendar_mini}>
                                 {week.map((day, index) =>
-                                    <div onClick={() => dateClick(day)} className={cn(lookAt === day && styles.current, holidays.includes(day) && styles.holiday)}>
+                                    <div onClick={() => dateClick(day)} className={cn(styles.day_cont, lookAt === day && styles.current, holidays.includes(day) && styles.holiday)}>
                                         <p>{day.split('-')[2]}</p>
                                         <p className={styles.day_name}>{daysOfWeek[index]}</p>
-                                        {info.sked[day] && info.sked[day].length>0 && <span className={styles.subject_number}>{info.sked[day].length}</span>}
+                                        <span className={styles.subject_number}>{info.sked[day] && info.sked[day].length>0 && <>{info.sked[day].map(n => <div className={styles.number_dot}/>)}</>}</span>
                                     </div>
                                 )}
                             </div>
@@ -245,8 +239,8 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, 
                                 </svg>
                             </button>
                         </div>
-                    </>
-                }
+                {/*    </>*/}
+                {/*}*/}
             </div>
         </div>
     )
