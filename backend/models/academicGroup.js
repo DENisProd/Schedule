@@ -4,7 +4,7 @@ const academicGroup = new Schema({
     faculty: {type: String},
     groupID: {type: Number},
     name: {type: String},
-    university: {type: String},
+    university: {type: ObjectId, ref: 'University', required: true},
     level: {type: Number}
 })
 

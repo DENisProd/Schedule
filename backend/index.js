@@ -1,12 +1,11 @@
 import express from "express"
 import mongoose from "mongoose"
 import config from "config"
+import cookieParser from 'cookie-parser';
 import corsMiddleware from "./middleware/cors.middleware.js"
-import ClientInfo from './models/clientInfo.js'
 import requestIp from 'request-ip'
-import rateLimit from 'express-rate-limit'
 import morgan from 'morgan'
-//const cors from 'cors'
+import https from 'https'
 
 import groupRouter from "./routes/groupRoutes.js"
 import CronController from "./controllers/cronController.js";
@@ -14,28 +13,19 @@ import CronController from "./controllers/cronController.js";
 const app = express()
 const PORT = config.get("serverPort")
 
-const apiLimiter = rateLimit({
-    windowMs: 30 * 60 * 1000, // 15 minutes
-    max: 2, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-})
-
-const admin10 = rateLimit({
-    windowMs: 60 * 60 * 1000, // 1 hour
-    max: 10, // Limit each IP to 5 create account requests per `window` (here, per hour)
-    message:
-        'Too many accounts created from this IP, please try again after an hour',
-    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-})
+import fs from 'fs'
+import path from 'path'
+import universityRoutes from "./routes/universityRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import scheduleTimeRoutes from "./routes/scheduleTimeRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import academicGroupRoutes from "./routes/academicGroupRoutes.js";
+import queueRoutes from "./routes/queueRoutes.js";
+import subjectRouter from "./routes/subjectRouter.js";
 
 app.use(requestIp.mw())
 app.use(corsMiddleware)
 app.use(express.json())
-
-import fs from 'fs'
-import path from 'path'
 
 const accessLogStream = fs.createWriteStream(path.join(process.cwd(), 'access.log'), { flags: 'a' });
 
@@ -65,7 +55,7 @@ function isTrustedIp(addr) {
 
     return trustedIps.includes(addr);
 }
-const format = ':method :url :status - :response-time ms - :user-agent';
+const format = ':date[iso] :method :url :status - :response-time ms - :user-agent';
 // Use morgan with the write stream
 app.use(morgan(format, {
     stream: accessLogStream
@@ -73,59 +63,65 @@ app.use(morgan(format, {
 
 const parseIp = (req) => req.headers['x-forwarded-for'] || req.socket.remoteAddress
 
+// Trust the first proxy in front of your application
+app.set('trust proxy', 1);
+
 app.use("/group", groupRouter)
+app.use("/universities", universityRoutes)
+app.use("/user", userRoutes)
+app.use("/time_shedule", scheduleTimeRoutes)
+app.use('', adminRoutes)
+app.use('/groups', academicGroupRoutes)
+app.use('/queue', queueRoutes)
+app.use('/subject', subjectRouter)
 
-app.post('/all/', admin10, async (req, res) => {
-    console.log(req.body)
-    try {
-        const data = await ClientInfo.find({})
-        //res.status(200).json(data)
-        if (req.body.pwd === '123_admin_dark')
-            res.status(200).json({success: "ok", data: data})
-        else
-            res.status(200).json({success: "false"});
-    } catch (e) {
-        console.error(e)
-        res.status(400).json({success: "false"});
-    }
-})
 
-app.post('/stats/', apiLimiter, async (req, res) => {
-    try {
-        const ip = req.clientIp;
-        const newClientInfo = new ClientInfo({
-            userAgent: req.headers['user-agent'],
-            ipAdress: ip,
-            searchedGroups: req.body.sg,
-            favoriteGroups: req.body.fav,
-            enterCount: req.body.count,
-            group: req.body.group
-        })
+app.get('/', (req, res) => {
+    res.send('Hello, HTTPS!');
+});
 
-        await newClientInfo.save()
 
-        return res.status(200).json({success: true})
-    } catch (e) {
-        console.error(e)
-    }
-})
+const options = {
+    key: fs.readFileSync('./cert/localhost/localhost.decrypted.key'),
+    cert: fs.readFileSync('./cert/localhost/localhost.crt')
+};
 
 const start = async () => {
     try {
-        mongoose.set('strictQuery', false)
-        mongoose.connect(config.get("dbUrl"), {
+        // Подключение к MongoDB с обработкой ошибок
+        mongoose.set('strictQuery', false);
+        await mongoose.connect(config.get("dbUrl"), {
             useNewUrlParser: true,
-        })
-            .then(() => console.log('MongoDB connected'))
-            .catch(error => console.log(error));
-        app.listen(PORT, ()=> {
-            console.log("start", PORT)
-            const cron = new CronController()
-            cron.init()
-        })
-    } catch (e) {
-        console.log("error", e)
+        });
+        console.log('MongoDB connected');
+    } catch (error) {
+        console.error('MongoDB connection error:', error);
+        return;
     }
-}
+
+    // Создание и запуск HTTPS-сервера с обработкой ошибок
+    // const server = https.createServer(options, app);
+    // https.globalAgent.options.ca = rootCas;
+    try {
+        await app.listen(PORT);
+        console.log("Server started on port", PORT);
+    } catch (error) {
+        console.error("Error starting the server:", error);
+        return;
+    }
+
+    // Инициализация CronController
+    const cron = new CronController();
+    cron.init();
+
+    // Обработка необработанных исключений и отображение ошибок
+    process.on('uncaughtException', (err) => {
+        console.error('Uncaught Exception:', err);
+    });
+
+    process.on('unhandledRejection', (reason, promise) => {
+        console.error('Unhandled Rejection:', reason);
+    });
+};
 
 start()

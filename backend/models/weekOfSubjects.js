@@ -6,12 +6,13 @@ const weekSchema = new Schema({
     dateUploadingRasp: {type: Date, default: Date.now()},
     dateUploadingRaspDark: {type: Date, default: Date.now()},
     groupName: {type: String},
-    groupID: {type: Number},
+    groupID: {type: String},
     year: {type: String},
     days: [{type: ObjectId, ref: 'Day', required: true}],
     mondayDate: {type: String},
-    isEven: {type: Boolean, default: false},
-    university: {type: String}
+    isEven_: {type: Boolean, default: false},
+    university: {type: ObjectId, ref: 'University', required: true},
+    faculty: {type: String}
 })
 
 weekSchema.pre('remove', function (next) {

@@ -1,10 +1,9 @@
 import Router from "express";
 import rateLimit from "express-rate-limit";
-import ScheduleTimeController from "../controllers/scheduleTimeController.js";
+import QueueController from "../controllers/queueController.js";
 
 const router = new Router()
-
-const scheduleTimeController = new ScheduleTimeController()
+const queueController = new QueueController()
 
 const scheduleLimiter = rateLimit({
     windowMs: 60 * 1000, // 15 minutes
@@ -13,12 +12,11 @@ const scheduleLimiter = rateLimit({
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
 
-router.post('/', scheduleLimiter, scheduleTimeController.create);
+router.post('/', scheduleLimiter, queueController.create)
+router.post('/subscribe/:queueId', scheduleLimiter, queueController.addMember)
+router.get('/:queueId', queueController.getOne)
+router.get('/group/:groupId', queueController.getAllByGroup)
+router.post('/delete/:queueId', queueController.deleteOne)
 
-router.get('/:univerId', scheduleTimeController.getAllByUniversity);
-
-router.put('/:id', scheduleTimeController.update);
-
-router.delete('/:id', scheduleTimeController.delete);
 
 export default router

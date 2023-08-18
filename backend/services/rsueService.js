@@ -5,6 +5,11 @@ import Day from "../models/dayModel.js";
 import Week from "../models/weekOfSubjects.js";
 import {BASE_URL_RSUE} from "../constants/URLS.js";
 import AcademicGroup from "../models/academicGroup.js";
+import {FormData} from "formdata-node"
+import dayjs from "dayjs";
+import mongoose from "mongoose";
+import https from "https";
+import axios from "axios";
 
 const subjectNumbers = {
     "8:30": 1,
@@ -38,22 +43,26 @@ const shortFaculties = {
     1: "МиП",
     2: "ТД",
     3: "КТиИБ",
-    4: "УэФ'",
+    4: "УэФ",
     5: "ФЭиФинансы",
     6: "Юридический",
     7: "ФЛиЖ",
 }
+
+
+export const RSUE_ID = mongoose.Types.ObjectId('64d2baa6e6556ef902b29994')
 
 class RsueService {
     async fetchRsue(type, facultyId, courseId) {
         const formData = new FormData();
         formData.append('query', type);
         formData.append('type_id', facultyId);
-        formData.append('kind_id', courseId);
+        if (courseId) formData.append('kind_id', courseId);
 
         const options = {
             method: 'POST',
-            body: formData
+            body: formData,
+            agent: new https.Agent({ rejectUnauthorized: false })
         }
 
         const response = await fetch(BASE_URL_RSUE, options)
@@ -76,34 +85,35 @@ class RsueService {
     }
 
     async getGroupsFromServer() {
-             return await Promise.all(Object.keys(faculties).map(async faculty => {
-                const response = await this.fetchRsue('getKinds', faculty)
-                if (response) {
-                    let data = await Promise.all(response.map(async resp => {
-                        const response2 = await this.fetchRsue('getCategories', faculty, resp.kind_id)
-                        // let groups2 = []
-                        response2.map(async obj => {
-                            const group = new AcademicGroup({
-                                faculty: shortFaculties[faculty],
-                                groupID: obj.category_id,
-                                name: obj.category,
-                                level: Number.parseInt(resp.kind_id),
-                                university: 'rsue'
-                            })
-                            await group.save()
+        return await Promise.all(Object.keys(faculties).map(async faculty => {
+            const response = await this.fetchRsue('getKinds', faculty)
+            if (response) {
+                let data = await Promise.all(response.map(async resp => {
+                    const response2 = await this.fetchRsue('getCategories', faculty, resp.kind_id)
+                    // let groups2 = []
+                    response2.map(async obj => {
+                        const group = new AcademicGroup({
+                            faculty: shortFaculties[faculty],
+                            groupID: obj.category_id,
+                            name: obj.category,
+                            level: Number.parseInt(resp.kind_id),
+                            university: RSUE_ID
                         })
-                        // return groups2
-                    }))
-                    // return this.concatArrayOfArray(data)
+                        await group.save()
+                    })
+                    // return groups2
+                }))
 
-                }
-            }))
+                // return this.concatArrayOfArray(data)
+
+            }
+        }))
     }
 
     async getGroups() {
-        // await this.getGroupsFromServer()
-
-        return await AcademicGroup.find({university: 'rsue'}, {_id: 0, __v: 0})
+        const schedule = await AcademicGroup.find({university: RSUE_ID}, {_id: 0, __v: 0})
+        if (schedule) return schedule
+        else return await this.getGroupsFromServer()
     }
 
     uuid(length) {
@@ -114,7 +124,7 @@ class RsueService {
         return result;
     }
 
-    async processSchedule(schedule, mode, groupName) {
+    async processSchedule(schedule, mode, groupName, groupId) {
         let arr = []
         for (const e of schedule) {
             const cont = cheerio.load(e)
@@ -122,6 +132,7 @@ class RsueService {
             const subjects = []
             const subjectsHtml = cont('div').children().first().nextAll().toArray()
 
+            let subgroups = {}
             for (const subj of subjectsHtml) {
                 const shtml = cheerio.load(subj)
                 const bottomBlock = shtml('div').children()
@@ -129,23 +140,27 @@ class RsueService {
                 let time = shtml('div').children().first().children('span').text()
                 let timeArray = time.split('—')
                 let podgr = shtml('div').children().first().children('span').children('span').text()
+                const name = shtml('div').children().first().next().children('span').text()
                 let isSubgroup = false
-                if (podgr)
+
+                if (podgr && subgroups[timeArray[0]])
                     if (Number.parseInt(podgr.replace(/[^0-9\.]/g, '')) !== 1)
                         isSubgroup = true
 
+                subgroups[timeArray[0]] = name
                 let subText = timeArray[1].split(' ')[3]
 
                 const _subject = new Subject({
                     groupName,
                     startTime: timeArray[0].trim(),
                     endTime: timeArray[1].split(' ')[1],
-                    name: shtml('div').children().first().next().children('span').text() + (isSubgroup ? (' п/г ' + subText) : ''),
+                    name: name + (subText ? (' п/г ' + subText) : ''),
                     teacherName: shtml('div').children().first().next().next().children('span').text(),
                     audName: bottomBlock.children('.aud').text(),
                     type: bottomBlock.children('.type').text(),
                     year: year.getFullYear(),
                     number: subjectNumbers[timeArray[0].trim()],
+                    group: groupId,
                     isSubgroup,
                 })
 
@@ -167,7 +182,7 @@ class RsueService {
     }
 
     async removeWeek() {
-        const weeks = await Week.find({ university: 'rsue' });
+        const weeks = await Week.find({university: RSUE_ID});
         const promises = weeks.map((w) => w.remove());
         return Promise.all(promises)
             .then(() => {
@@ -179,10 +194,13 @@ class RsueService {
     }
 
     async getAllSchedule() {
-
+        const groups = await AcademicGroup.find({university: RSUE_ID})
+        return Promise.all(groups.map(group => {
+            this.parseSchedule(group.faculty)
+        }))
     }
 
-    async parseSchedule(facultyId, kursId, groupId) {
+    async parseSchedule(facultyId, kursId, groupId, group) {
         const formData = new FormData();
         formData.append('f', facultyId);
         formData.append('k', kursId);
@@ -191,7 +209,8 @@ class RsueService {
 
         const options = {
             method: 'POST',
-            body: formData
+            body: formData,
+            agent: new https.Agent({ rejectUnauthorized: false })
         }
 
         return await fetch('https://rsue.ru/raspisanie/', options)
@@ -203,27 +222,31 @@ class RsueService {
                 const oddWeekArray = container.find('.row').first().children().toArray()
                 const evenWeekArray = container.children('.row').last().children().toArray()
 
-                const oddProcessed = await this.processSchedule(oddWeekArray, 'odd', groupName)
-                const evenProcessed = await this.processSchedule(evenWeekArray, 'even', groupName)
+                const oddProcessed = await this.processSchedule(oddWeekArray, 'odd', groupName, group._id)
+                const evenProcessed = await this.processSchedule(evenWeekArray, 'even', groupName, group._id)
 
                 const oddWeek = new Week({
-                    isEven: false,
+                    isEven_: false,
                     days: oddProcessed,
                     year: new Date().getFullYear(),
                     groupName,
                     curWeekNumber: 1,
-                    university: 'rsue'
+                    groupID: groupName,
+                    university: RSUE_ID,
+                    faculty: shortFaculties[facultyId]
                 })
 
                 await oddWeek.save()
 
                 const evenWeek = new Week({
-                    isEven: true,
+                    isEven_: true,
                     days: evenProcessed,
                     year: new Date().getFullYear(),
                     groupName,
                     curWeekNumber: 2,
-                    university: 'rsue'
+                    university: RSUE_ID,
+                    groupID: groupName,
+                    faculty: shortFaculties[facultyId]
                 })
 
                 await evenWeek.save()
@@ -233,9 +256,8 @@ class RsueService {
     }
 
     async getSchedule(weekNumber, groupName) {
-        console.log(weekNumber, groupName)
-        // return Week.findOne({groupName: groupName, isEven: weekNumber % 2 === 0, university: 'rsue'})
-        return Week.findOne({university: 'rsue', isEven: weekNumber % 2 === 0, groupName: groupName})
+        // return Week.findOne({groupName: groupName, isEven_: weekNumber % 2 === 0, university: 'rsue'})
+        const schedule = await Week.findOne({university: RSUE_ID, isEven_: weekNumber % 2 === 0, groupName: groupName})
             .populate({
                 path: 'days',
                 model: 'Day',
@@ -250,10 +272,17 @@ class RsueService {
                     },
                 }
             })
+        return schedule
     }
 
-    async getWeekScheduleByGroupId(group_id) {
-        const schedule = await Week.findOne({groupID: group_id}, {__v: 0})
+    async getWeekScheduleByGroupId(groupName, weekNumber, date) {
+        const _today = dayjs(date).startOf('week').add(1, 'day')
+        const today = _today.format('YYYY-MM-DDTHH:mm:ss')
+        const schedule = await Week.findOne({
+            groupName: groupName,
+            university: RSUE_ID,
+            isEven_: weekNumber % 2 === 0
+        }, {__v: 0})
             .populate({
                 path: 'days',
                 model: 'Day',
@@ -268,10 +297,21 @@ class RsueService {
                     },
                 }
             })
-        if (schedule) return schedule
-        else {
-            const group = await AcademicGroup.findOne({name: group_id, university: 'rsue'})
+        if (schedule) {
+            console.log('schedule is exists')
+            const _schedule = JSON.parse(JSON.stringify(schedule))
+            const _days = await Promise.all(_schedule.days.map(day => {
+                const _day_t = _today.add(Number(day.dayNumber) - 1, 'day').format('YYYY-MM-DDTHH:mm:ss')
+                return {...day, date: _day_t}
+            }))
+            return {..._schedule, mondayDate: today, days: _days}
+
+
+        } else {
+            console.log('schedule is not exists')
+            const group = await AcademicGroup.findOne({name: groupName, university: RSUE_ID})
             if (group) {
+                console.log('group is exists')
                 // Получаем массивы ключей и значений объекта
                 const keys = Object.keys(shortFaculties);
                 const values = Object.values(shortFaculties);
@@ -281,9 +321,37 @@ class RsueService {
 
                 // Получаем ключ по индексу
                 const faculty = keys[index];
-                return await this.parseSchedule(faculty, level, group.groupID)
+                await this.parseSchedule(faculty, group.level, group.groupID, group)
+                const sked = await Week.findOne({
+                    groupName: groupName,
+                    university: RSUE_ID,
+                    isEven_: weekNumber % 2 === 0
+                }, {__v: 0})
+                    .populate({
+                        path: 'days',
+                        model: 'Day',
+                        select: {
+                            __v: 0
+                        },
+                        populate: {
+                            path: 'subjects',
+                            model: 'Subject',
+                            select: {
+                                __v: 0
+                            },
+                        }
+                    })
+                const _sked = JSON.parse(JSON.stringify(sked))
+                const _days = await Promise.all(_sked.days.map(day => {
+                    const _day_t = _today.add(Number(day.dayNumber) - 1, 'day').format('YYYY-MM-DDTHH:mm:ss')
+                    return {...day, date: _day_t}
+                }))
+
+                return {..._sked, mondayDate: today, days: _days}
+                // return {..._sked, mondayDate: today}
+                // return {..._sked, mondayDate: today}
             } else {
-                throw new Error(`Group ${group_id} is not exists`)
+                throw new Error(`Group ${groupName} is not exists`)
             }
 
         }

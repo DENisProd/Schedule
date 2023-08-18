@@ -8,11 +8,15 @@ import Week from "../models/weekOfSubjects.js";
 import AcademicGroup from "../models/academicGroup.js";
 import GroupUploadingSchema from "../models/groupUpdating.js";
 import GroupUploading from "../models/groupUpdating.js";
+import University from "../models/university.js";
+import mongoose from "mongoose";
 
 const GROUP_URLS = {
     "DSTU": "",
     "RSUE": ""
 }
+
+export const DSTU_ID = mongoose.Types.ObjectId('64d2529b4e0d38f5c52c1b66')
 
 class DstuService {
     async fetchGroup(URL, groupId, date) {
@@ -20,7 +24,7 @@ class DstuService {
         return await response.json()
     }
 
-    async adaptToServer (subject) {
+    async adaptToServer (subject, groupID) {
         try {
             const subj = new Subject({
                 audName: subject["аудитория"],
@@ -34,7 +38,8 @@ class DstuService {
                 year: subject["учебныйГод"],
                 isSubgroup: subject["isPodgr"],
                 number: subject["номерЗанятия"],
-                name: subject["дисциплина"]
+                name: subject["дисциплина"],
+                group: groupID,
             })
 
             await subj.save()
@@ -65,10 +70,12 @@ class DstuService {
     }
 
     async processGroupedSchedule(schedule, info) {
+        const groupFromDb = await AcademicGroup.findOne({ groupID: +info.group.groupID, university: DSTU_ID })
+
         let week = await Promise.all(Object.keys(schedule).map(async date => {
             let day = await Promise.all(schedule[date].map(async subjectArray => {
                 return await Promise.all(subjectArray.map(async subject => {
-                    return await this.adaptToServer(subject)
+                    return await this.adaptToServer(subject, groupFromDb?._id)
                 }))
             }))
             return await this.createDay(info.group.name, info.group.groupID, date, day)
@@ -83,7 +90,7 @@ class DstuService {
             year: info.year,
             mondayDate: info.date,
             days: week,
-            university: 'dstu'
+            university: DSTU_ID,
         })
 
         await this.subscribeToGroup(info.group.groupID)
@@ -95,16 +102,30 @@ class DstuService {
     async subscribeToGroup(groupId) {
         const groupFromDb = await GroupUploading.findOne({groupID: groupId})
         if(!groupFromDb) {
-            const group = new GroupUploading({
-                groupID: groupId
-            })
-            await group.save()
+
+            // Находим группу, убираем последнюю цифру, добавляем в список обновляемых групп весь данный поток
+            // Уменьшаем нагрузку на бд, так как не храним расписание всех 2к групп, и подгружаем группы потока
+            // пользователя (на случай, если главный сайт упадет, люди начнут переходить сюда, где для них будет всё закэшировано)
+            const findedGroup = await AcademicGroup.findOne({groupID: groupId})
+            if (findedGroup) {
+                let groupThread = findedGroup.name.slice(0, -1)
+                const allGroupsFromDb = await AcademicGroup.find({name: {$regex: new RegExp(groupThread)}})
+
+                allGroupsFromDb.map(async group => {
+                    const newGroup = new GroupUploading({
+                        groupID: group.groupId
+                    })
+                    await newGroup.save()
+                })
+            }
+
+
         }
 
     }
 
     async removeWeek(monday) {
-        const weeks = await Week.find({ university: 'dstu', mondayDate: monday });
+        const weeks = await Week.find({ university: DSTU_ID, mondayDate: monday });
         const promises = weeks.map((w) => w.remove());
         return Promise.all(promises)
             .then(() => {
@@ -120,7 +141,7 @@ class DstuService {
         let rasp1 = schedule.data.rasp;
         for (let i = 0; i < rasp1.length; i++) {
             const raspDate = rasp1[i]["дата"].split("T");
-            if (obj[raspDate[0]]?.length > 0) {
+            if (obj[raspDate[0]] && obj[raspDate[0]].length > 0) {
                 if (
                     rasp1[i]["номерЗанятия"] === rasp1[i - 1]["номерЗанятия"] &&
                     rasp1[i - 1]["дата"].split("T")[0] === raspDate[0]
@@ -190,8 +211,7 @@ class DstuService {
                 path: 'subjects',
                 model: 'Subject',
                 select: {
-                    __v: 0,
-                    _id: 0
+                    __v: 0
                 },
             }
         })
@@ -199,7 +219,7 @@ class DstuService {
 
     async getWeekScheduleByGroupIdAndDate(group_id, date) {
         const monday = dayjs(date).startOf('week').add(1, 'day').format('YYYY-MM-DDTHH:mm:ss')
-        console.log(monday)
+
         return Week.findOne({groupID: group_id, mondayDate: monday}, {__v: 0}).populate({
             path: 'days',
             model: 'Day',
@@ -211,8 +231,7 @@ class DstuService {
                 path: 'subjects',
                 model: 'Subject',
                 select: {
-                    __v: 0,
-                    _id: 0
+                    __v: 0
                 },
             }
         })
@@ -226,7 +245,7 @@ class DstuService {
                 faculty: obj.facul,
                 name: obj.name,
                 level: Number.parseInt(obj.kurs),
-                university: 'dstu',
+                university: DSTU_ID,
                 groupID: obj.id
             })
             await group.save()
@@ -236,7 +255,14 @@ class DstuService {
     async getGroups() {
         // await this.getGroupsFromServer()
 
-        return AcademicGroup.find({university: 'dstu'}, {_id: 0, __v: 0});
+        return AcademicGroup.find({university: DSTU_ID}, { __v: 0});
+    }
+
+    async getTeacherSchedule(teacherName, date) {
+        const monday = dayjs(date).startOf('week').add(1, 'day').format('YYYY-MM-DDTHH:mm:ss')
+
+        const subjects = await Subject.find({teacherName, date: monday})
+        console.log(subjects)
     }
 }
 
