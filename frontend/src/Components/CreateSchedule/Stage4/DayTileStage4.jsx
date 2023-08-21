@@ -6,10 +6,16 @@ import {useCallback, useState} from "react";
 export const SubjectTileStage4 = ({ subject }) => {
     return (
         <div className={styles.stage4tile}>
-            <p>{subject?.name}</p>
-            <p>{subject?.audName}</p>
-            <p>{subject?.teacherName}</p>
-            <p>{subject?.timeStart}-{subject?.endTime}</p>
+            <div>{subject?.name}</div>
+            <div style={{
+                display: 'flex',
+                justifyContent:'space-between'
+            }}>
+                <div>Аудитория {subject?.audName}</div>
+                <div>{subject?.timeStart}-{subject?.endTime}</div>
+            </div>
+            
+            <div>{subject?.teacherName}</div>
         </div>
     )
 }

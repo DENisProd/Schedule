@@ -18,6 +18,7 @@ export function groupByDate(schedule) {
     })
 
     return {
+        group: schedule?.group,
         id: schedule.groupID,
         sked,
         name: schedule.groupName,

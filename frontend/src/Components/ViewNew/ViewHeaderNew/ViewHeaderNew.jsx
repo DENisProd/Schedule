@@ -34,7 +34,8 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, 
     }
 
     useEffect(() => {
-        checkFavorites()
+        const isFavorite = checkFavorites()
+        setFavorite(isFavorite)
         setHolidays([])
         if (info.name) {
             Object.keys(info.sked).map(day => {
@@ -44,69 +45,58 @@ function ViewHeaderNew({info, week, prev, next, lookAt, scrollTo, addToCompare, 
     }, [info])
 
     const checkFavorites = () => {
-        setFavorite(false);
-        let favoritesGroups = JSON.parse(localStorage.getItem("favorites"));
-        let _fav = []
-
-
-        if (favoritesGroups && info.id) {
-            favoritesGroups.forEach((favorites) => {
-                let isOld = false
-
-                if (favorites?.id && favorites.id.toString() === info.id) {
-                    let fav = JSON.parse(JSON.stringify(favorites))
-                    if (!fav["university"] || fav["university"] === "undefined") {
-                        fav["university"] = (university === "undefined" ? 'dstu' : university)
-                        isOld = true
-                        _fav.push(fav)
-                    }
-                    // [{"name":"ВИБ31","id":44464,"university":""},{"name":"МКИС14","id":"44432"},{"name":"ВПР34","id":"44454","university":"dstu"}]
-
-                    setFavorite(true);
-                    return
-                }
-                if (!isOld)
-                    _fav.push(favorites)
-            });
-
-                //localStorage.setItem("favorites", JSON.stringify(_fav))
+        let favoritesGroups = JSON.parse(localStorage.getItem("favorites2"))
+        if (favoritesGroups && info?.group?._id) {
+            return favoritesGroups.some(gr => {
+                return gr.name === info.name && gr.university === info?.group?.university?.code
+            })
         }
-    };
+        return false
+    }
+
+    const removeFromFavorites = () => {
+        let favoritesGroups = JSON.parse(localStorage.getItem("favorites2"))
+
+        if (favoritesGroups && info?.group?._id) {
+            let myArray = favoritesGroups.filter(obj => {
+                return !(obj.name === info.name && obj.university === info?.group?.university.code)
+            })
+
+            localStorage.setItem("favorites2", JSON.stringify(myArray))
+        }
+    }
 
     const addToFavorites = () => {
         let favoritesGroups = JSON.parse(
-            localStorage.getItem("favorites")
-        );
+            localStorage.getItem("favorites2")
+        )
 
         if (favorite) {
-            if (favoritesGroups.length > 0) {
-                let myArray = favoritesGroups.filter(
-                    function (obj) {
-                        return (obj.id !== info.id);
-                    });
-                localStorage.setItem("favorites", JSON.stringify(myArray));
-            }
+            removeFromFavorites()
         } else {
-            if (favoritesGroups === null) favoritesGroups = [];
-            let isExists = false
-            favoritesGroups.map(gr => {
-                if (gr.id === info.id) isExists = true
-            })
+            if (favoritesGroups === null) {
+                favoritesGroups = []
+            }
+            let isExists = checkFavorites()
 
             if (!isExists) {
-                favoritesGroups.push({
-                    name: info.name,
-                    id: info.id,
-                    faculty: info?.faculty,
-                    university: (university === "undefined" ? 'dstu' : university)
-                })
-                let favoritesFiltered = favoritesGroups.filter(gr => gr.hasOwnProperty('name') === true)
-                localStorage.removeItem("favorites");
-                localStorage.setItem("favorites", JSON.stringify(favoritesFiltered));
+                let _group = {
+                    groupID: info.group.groupID,
+                    name: info.group.name,
+                    level: info.group.level,
+                    id: info.group._id,
+                    university: info?.group?.university?.code,
+                    universityName: info?.group?.university?.short_name,
+                    faculty: info.group.faculty
+                }
+
+                favoritesGroups.push(_group)
+                localStorage.setItem("favorites2", JSON.stringify(favoritesGroups));
             }
         }
 
-        checkFavorites()
+        const isFavorite = checkFavorites()
+        setFavorite(isFavorite)
         // props.checkFavorites();
     }
 

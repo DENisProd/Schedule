@@ -1,51 +1,51 @@
-import {useState} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import styles from './select-input.module.scss';
+import cn from 'classnames';
 
-import styles from "./select-input.module.scss"
-import cn from 'classnames'
+export function SelectInput({ options, value, onChange, placeholder }) {
+    const [isOpen, setIsOpen] = useState(false)
+    const selectRef = useRef(null)
 
-export function SelectInput({options, value, onChange}) {
-    const [isOpen, setIsOpen] = useState(false);
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (!selectRef.current.contains(event.target)) {
+                setIsOpen(false)
+            }
+        }
+
+        if (isOpen) {
+            document.addEventListener('click', handleClickOutside)
+        }
+
+        return () => {
+            document.removeEventListener('click', handleClickOutside)
+        }
+    }, [isOpen])
+
+    useEffect(() => {
+        onChange(value)
+    }, [value])
 
     function handleOptionClick(option) {
-        onChange(option);
-        setIsOpen(false);
+        onChange(option)
+        setIsOpen(false)
     }
 
     return (
-        <div className={styles.custom_select}>
+        <div className={styles.custom_select} ref={selectRef}>
             <div className={cn(styles.selected_value, isOpen && styles.is_open)} onClick={() => setIsOpen(!isOpen)}>
-                {value}
-                <span className={styles.arrow}>{isOpen ?
-                    <>
-                        <svg width="16" height="10" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M13.7847 8.92819L13.7904 8.93294C14.1124 9.18051 14.5697 9.15266 14.861 8.85084C15.1796 8.52066 15.1796 7.98676 14.861 7.65658L8.58116 1.14912L8.57588 1.14403L8.4951 1.07177L8.48938 1.06702C8.16738 0.819439 7.71004 0.847298 7.41878 1.14912L1.13897 7.65658L1.13407 7.66201L1.06437 7.74571L1.05987 7.7515C0.823175 8.08202 0.849074 8.55042 1.13897 8.85084L1.14427 8.85593L1.22497 8.92819L1.23077 8.93294C1.55277 9.18051 2.01007 9.15266 2.30137 8.85084L7.99997 2.9454L13.6986 8.85084L13.7039 8.85593L13.7847 8.92819Z"
-                                fill="white"/>
-                            <path
-                                d="M2.30137 8.85084C2.01007 9.15266 1.55277 9.18051 1.23077 8.93294L1.22497 8.92819L1.14427 8.85593L1.13897 8.85084C0.849074 8.55042 0.823175 8.08202 1.05987 7.7515L1.06437 7.74571L1.13407 7.66201L1.13897 7.65658L7.41878 1.14912C7.71004 0.847298 8.16738 0.819439 8.48938 1.06702L8.4951 1.07177L8.57588 1.14403L8.58116 1.14912L14.861 7.65658C15.1796 7.98676 15.1796 8.52066 14.861 8.85084C14.5697 9.15266 14.1124 9.18051 13.7904 8.93294L13.7847 8.92819L13.7039 8.85593L13.6986 8.85084L7.99997 2.9454L2.30137 8.85084ZM2.30137 8.85084L2.22937 8.7814"
-                                stroke="black" strokeWidth="0.2"/>
-                        </svg>
-
-                    </>
-                    :
-                    <>
-                        <svg width="16" height="10" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M2.2153 1.07179L2.21548 1.07158L2.20958 1.06704C1.88758 0.819464 1.43024 0.847316 1.13897 1.14914C0.820342 1.47932 0.820342 2.01322 1.13897 2.3434L7.41881 8.85086L7.41861 8.85105L7.42409 8.85595L7.50487 8.92821L7.50468 8.92842L7.51059 8.93296C7.83259 9.18054 8.28993 9.15268 8.58119 8.85086L14.861 2.3434L14.8612 2.34359L14.8659 2.33797L14.9356 2.25427L14.9358 2.25444L14.9401 2.24848C15.1768 1.91796 15.1509 1.44956 14.861 1.14914L14.8612 1.14895L14.8557 1.14405L14.775 1.07179L14.7752 1.07158L14.7692 1.06704C14.4472 0.819464 13.9899 0.847316 13.6986 1.14914L13.7706 1.21858L13.6986 1.14914L8 7.05458L2.30136 1.14914L2.30155 1.14895L2.29607 1.14405L2.2153 1.07179Z"
-                                fill="white" stroke="black" strokeWidth="0.2"/>
-                        </svg>
-                    </>
-                }</span>
+                {value ? value : <span className={styles.placeholder}>{placeholder || ''}</span>}
+                <span className={cn(styles.arrow, isOpen && styles.open)}>
+                    {/* SVG code */}
+                </span>
             </div>
-            {isOpen && (
-                <ul className={styles.options}>
-                    {Object.values(options).map((option, index) => (
-                        <li key={option} onClick={() => handleOptionClick(Object.keys(options)[index])}>
-                            {option}
-                        </li>
-                    ))}
-                </ul>
-            )}
+            <ul className={cn(styles.options, isOpen && styles.open)}>
+                {Object.keys(options).map((key) => (
+                    <li key={key} onClick={() => handleOptionClick(key)}>
+                        {options[key]}
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 }

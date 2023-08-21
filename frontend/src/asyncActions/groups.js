@@ -1,7 +1,7 @@
 import {addGroupAction, emptyAction} from "../store/groupReducer";
 import {groupByDate, groupByDateWithSubgroups} from "../utils/groupHelpers";
 import dayjs from "dayjs";
-import {addMessageAction, MESSAGE_TYPES} from "../store/messageReducer";
+import {addMessageAction, MESSAGE_TYPES, WHEN_TYPES} from "../store/messageReducer";
 import {URLS} from "../utils/urlsUtils";
 
 export const fetchGroups = (groupId, date, university = 'dstu') => {
@@ -26,8 +26,9 @@ export const fetchGroups = (groupId, date, university = 'dstu') => {
                 .catch(err => {
                     dispatch(addMessageAction({
                         title: 'Ошибка',
-                        text: err,
-                        type: MESSAGE_TYPES.ERROR
+                        text: 'Не удалось получить расписание группы',
+                        type: MESSAGE_TYPES.ERROR,
+                        when: WHEN_TYPES.FETCH_SCHEDULE
                     }))
                 })
         }

@@ -96,6 +96,12 @@
         border: none;
         font-weight: 800;
         color: #FFFFFF;
+
+        & svg {
+          & path {
+            stroke: #FFFFFF;
+          }
+        }
       }
 
       & .calendar_mini {

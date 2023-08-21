@@ -22,7 +22,7 @@ export default function VerticalTable({schedule, date}) {
                         <div className={cn(styles.row, styles.title)}>{group}</div>
                         {Object.keys(schedule[group]).map(subject =>
                         <>
-                            <div className={cn(styles.row, schedule[group][subject].audName && styles.green)}>{schedule[group][subject].audName}</div>
+                            <div className={cn(styles.row, schedule[group][subject].audName && styles.green)}>{schedule[group][subject]?.audName?.replace('Подгруппа:','')}</div>
                         </>
                         )}
                     </div>

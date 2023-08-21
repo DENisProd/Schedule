@@ -1,5 +1,5 @@
 import styles from "../create-schedule.module.scss";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import {URLS} from "../../../utils/urlsUtils";
 import {setStage1Action, setStage3Action} from "../../../store/createScheduleReducer";
@@ -9,6 +9,7 @@ export const CreateGroupStage3 = ({_next}) => {
     const [name, setName] = useState('')
     const [level, setLevel] = useState(1)
     const [faculty, setFaculty] = useState('')
+    const [groups, setGroups] = useState([])
 
     const dispatch = useDispatch()
     const stage = useSelector(state => state.createSchedule)
@@ -20,16 +21,44 @@ export const CreateGroupStage3 = ({_next}) => {
             faculty,
             university: stage.stage1._id
         }).then(res => {
-            dispatch(setStage3Action(res.data))
+            dispatch(setStage3Action(res.data.group))
             _next()
         })
     }
+
+    useEffect(() => {
+        axios.get(URLS.ACADEMIC_GROUPS + 'code/' + stage.stage1.code).then(res => {
+            let obj = []
+            if (Array.isArray(res.data)) {
+                res.data.map(el => obj.push(el))
+            }
+            setGroups(obj)
+        })
+    }, [])
+
+    useEffect(() => {
+        console.log(groups)
+    }, [groups])
 
     return (
         <>
             <p>
                 <span>Теперь создайте свою группу</span>
             </p>
+
+            <div>
+                {Array.isArray(groups) && groups.map(gr =>
+                    <div className={styles.groups}
+                    onClick={() => {
+                        dispatch(setStage3Action(gr))
+                        _next()
+                    }}
+                    >
+                        <div>{gr.name}</div>
+                        <div>{gr.faculty}</div>
+                    </div>
+                )}
+            </div>
 
             <p>
                 <div className={styles.field_title}>Название</div>
@@ -40,7 +69,7 @@ export const CreateGroupStage3 = ({_next}) => {
             <p>
                 <div className={styles.field_title}>Курс</div>
                 <div className={styles.field_container}>
-                    <input onChange={(e) => setLevel(e.target.value)} value={level} type={'number'} placeholder={"МКИС12"}/>
+                    <input onChange={(e) => setLevel(e.target.value)} value={level} type={'number'} placeholder={"Курс"}/>
                 </div>
             </p>
             <p>

@@ -9,7 +9,7 @@ import {CreateGroupStage3} from "./Stage3/CreateGroupStage3";
 import {CreateScheduleStage4} from "./Stage4/CreateScheduleStage4";
 
 export const CreateSchedule = () => {
-    const [stage, setStage] = useState(1)
+    const [stage, setStage] = useState(0)
 
     const next = () => setStage(prevState => prevState+1)
 

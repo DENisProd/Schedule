@@ -93,7 +93,7 @@ export default function TaskCreate({setIsCreating, tagsList}) {
                 background: 'var(--primary-cyan)',
             },
             background: 'var(--background-tile)',
-            color: state.isSelected ? 'white' : 'black',
+            color: 'var(--text-color)',
         }),
     }
 

@@ -1,7 +1,9 @@
 import styles from "../create-schedule.module.scss";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
-import {addScheduleTimeStage2} from "../../../store/createScheduleReducer";
+import {addScheduleTimeStage2, removeScheduleTimeStage2} from "../../../store/createScheduleReducer";
+
+import cn from 'classnames'
 
 export const ScheduleTimeTile = ({index, data}) => {
     const dispatch = useDispatch()
@@ -16,7 +18,6 @@ export const ScheduleTimeTile = ({index, data}) => {
     }, [stageInfo.stage2])
 
     const add = () => {
-        console.log('я тут', index)
         dispatch(addScheduleTimeStage2({
             number,
             startTime,
@@ -26,16 +27,22 @@ export const ScheduleTimeTile = ({index, data}) => {
         setEndTime('')
     }
 
+    const remove = () => {
+        dispatch(removeScheduleTimeStage2(index))
+        setStartTime('')
+        setEndTime('')
+    }
+
     return (
         <div className={styles.time_tile}>
-            <div>
+            <div className={styles.left}>
                 {index === undefined ?
                     <>
                         <p>Номер пары: {number}</p>
                         <p>Время начала: <input value={startTime} onChange={(e) => setStartTime(e.target.value)}
-                                                type="time" name="startTime"/></p>
+                                                type="time" name="startTime" className={styles.time_input}/></p>
                         <p>Время конца: <input value={endTime} onChange={(e) => setEndTime(e.target.value)} type="time"
-                                               name="endTime"/></p>
+                                               name="endTime" className={styles.time_input}/></p>
                     </>
                     :
                     <>
@@ -47,9 +54,9 @@ export const ScheduleTimeTile = ({index, data}) => {
 
             </div>
             {index !== undefined ?
-                <button>X</button>
+                <button className={cn(styles.small_btn, styles.red)} onClick={remove}>X</button>
                 :
-                <button onClick={add}>+ Добавить</button>
+                <button onClick={add} className={styles.small_btn}>+ Добавить</button>
             }
         </div>
     )

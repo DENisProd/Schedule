@@ -2,7 +2,112 @@
     width: 100%;
     max-width: 600px;
     margin: 0 auto;
-    padding: 0.5rem;
+    padding: 0.5rem 0.5rem 15vh 0.5rem;
     box-sizing: border-box;
     text-align: left;
+
+    & .sub_title {
+        margin-bottom: 0.2rem;
+        font-size: 12px;
+        color: var(--primary-gray2);
+    }
+
+    & .title {
+        display: grid;
+        grid-template-columns: 1fr 4fr 1fr;
+        text-align: center;
+        margin-top: 0.2rem;
+        margin-bottom: 0.6rem;
+
+        & h2 {
+            margin-block-start: 0;
+            margin-block-end: 0;
+        }
+
+
+        & button {
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text-color);
+            font-weight: 600;
+            align-items: center;
+            display: flex;
+            cursor: pointer;
+            text-align: left;
+            padding: 0;
+
+            & svg {
+                height: 0.8rem;
+
+                & path {
+                    stroke: var(--text-color);
+                }
+            }
+        }
+    }
+
+    & .field_title {
+        margin-bottom: 0.4rem;
+    }
+
+    & .groups_container {
+        background: var(--background-tile);
+        box-sizing: border-box;
+        padding: 1.2rem 1rem;
+        border-radius: 25px;
+    }
+
+    & .search_field {
+        margin-bottom: 1rem;
+        display: flex;
+        position: relative;
+        font-weight: 600;
+
+        & svg {
+            position: absolute;
+            left: 1rem;
+            top: 1rem;
+        }
+
+        & input {
+            width: 100%;
+            font-size: 14px;
+            box-sizing: border-box;
+            padding: 1rem 1rem 1rem 2.8rem;
+            border-radius: 20px;
+            background: var(--background-tile);
+            border: 2px solid var(--background-tile);
+            color: var(--text-color);
+            transition: all 0.2s ease-out;
+            outline: none;
+
+            &:focus {
+                border: 2px solid var(--primary-color);
+            }
+        }
+    }
+
+    & .groups_tile {
+        padding: 0.8rem 1.3rem;
+        background: var(--background-color);
+        display: grid;
+        text-align: center;
+        grid-template-columns: 2fr 2fr 2fr;
+        border-radius: 25px;
+        cursor: pointer;
+        margin-bottom: 1rem;
+        font-size: 15px;
+        font-weight: 600;
+
+        &.flex {
+            display: flex;
+            justify-content: start;
+        }
+
+        &.no_back {
+            background: none;
+            padding: 0.2rem 1.3rem;
+        }
+    }
 }

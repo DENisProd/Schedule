@@ -20,6 +20,8 @@ import Art1 from '../../assets/arts/Art1.svg'
 import Art2 from '../../assets/arts/Art2.svg'
 import Art3 from '../../assets/arts/Art3.svg'
 import Art4 from '../../assets/arts/Art4.svg'
+import {URLS} from "../../utils/urlsUtils";
+import axios from "axios";
 
 function isExists (group, groupId, date, univer) {
     if (univer === 'dstu') {
@@ -121,6 +123,14 @@ const ViewNew = ({isTeachers, isRoom, isGroup, isMobile, addToCompare}) => {
         }
     }
 
+    const getGroup = (group) => {
+        if (group?.group) {
+            axios.get(URLS.ACADEMIC_GROUPS + group?.group).then(res => {
+                setCurrentSked(prevState => ({...prevState, group: {...res.data}}))
+            })
+        }
+    }
+
     useEffect(() => {
         if (dataFetch.current)
             return
@@ -151,7 +161,6 @@ const ViewNew = ({isTeachers, isRoom, isGroup, isMobile, addToCompare}) => {
         if (count_enter) count_enter++
         else count_enter = 1
         localStorage.setItem("count_enter", count_enter.toString())
-
         sendStats()
 
 
@@ -173,12 +182,14 @@ const ViewNew = ({isTeachers, isRoom, isGroup, isMobile, addToCompare}) => {
             if (group) {
                 Object.keys(group.sked).map(date => sked[date] = group.sked[date])
                 setCurrentSked({
+                    group: group?.group,
                     id: group.id,
                     name: group.name,
                     date: group.date,
                     sked
                 })
             }
+            getGroup(group)
             setIsLoading(false)
             // addScrollLimit()
             scrollToStart()
@@ -223,11 +234,11 @@ const ViewNew = ({isTeachers, isRoom, isGroup, isMobile, addToCompare}) => {
     }, [currentWeek])
 
     const scrollToStart = () => {
-        window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: 'smooth'
-        });
+        // window.scrollTo({
+        //     top: 0,
+        //     left: 0,
+        //     behavior: 'smooth'
+        // });
     }
 
     // const addScrollLimit = () => {

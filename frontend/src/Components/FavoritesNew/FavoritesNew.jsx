@@ -63,7 +63,7 @@ const FavoritesNew = () => {
     }, [universities])
 
     const loadFavorites = () => {
-        let data = JSON.parse(localStorage.getItem("favorites"))
+        let data = JSON.parse(localStorage.getItem("favorites2"))
         if (data) {
             let filtered = data.filter(gr => gr.hasOwnProperty('name') === true)
             setGroupList(filtered)
@@ -77,7 +77,7 @@ const FavoritesNew = () => {
     })
 
     const getMyGroup = () => {
-        const myGroupFromStorage = checkGroups("my-group")
+        const myGroupFromStorage = checkGroups("my-group2")
         if (myGroupFromStorage) setIsMyGroup(myGroupFromStorage);
     }
 
@@ -87,15 +87,15 @@ const FavoritesNew = () => {
     }
 
     const chooseHandler = (group) => {
-        localStorage.setItem("my-group", JSON.stringify(group));
+        localStorage.setItem("my-group2", JSON.stringify(group));
         setIsGroupChoose(false)
         getMyGroup()
     }
 
     const removeFavorite = (id) => {
-        let groupFromStorage = JSON.parse(localStorage.getItem("favorites"))
+        let groupFromStorage = JSON.parse(localStorage.getItem("favorites2"))
         groupFromStorage = groupFromStorage.filter(gr => (gr?.id !== id))
-        localStorage.setItem("favorites", JSON.stringify(groupFromStorage))
+        localStorage.setItem("favorites2", JSON.stringify(groupFromStorage))
         loadFavorites()
         setIsGroupChoose(false)
     }
@@ -104,7 +104,8 @@ const FavoritesNew = () => {
         if (groupsList.length > 0) {
             chooseButtonHandler(true)
         } else {
-            focusSearchInput()
+            //focusSearchInput()
+            navigate('/test/')
         }
     }
 
@@ -112,17 +113,34 @@ const FavoritesNew = () => {
         if (searchModuleRef.current && typeof searchModuleRef.current.focusSearchInput === 'function') {
             searchModuleRef.current.focusSearchInput();
         }
-    };
+    }
+
+    const redirectToView = (group) => {
+        let link = ''
+        if (group.university === 'DGTU') link = group.groupID + '?u=' + group.university
+        else link = group.name + '?u=' + group.university
+        navigate("/group/" + link)
+    }
 
     return (
         <ErrorBoundary>
             <div className={styles.favorites_screen}>
-                <div className={styles.search_container}>
-                    <SearchModule _setIsSearching={setIsSearching} _setActiveTab={setActiveTab} ref={searchModuleRef}/>
-                </div>
-                {!isSearching &&
+                {/*<div className={styles.search_container}>*/}
+                {/*    <SearchModule _setIsSearching={setIsSearching} _setActiveTab={setActiveTab} ref={searchModuleRef}/>*/}
+                {/*</div>*/}
+                {/*{!isSearching &&*/}
                     <div className={styles.favorites_back}>
-                        <h2 className={styles.title}>Избранные {favoritesList[activeTab]}</h2>
+                        <div className={styles.title}>
+                            <div/>
+                            <h2>Избранные {favoritesList[activeTab]}</h2>
+                            <div className={styles.button_container}>
+                                <button className={styles.search_button} onClick={() => navigate('/test/')}>
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12.9706 13.072L17 17M15.2269 7.95238C15.2269 11.7921 12.0421 14.9048 8.11343 14.9048C4.18479 14.9048 1 11.7921 1 7.95238C1 4.11268 4.18479 1 8.11343 1C12.0421 1 15.2269 4.11268 15.2269 7.95238Z" stroke="#9C9D9F" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
                         <div className={styles.favorites_container}>
                             {groupsList.length > 0 ? (
                                 <>
@@ -160,15 +178,13 @@ const FavoritesNew = () => {
                                             ) : (
                                                 <div className={cn(styles.tile, myGroup?.id === group.id && styles.my)}
                                                      key={group.id}
-                                                     onClick={() => navigate("/group/" + group.id + '?u=' + (group.university === undefined ? 'dstu' : group.university))}>
+                                                     onClick={() => redirectToView(group)}>
                                                     <img className={styles.crown} src={CrownIcon}/>
                                                     <div className={styles.inner_cont}>
                                                         <div className={styles.name}>{group.name}</div>
-                                                        <div className={styles.actions}></div>
+                                                        <div className={styles.actions}>{group.level}</div>
                                                         <div className={styles.faculty}>{group?.faculty}</div>
-                                                        <div className={styles.university}>
-                                                            {group.university && universities[group.university]}
-                                                        </div>
+                                                        <div className={styles.university}>{group.universityName}</div>
                                                     </div>
                                                 </div>
                                             )}
@@ -180,7 +196,7 @@ const FavoritesNew = () => {
                             )}
                         </div>
                     </div>
-                }
+                {/*}*/}
 
                 <div className={styles.bottom_container}>
                     {isGroupChoose ? (

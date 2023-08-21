@@ -9,7 +9,9 @@ import {useSelector} from "react-redux";
 import CompareCalendar from "./CompareCalendar/CompareCalendar";
 import dayjs from "dayjs";
 
-const Compare2 = ({compareList, groupsLis2t} ) => {
+import Guide from '../../assets/compare.gif'
+
+const Compare2 = ({compareList, groupsLis2t}) => {
 
     const dataFetch = useRef(false)
 
@@ -25,7 +27,7 @@ const Compare2 = ({compareList, groupsLis2t} ) => {
 
     const fetchData = (mondayString) => {
         if (groupsList.groupsc.length > 0) {
-            axios.post(URLS.COMPARE+'?date='+mondayString, {groups: groupsList.groupsc}).then(r => setData(r.data))
+            axios.post(URLS.COMPARE + '?date=' + mondayString, {groups: groupsList.groupsc}).then(r => setData(r.data))
             // axios.post(URLS.COMPARE+'?date='+date.id.split('T')[0], {groups: groupsList.groupsc}).then(r => setData(r.data))
         }
     }
@@ -95,29 +97,29 @@ const Compare2 = ({compareList, groupsLis2t} ) => {
                     })
 
                     // if (day.groupName) {
-                        if (day.groupName) {
-                            const dateKey = day.date.split('T')[0];
-                            if (!schedule[dateKey]) {
-                                schedule[dateKey] = {};
-                            }
-
-                            if (!schedule[dateKey][day.groupName]) {
-                                schedule[dateKey][day.groupName] = {};
-                            }
-
-                            schedule[dateKey][day.groupName] = _day;
+                    if (day.groupName) {
+                        const dateKey = day.date.split('T')[0];
+                        if (!schedule[dateKey]) {
+                            schedule[dateKey] = {};
                         }
-                        // if (schedule[day.date.split('T')[0]][day?.groupName]) schedule[day.date.split('T')[0]][day?.groupName] = _day
-                        else {
-                            console.log(groups)
-                            groups.map(gr => {
-                                schedule[day.date.split('T')[0]][gr] = {}
-                                for (let i = 1; i < 7; i++) {
-                                    schedule[day.date.split('T')[0]][gr][i] = {}
-                                }
-                            })
-                            schedule[day.date.split('T')[0]][day.groupName] = _day
+
+                        if (!schedule[dateKey][day.groupName]) {
+                            schedule[dateKey][day.groupName] = {};
                         }
+
+                        schedule[dateKey][day.groupName] = _day;
+                    }
+                    // if (schedule[day.date.split('T')[0]][day?.groupName]) schedule[day.date.split('T')[0]][day?.groupName] = _day
+                    else {
+                        console.log(groups)
+                        groups.map(gr => {
+                            schedule[day.date.split('T')[0]][gr] = {}
+                            for (let i = 1; i < 7; i++) {
+                                schedule[day.date.split('T')[0]][gr][i] = {}
+                            }
+                        })
+                        schedule[day.date.split('T')[0]][day.groupName] = _day
+                    }
                 })
             })
             console.log('not err2')
@@ -155,7 +157,13 @@ const Compare2 = ({compareList, groupsLis2t} ) => {
             {sked && Object.keys(sked).map(date =>
                 <VerticalTable schedule={sked[date]} date={date}/>
             )}
-            {!data && <h2>Список групп для сравнения пуст</h2>}
+            {!data &&
+                <>
+                    <h2 style={{ fontSize: '14px' }}>Список групп для сравнения пуст</h2>
+                    <p>Чтобы добавить группу в сравнение нажмите "+" рядом с названием группы</p>
+                    <img src={Guide} style={{ height: '40vh', objectFit: 'cover'}}/>
+                </>
+            }
         </div>
     );
 };

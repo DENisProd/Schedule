@@ -32,11 +32,14 @@ export default function ModalWindow({setIsModalOpen}) {
         <div className={styles.menu_container}>
             <div className={styles.background} onClick={close}/>
             <div className={cn(styles.content, isClosing && styles.closed, isSettings && styles.settings)}>
-                <h2>Расписание обновлено <button className={styles.btn_close} onClick={close}>X</button></h2>
+                <div style={{ display: 'flex', justifyContent: 'center'}}>
+                    <h2>Расписание обновлено</h2>
+                    <button className={styles.btn_close} onClick={close}>X</button>
+                </div>
                 <div>
-                    <p>Теперь вы не заблудитесь с картой корпусов</p>
+                    <p style={{ textAlign: 'center'}}>Теперь вы не заблудитесь с картой корпусов (На данный момент карта корпусов доступна только для 10 корпуса ДГТУ)</p>
                     <div className={styles.img}>
-                        <img src={Slide1}/>
+                        <img style={{ borderRadius: '30px'}} src={Slide1}/>
                     </div>
                 </div>
             </div>

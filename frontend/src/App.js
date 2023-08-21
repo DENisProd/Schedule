@@ -18,6 +18,9 @@ import {Tasks} from "./Components/Tasks/Tasks";
 import {Queue} from "./Components/Queue/Queue";
 import {CreateSchedule} from "./Components/CreateSchedule/CreateSchedule";
 import {checkId} from "./utils/checkId";
+import {CreateTest} from "./Components/CreateTest/CreateTest";
+import {CreateQueue} from "./Components/Queue/CreateQueue/CreateQueue";
+import {Message} from "./Components/Message/Message";
 
 export const ver = "1.0.3"
 
@@ -92,7 +95,7 @@ function App() {
 
     return (
             <BrowserRouter>
-
+                <Message/>
                 {isOffline && <div>offline</div>}
                 { updateNewsShow && <ModalWindow setIsModalOpen={setUpdateNewsShow}/>}
                 <Routes>
@@ -108,9 +111,10 @@ function App() {
                     <Route path="/room/:groupId" element={<View isRoom={true}/>} />
                     <Route path="/tasks/:groupId" element={<Tasks/>} />
                     <Route path="/tasks/" element={<Tasks/>} />
-                    <Route path="/queue/:groupId" element={<Queue/>} />
-                    <Route path="/queue/" element={<Queue/>} />
+                    <Route path="/queue/:queueId" element={<Queue/>} />
+                    <Route path="/queue/create/:subjectId" element={<CreateQueue/>} />
                     <Route path="/create/" element={<CreateSchedule/>} />
+                    <Route path="/test/" element={<CreateTest/>} />
                     <Route path="/teacher/:groupId" element={<View isTeachers={true}/>} />
                     {/*<Route path="/favorites" element={<FavoritesNew />} />*/}
                     <Route path="/admin" element={<Admin />} />

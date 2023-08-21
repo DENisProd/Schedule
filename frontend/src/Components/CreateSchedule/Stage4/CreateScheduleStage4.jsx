@@ -3,15 +3,17 @@ import {DayTileStage4, SubjectTileStage4} from "./DayTileStage4";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {setAllScheduleTimeAction} from "../../../store/createScheduleReducer";
+import {clearCreate, setAllScheduleTimeAction} from "../../../store/createScheduleReducer";
 import {URLS} from "../../../utils/urlsUtils";
 import styles from "../create-schedule.module.scss";
+import {useNavigate} from "react-router-dom";
 
 const UNIVER_ID = '64d54ddab8e8b60795dba2c8'
 const GROUP_ID = '64d54e0db8e8b60795dba2d2'
 
 export const CreateScheduleStage4 = () => {
 
+    const navigate = useNavigate()
     const dispatch = useDispatch()
     const schedule = useSelector(state => state.createSchedule)
 
@@ -19,20 +21,23 @@ export const CreateScheduleStage4 = () => {
     const onInputChange = (event) => setIsEven(event.target.checked)
 
     useEffect(() => {
-        axios.get(URLS.TIME_SCHEDULE + UNIVER_ID).then(response => {
+        axios.get(URLS.TIME_SCHEDULE + schedule.stage1._id).then(response => {
             dispatch(setAllScheduleTimeAction(response.data))
         })
     }, [])
 
     const create = () => {
         const data = {
-            groupId: GROUP_ID,
-            universityId: UNIVER_ID,
+            groupId: schedule.stage3._id,
+            universityId: schedule.stage1._id,
             isEven_: isEven,
             days: schedule.stage4
         }
         axios.post(URLS.GET_GROUP_SCHEDULE, data).then(res => {
-            console.log(res)
+            if (res.status === 201) {
+                navigate('/test/')
+                dispatch(clearCreate())
+            }
         })
     }
 
@@ -99,7 +104,7 @@ export const CreateScheduleStage4 = () => {
                     <ScheduleTileStage4Create day={'sunday'}/>
                 </div>
 
-                <p>
+                <p className={styles.checkbox_container}>
                     <label htmlFor="is_odd">Четная неделя</label>
                     <input checked={isEven} id={"is_odd"} type={"checkbox"} onChange={onInputChange}/>
                 </p>

@@ -10,6 +10,7 @@ import {
     addToTuesday,
     addToWednesday
 } from "../../../store/createScheduleReducer";
+import {Dropdown} from "../../UIKit/DropdownNew/Dropdown";
 
 export const ScheduleTileStage4Create = ({day}) => {
     const [name, setName] = useState('')
@@ -17,8 +18,9 @@ export const ScheduleTileStage4Create = ({day}) => {
     const [audName, setAudName] = useState('')
     const [type, setType] = useState('Лекция')
     const [number, setNumber] = useState('')
+    const [timeList, setTimeList] = useState([])
 
-    const [isVisible, setIsVisible] = useState(false)
+    const [isVisible, setIsVisible] = useState(true)
 
     const dispatch = useDispatch()
     const scheduleTimes = useSelector(state => state.createSchedule)
@@ -30,11 +32,18 @@ export const ScheduleTileStage4Create = ({day}) => {
     };
 
     useEffect(() => {
-        console.log(selectedObject)
-    }, [selectedObject])
+        let obj = []
+        scheduleTimes.allScheduleTimes.map(time => {
+            obj.push({
+                ...time,
+                optionName:  `${time.number}     ${time.timeStart} - ${time.timeEnd}`
+            })
+        })
+        setTimeList(obj)
+    }, [scheduleTimes.allScheduleTimes])
 
     const add = () => {
-        console.log('efeo')
+        console.log(selectedObject)
         const data = {
             timeStart: selectedObject.timeStart,
             endTime: selectedObject.timeEnd,
@@ -79,62 +88,63 @@ export const ScheduleTileStage4Create = ({day}) => {
         setAudName('')
         setType('')
         setSelectedObject(null)
-        setIsVisible(false)
+        // setIsVisible(false)
     }
 
     return (
         <div className={styles.stage4tile}>
             {isVisible ?
                 <>
-                    <p>
+                    <div>
                         <div className={styles.field_title}>Название предмета</div>
                         <div className={styles.field_container}>
                             <input onChange={(e) => setName(e.target.value)} value={name}
                                    placeholder={"Название предмета"}/>
                         </div>
-                    </p>
+                    </div>
 
-                    <p>
+                    <div>
                         <div className={styles.field_title}>ФИО преподавателя</div>
                         <div className={styles.field_container}>
                             <input onChange={(e) => setTeacherName(e.target.value)} value={teacherName}
                                    placeholder={"ФИО преподавателя"}/>
                         </div>
-                    </p>
+                    </div>
 
-                    <div style={{display: 'flex', gap: '1rem'}}>
-                        <p>
+                    <div className={styles.tripple_container}>
+                        <div className={styles.child}>
                             <div className={styles.field_title}>Аудитория</div>
                             <div className={styles.field_container}>
                                 <input onChange={(e) => setAudName(e.target.value)} value={audName}
                                        placeholder={"Аудитория"}/>
                             </div>
-                        </p>
+                        </div>
 
-                        <p>
+                        <div className={styles.child}>
                             <div className={styles.field_title}>Тип пары</div>
                             <div className={styles.field_container}>
                                 <input onChange={(e) => setType(e.target.value)} value={type} placeholder={"Лекция"}/>
                             </div>
-                        </p>
+                        </div>
 
-                        <p>
+                        <div className={styles.child}>
                             <div className={styles.field_title}>Номер пары</div>
-                            <div className={styles.field_container}>
-                                <input onChange={(e) => setNumber(e.target.value)} value={number}
-                                       placeholder={"Номер пары"}/>
-                            </div>
-                        </p>
+                            <Dropdown optionList={timeList} placeholder={"Выберете время"} setSelectedValue={handleSelect} selectedValue={selectedObject} isDisplayEmpty={false}/>
+                        </div>
                     </div>
 
-                    <DropdownTime data={scheduleTimes.allScheduleTimes} onSelect={handleSelect}/>
+                    {/* <DropdownTime data={scheduleTimes.allScheduleTimes} onSelect={handleSelect}/> */}
 
-                    <p>
-                        <button onClick={add}>+ Добавить пару</button>
+                    <p style={{
+                        textAlign: 'center'
+                    }}>
+                        <button className={styles.nextButton} style={{
+                            width: '50%'
+                        }} onClick={add}>Сохранить пару</button>
                     </p>
                 </>
                 :
-                <button onClick={() => setIsVisible(true)}>+</button>
+                <button onClick={() => setIsVisible(true)} className={styles.small_btn}>+</button>
             }
         </div>
     )
