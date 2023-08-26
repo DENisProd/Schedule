@@ -171,11 +171,11 @@ body {
     /*background: #FAFAFD;*/
     height: 96vh;
     /*overflow-y: hidden;*/
-    --nav-height: 20px;
+    --nav-height: 15px;
 }
 
 #root.ios-detected {
-    --nav-height: 40px;
+    --nav-height: 30px;
 }
 
 #root.scroll-blocked {

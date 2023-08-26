@@ -8,6 +8,11 @@ import styles from './create-test.module.scss';
 import {Dropdown} from "../UIKit/DropdownNew/Dropdown";
 import {CATEGORIES} from "../CreateSchedule/Stage1/CreateUniversityStage1";
 import {checkGroups} from "../../utils/localStorageHelpers";
+import Loader2 from "../Loader/Loader2";
+
+export const BLOCKED_CREATE_UNIVERSITY = [
+    'DGTU', 'RGEU'
+]
 
 export const CreateTest = () => {
     const navigate = useNavigate()
@@ -22,8 +27,10 @@ export const CreateTest = () => {
     const [filteredGroups, setFilteredGroups] = useState(null)
     const [type, setType] = useState('UNIVERSITY')
     const [searchValue, setSearchValue] = useState('')
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
+
         axios.get(URLS.UNIVERSITY).then(res => {
             setUniversitiesFull(res.data)
             let _un = {};
@@ -46,6 +53,7 @@ export const CreateTest = () => {
                 setFilteredData(arr.filter(u => u.type === 'UNIVERSITY'))
                 setUniversities(_un)
                 setUniversitiesFullName(_un2)
+                setIsLoading(false)
             }
         });
 
@@ -146,10 +154,17 @@ export const CreateTest = () => {
             </div>
 
             <div className={styles.groups_container}>
-                <div className={styles.sub_title}>
-                    <div style={{textAlign: 'center'}}>Нет вашей группы или университета? <Link
-                        style={{color: 'var(--text-color)'}} to={'/create/'}>Создайте</Link></div>
-                </div>
+                {isLoading &&
+                    <div style={{display: 'flex', justifyContent: 'center', margin: '2rem auto'}}>
+                        <Loader2/>
+                    </div>
+                }
+                {!BLOCKED_CREATE_UNIVERSITY.includes(university.code) &&
+                    <div className={styles.sub_title}>
+                        <div style={{textAlign: 'center'}}>Нет вашей группы или университета? <Link
+                            style={{color: 'var(--text-color)'}} to={'/create/'}>Создайте</Link></div>
+                    </div>
+                }
                 <div className={cn(styles.groups_tile, styles.no_back)}>
                     <div>Группа</div>
                     <div>Курс</div>

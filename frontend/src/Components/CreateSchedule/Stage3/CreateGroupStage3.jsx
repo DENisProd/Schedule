@@ -5,7 +5,7 @@ import {URLS} from "../../../utils/urlsUtils";
 import {setStage1Action, setStage3Action} from "../../../store/createScheduleReducer";
 import {useDispatch, useSelector} from "react-redux";
 
-export const CreateGroupStage3 = ({_next}) => {
+export const CreateGroupStage3 = ({_next, back}) => {
     const [name, setName] = useState('')
     const [level, setLevel] = useState(1)
     const [faculty, setFaculty] = useState('')
@@ -46,20 +46,6 @@ export const CreateGroupStage3 = ({_next}) => {
                 <span>Теперь создайте свою группу</span>
             </p>
 
-            <div>
-                {Array.isArray(groups) && groups.map(gr =>
-                    <div className={styles.groups}
-                    onClick={() => {
-                        dispatch(setStage3Action(gr))
-                        _next()
-                    }}
-                    >
-                        <div>{gr.name}</div>
-                        <div>{gr.faculty}</div>
-                    </div>
-                )}
-            </div>
-
             <p>
                 <div className={styles.field_title}>Название</div>
                 <div className={styles.field_container}>
@@ -80,8 +66,26 @@ export const CreateGroupStage3 = ({_next}) => {
             </p>
 
             <p>
-                <button className={styles.nextButton} onClick={next}>Далее</button>
+                <span>Или выберите существующие группы для вашего учебного заведения, которые открыли для общего доступа</span>
             </p>
+
+            <div className={styles.groups_list}>
+                {Array.isArray(groups) && groups.map(gr =>
+                    <div className={styles.groups}
+                         onClick={() => {
+                             dispatch(setStage3Action(gr))
+                             _next()
+                         }}
+                    >
+                        <div>{gr.name}</div>
+                        <div>{gr.faculty}</div>
+                    </div>
+                )}
+            </div>
+
+            <div className={styles.button_container}>
+                <button className={styles.nextButton} onClick={next}>Далее</button>
+            </div>
         </>
     )
 }

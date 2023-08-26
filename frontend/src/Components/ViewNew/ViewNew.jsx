@@ -234,11 +234,11 @@ const ViewNew = ({isTeachers, isRoom, isGroup, isMobile, addToCompare}) => {
     }, [currentWeek])
 
     const scrollToStart = () => {
-        // window.scrollTo({
-        //     top: 0,
-        //     left: 0,
-        //     behavior: 'smooth'
-        // });
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
     }
 
     // const addScrollLimit = () => {

@@ -6,6 +6,7 @@ import {ThemeContext, themes} from "../../contexts/ThemeContext";
 import CompareIcon from "../../assets/compare_icon.svg"
 import VkIcon from "../../assets/vk_icon.svg"
 import MapIcon from "../../assets/map_icon.svg"
+import CreateIcon from "../../assets/create_schedule_icon.svg"
 
 import Modal from "./Modal/Modal";
 import MenuButton from "./MenuButton/MenuButton";
@@ -61,6 +62,7 @@ const Menu = ({children, setIsModalOpen}) => {
                                 }} setIsModalOpened={setIsModalOpened} setInspectName={setInspectName} name="vk" img={VkIcon} title={"Группа VK"}/>
                                 <MenuButton onClick={() => navTo(() => navigate('/compare/'))} setIsModalOpened={setIsModalOpened} setInspectName={setInspectName} name="compare" img={CompareIcon} title={"Сравнение"}/>
                                 <MenuButton onClick={() => navTo(() => navigate('/navigator/10'))} setIsModalOpened={setIsModalOpened} setInspectName={setInspectName} name="navigator" img={MapIcon} title={"Карта корпусов"}/>
+                                <MenuButton onClick={() => navTo(() => navigate('/create/'))} setIsModalOpened={setIsModalOpened} setInspectName={setInspectName} name="create" img={CreateIcon} title={"Создать расписание"}/>
                             </div>
                         </>
                     }

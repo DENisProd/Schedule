@@ -56,7 +56,7 @@ export const ScheduleTimeTile = ({index, data}) => {
             {index !== undefined ?
                 <button className={cn(styles.small_btn, styles.red)} onClick={remove}>X</button>
                 :
-                <button onClick={add} className={styles.small_btn}>+ Добавить</button>
+                <button onClick={add} className={styles.small_btn}>Сохранить</button>
             }
         </div>
     )

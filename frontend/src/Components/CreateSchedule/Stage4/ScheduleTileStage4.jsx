@@ -129,7 +129,7 @@ export const ScheduleTileStage4Create = ({day}) => {
 
                         <div className={styles.child}>
                             <div className={styles.field_title}>Номер пары</div>
-                            <Dropdown optionList={timeList} placeholder={"Выберете время"} setSelectedValue={handleSelect} selectedValue={selectedObject} isDisplayEmpty={false}/>
+                            <Dropdown invertedColor={true} optionList={timeList} placeholder={"Выберете время"} setSelectedValue={handleSelect} selectedValue={selectedObject} isDisplayEmpty={false}/>
                         </div>
                     </div>
 

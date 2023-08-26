@@ -6,12 +6,13 @@ import {useDispatch, useSelector} from "react-redux";
 import {setStage1Action} from "../../../store/createScheduleReducer";
 import {SelectInput} from "../../UIKit/SelectInput/SelectInput";
 import {Dropdown} from "../../UIKit/DropdownNew/Dropdown";
+import {BLOCKED_CREATE_UNIVERSITY} from "../../CreateTest/CreateTest";
 
 export const CATEGORIES = [
     {optionName: 'Высшее учебное заведение', value: 'UNIVERSITY'},
     {optionName: 'Колледж', value: 'COLLEGE'},
     {optionName: 'Школа', value: 'SCHOOL'},
-    {optionName: 'Организация', value: 'ORGANIZATION'},
+    {optionName: 'Другое', value: 'ORGANIZATION'},
 ]
 
 export const CreateUniversityStage1 = ({_next}) => {
@@ -48,8 +49,8 @@ export const CreateUniversityStage1 = ({_next}) => {
                         _un2[code] = univer.full_name
                     }
                 })
+                arr = arr.filter(univer => !BLOCKED_CREATE_UNIVERSITY.includes(univer.code))
                 setData(arr)
-                console.log(type)
                 setFilteredData(arr.filter(u => u.type === type.value))
                 setUniversitiesFullName(_un2)
             }
@@ -102,7 +103,7 @@ export const CreateUniversityStage1 = ({_next}) => {
                         <span>Создайте организацию</span>
                     </div>
                     <p>
-                        <div className={styles.field_title}>Выберите тип</div>
+                        <div className={styles.field_title}>Выберите тип учебного заведения</div>
                         <Dropdown selectedValue={type} optionList={CATEGORIES} defaultValue={CATEGORIES[0]} placeholder={"Выберите тип"}
                                   setSelectedValue={typeHandler}/>
 
@@ -150,7 +151,10 @@ export const CreateUniversityStage1 = ({_next}) => {
                 :
                 <>
                     <p>
-                        <span>Для начала выберете тип организации</span>
+                        <span>Для начала выберете тип учебного заведения.</span>
+                    </p>
+                    <p>
+                        <span>Вам нужно выбрать или создать учебное заведение, чтобы вы имели возможность поделиться созданным расписанием с друзьями.</span>
                     </p>
                     {/*<SelectInput options={CATEGORIES} value={CATEGORIES["UNIVERSITY"]} onChange={setType}*/}
                     {/*             placeholder={"Выберете тип создания"}/>*/}

@@ -12,7 +12,9 @@ export const Dropdown = forwardRef(({
                                         setObject,
                                         next,
                                         placeholder,
-                                        isDisplayEmpty = true
+                                        isDisplayEmpty = true,
+                                        canWrite = false,
+                                        invertedColor = false
                                     }, ref) => {
     const inputRef = useRef(null)
 
@@ -27,7 +29,7 @@ export const Dropdown = forwardRef(({
     }, [optionList])
 
     useEffect(() => {
-        console.log(defaultValue)
+
         if (!defaultApplied && defaultValue) {
 
             setValue(defaultValue.optionName);
@@ -56,27 +58,29 @@ export const Dropdown = forwardRef(({
     }, [isMenuVisible]);
 
     const changeHandler = (event) => {
-        const searchValue = event.target.value
-        setValue(searchValue)
+        if (canWrite) {
+            const searchValue = event.target.value
+            setValue(searchValue)
 
-        setList(optionList.filter(group =>
-            group.full_name.toLowerCase().includes(searchValue.toLowerCase()) ||
-            group.short_name.toLowerCase().includes(searchValue.toLowerCase())
-        ))
+            setList(optionList.filter(group =>
+                group.full_name.toLowerCase().includes(searchValue.toLowerCase()) ||
+                group.short_name.toLowerCase().includes(searchValue.toLowerCase())
+            ))
+        }
     }
 
     const focusHandler = (event) => {
-        console.log('focus')
+
         // setMenuVisible(true)
     }
 
     const clickHandler = (event) => {
-        console.log('click')
+
         setMenuVisible(prevState => !prevState)
     }
 
     const onKeyDownHandler = (event) => {
-        console.log(event)
+
         if (isMenuVisible) {
             if (event.keyCode === 40) {
                 if (selectedIndex >= list.length - 1) setSelectedIndex(0)
@@ -105,25 +109,23 @@ export const Dropdown = forwardRef(({
         }
     }))
 
-    useEffect(() => {
-        console.log(optionList)
-    }, [optionList])
-
-    useEffect(() => {
-        console.log(list)
-    }, [list])
-
     return (
         <div className={styles.container}>
-            <input
-                value={value}
-                onFocus={focusHandler}
-                onChange={changeHandler}
-                ref={inputRef}
-                onKeyDown={onKeyDownHandler}
-                placeholder={placeholder || ''}
-                onClick={clickHandler}
-            />
+            {canWrite ? (
+                <input
+                    value={value}
+                    onFocus={focusHandler}
+                    onChange={changeHandler}
+                    ref={inputRef}
+                    onKeyDown={onKeyDownHandler}
+                    placeholder={placeholder || ''}
+                    onClick={clickHandler}
+                />
+            ) : (
+                <div className={cn(styles.nonWritableInput, invertedColor && styles.inverted)} onClick={clickHandler} ref={inputRef}>
+                    {value || <span className={styles.placeholder}>{placeholder}</span>}
+                </div>
+            )}
 
             <span className={cn(styles.arrow, isMenuVisible && styles.open)}>
                     <svg width="16" height="10" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -155,12 +157,6 @@ export const Dropdown = forwardRef(({
                             </>
                         }
                     </>
-                }
-                {isDisplayEmpty &&
-                    <div className={styles.sub_title}>
-                        <div className={cn(styles.option)}>Нет вашей группы или университета?
-                            <Link style={{color: 'var(--text-color)'}} to={'/create/'}>Создайте</Link></div>
-                    </div>
                 }
             </div>
         </div>

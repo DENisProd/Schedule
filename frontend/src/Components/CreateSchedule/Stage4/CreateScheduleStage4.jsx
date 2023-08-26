@@ -11,7 +11,7 @@ import {useNavigate} from "react-router-dom";
 const UNIVER_ID = '64d54ddab8e8b60795dba2c8'
 const GROUP_ID = '64d54e0db8e8b60795dba2d2'
 
-export const CreateScheduleStage4 = () => {
+export const CreateScheduleStage4 = ({back}) => {
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -108,9 +108,9 @@ export const CreateScheduleStage4 = () => {
                     <label htmlFor="is_odd">Четная неделя</label>
                     <input checked={isEven} id={"is_odd"} type={"checkbox"} onChange={onInputChange}/>
                 </p>
-                <p>
+                <div className={styles.button_container}>
                     <button className={styles.nextButton} onClick={create}>Далее</button>
-                </p>
+                </div>
             </div>
 
         </>

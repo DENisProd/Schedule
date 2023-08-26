@@ -9,8 +9,8 @@ const BottomNavigation = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const groupId = checkGroups("groupId")
-    const myGroup = checkGroups("my-group")
+    const groupId = checkGroups("groupId2")
+    const myGroup = checkGroups("my-group2")
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selected, setSelected] = useState('/')
@@ -70,9 +70,15 @@ const BottomNavigation = () => {
                          setIsModalOpen(false)
                          console.log(myGroup)
                          if (myGroup) {
-                             navigate("/group/" + myGroup.id + '?u=' + myGroup.university)
+                             if (myGroup.university === 'DGTU')
+                                navigate("/group/" + myGroup.groupID + '?u=' + myGroup.university)
+                             else
+                                 navigate("/group/" + myGroup.name + '?u=' + myGroup.university)
                          } else if (groupId) {
-                             navigate("/group/" + groupId.id + '?u=' + myGroup.university)
+                             if (groupId.university === 'DGTU')
+                                 navigate("/group/" + groupId.groupID + '?u=' + myGroup.university)
+                             else
+                                 navigate("/group/" + groupId.name + '?u=' + myGroup.university)
                          } else {
                              navigate("/")
                          }

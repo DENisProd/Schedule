@@ -117,7 +117,15 @@ export const Tasks = () => {
                             </>
                             :
                             <>
-                                {todos.map((todo) => <TaskTile todo={todo}/>)}
+                                {todos.length > 0 ?
+                                    <>
+                                        {todos.map((todo) => <TaskTile todo={todo}/>)}
+                                    </>
+                                :
+                                    <h5 style={{textAlign: 'center', marginTop: '4rem'}}>
+                                        Задач пока нет
+                                    </h5>
+                                }
                             </>
                         }
                     </>

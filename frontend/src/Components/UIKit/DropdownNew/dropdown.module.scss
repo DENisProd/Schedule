@@ -18,6 +18,36 @@
     }
   }
 
+  & .nonWritableInput {
+    width: 100%;
+    font-size: 14px;
+    box-sizing: border-box;
+    padding: 0.8rem 2.3rem 0.8rem 1.3rem;
+    border-radius: 20px;
+    background: var(--background-tile);
+    border: 2px solid var(--background-tile);
+    color: var(--text-color);
+    outline: none;
+    user-select: none;
+    cursor: pointer;
+    text-align: left;
+    font-weight: 600;
+
+    &.inverted {
+      background: var(--background-color);
+      border: 2px solid var(--background-color);
+    }
+
+    & .placeholder {
+      font-weight: 400;
+      color: var(--primary-gray2);
+    }
+
+    &:focus {
+      border: 2px solid var(--primary-color);
+    }
+  }
+
   & input {
     width: 100%;
     font-size: 14px;
