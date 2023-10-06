@@ -14,7 +14,8 @@ export const Dropdown = forwardRef(({
                                         placeholder,
                                         isDisplayEmpty = true,
                                         canWrite = false,
-                                        invertedColor = false
+                                        invertedColor = false,
+                                        filterFunction
                                     }, ref) => {
     const inputRef = useRef(null)
 
@@ -57,15 +58,22 @@ export const Dropdown = forwardRef(({
         };
     }, [isMenuVisible]);
 
+    const filterFunctionDefault = (item, searchValue) => {
+        return item.value.toLowerCase().includes(searchValue.toLowerCase())
+    }
+
     const changeHandler = (event) => {
         if (canWrite) {
             const searchValue = event.target.value
             setValue(searchValue)
 
-            setList(optionList.filter(group =>
-                group.full_name.toLowerCase().includes(searchValue.toLowerCase()) ||
-                group.short_name.toLowerCase().includes(searchValue.toLowerCase())
-            ))
+            const _filterFunction = filterFunction || filterFunctionDefault
+            setList(optionList.filter(item => _filterFunction(item, searchValue)))
+            selectOption({ optionName: searchValue, value: searchValue})
+            // setList(optionList.filter(group =>
+            //     group.full_name.toLowerCase().includes(searchValue.toLowerCase()) ||
+            //     group.short_name.toLowerCase().includes(searchValue.toLowerCase())
+            // ))
         }
     }
 
@@ -106,6 +114,9 @@ export const Dropdown = forwardRef(({
     useImperativeHandle(ref, () => ({
         focus() {
             inputRef.current.focus()
+        },
+        clear() {
+            selectOption({ optionName: '', value: ''})
         }
     }))
 

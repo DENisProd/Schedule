@@ -41,7 +41,7 @@ export const createScheduleReducer = (state = defaultState, action) => {
         case SET_STAGE1:
             return {...state, stage1: action.payload}
         case SET_STAGE2:
-            return {...state, stage2: [action.payload]}
+            return {...state, stage2: action.payload}
         case SET_STAGE2_FROMDB:
             return {...state, stage2FromDb: action.payload}
         case ADD_SCHEDULE_TIME:

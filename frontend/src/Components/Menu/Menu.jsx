@@ -35,7 +35,8 @@ const Menu = ({children, setIsModalOpen}) => {
     }
 
     const navTo = (action) => {
-        setIsModalOpen(false)
+        close()
+        // setIsModalOpen(false)
         action()
     }
 

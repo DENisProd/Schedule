@@ -31,7 +31,8 @@ export const CreateScheduleStage4 = ({back}) => {
             groupId: schedule.stage3._id,
             universityId: schedule.stage1._id,
             isEven_: isEven,
-            days: schedule.stage4
+            days: schedule.stage4,
+            author_id: localStorage.getItem('clientId')
         }
         axios.post(URLS.GET_GROUP_SCHEDULE, data).then(res => {
             if (res.status === 201) {

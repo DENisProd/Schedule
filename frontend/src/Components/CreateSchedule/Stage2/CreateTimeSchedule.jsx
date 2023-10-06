@@ -5,7 +5,7 @@ import styles from '../create-schedule.module.scss'
 import {ScheduleTimeTile} from "./ScheduleTimeTile";
 import axios from "axios";
 import {URLS} from "../../../utils/urlsUtils";
-import {setStage2FromDbAction} from "../../../store/createScheduleReducer";
+import {setStage2Action, setStage2FromDbAction} from "../../../store/createScheduleReducer";
 
 export const CreateTimeSchedule = ({_next, back}) => {
 
@@ -39,6 +39,12 @@ export const CreateTimeSchedule = ({_next, back}) => {
             setIsCreateVisible(false)
         }
     }, [])
+
+    const setTimeSchedule = (object) => {
+        dispatch(setStage2Action(object.times))
+        console.log(object)
+        _next()
+    }
 
     return (
         <>
@@ -81,7 +87,7 @@ export const CreateTimeSchedule = ({_next, back}) => {
                             <div className={styles.right}>
                                 <p>Это ваше расписание звонков?</p>
                                 <div style={{display: 'flex', gap: '2rem', justifyContent: 'center'}}>
-                                    <button className={styles.small_btn} onClick={_next}>Да</button>
+                                    <button className={styles.small_btn} onClick={() => setTimeSchedule(timeObject)}>Да</button>
                                     <button className={styles.small_btn} onClick={() => setIsCreateVisible(true)}>Нет
                                     </button>
                                 </div>

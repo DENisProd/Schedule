@@ -6,9 +6,9 @@ import {setStage1Action, setStage3Action} from "../../../store/createScheduleRed
 import {useDispatch, useSelector} from "react-redux";
 
 export const CreateGroupStage3 = ({_next, back}) => {
-    const [name, setName] = useState('')
+    const [name, setName] = useState(null)
     const [level, setLevel] = useState(1)
-    const [faculty, setFaculty] = useState('')
+    const [faculty, setFaculty] = useState(null)
     const [groups, setGroups] = useState([])
 
     const dispatch = useDispatch()
@@ -84,7 +84,7 @@ export const CreateGroupStage3 = ({_next, back}) => {
             </div>
 
             <div className={styles.button_container}>
-                <button className={styles.nextButton} onClick={next}>Далее</button>
+                <button className={styles.nextButton} disabled={!(name && faculty && level > 0)} onClick={next}>Далее</button>
             </div>
         </>
     )

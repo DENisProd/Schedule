@@ -5,7 +5,6 @@ import {addMessageAction, MESSAGE_TYPES, WHEN_TYPES} from "../store/messageReduc
 import {URLS} from "../utils/urlsUtils";
 
 export const fetchGroups = (groupId, date, university = 'dstu') => {
-    console.log(university)
     if (!university) university = 'dstu'
     return function (dispatch, getState) {
         const state = getState()
@@ -16,7 +15,9 @@ export const fetchGroups = (groupId, date, university = 'dstu') => {
         }
         if (group) dispatch(emptyAction())
         else {
-            fetch(URLS.GET_GROUP_SCHEDULE + groupId + '?date=' + date + "&university=" + (university === 'undefined' ? 'dstu' : university))
+            const urlString = URLS.GET_GROUP_SCHEDULE + groupId + '?date=' + date + "&university=" + (university === 'undefined' ? 'dstu' : university) + "&user=" + localStorage.getItem('clientId')
+            console.log(urlString)
+            fetch(urlString)
                 .then(response => response.json())
                 .then(json => {
                     // const processed = groupByDateWithSubgroups(json)
