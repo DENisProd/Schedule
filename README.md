@@ -11,9 +11,9 @@ Schedule web site
 
 ![image](https://github.com/DENisProd/Schedule/assets/63392847/e5e14288-4ffc-48d1-81b6-80e4b0554150)
 
-![image](https://github.com/DENisProd/Schedule/assets/63392847/62cf084d-0e2d-4bef-a692-87533b7e9c98)
+![image](https://github.com/DENisProd/Schedule/assets/63392847/504bd380-240e-4638-a091-1c06465dd437)
 
-![image](https://github.com/DENisProd/Schedule/assets/63392847/835f9333-4fb0-44d5-95f7-e3d5b381539d)
+![image](https://github.com/DENisProd/Schedule/assets/63392847/c2cfa4e1-8843-464e-8f13-299ecab90c50)
 
 
 ![image](https://github.com/DENisProd/Schedule/assets/63392847/6050cff0-31e2-49cb-a502-8aed5e912280)
