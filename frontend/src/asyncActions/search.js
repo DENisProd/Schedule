@@ -8,7 +8,7 @@ export const SEARCH_TYPES = {
     ROOMS: "ROOMS",
     UNIVERSITY: "UNIVERSITY"
 }
-export const fetchSearch = (type, university = 'dstu') => {
+export const fetchSearch = (type, university = 'DGTU') => {
     return function (dispatch, getState) {
         const state = getState()
 

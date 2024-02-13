@@ -1,0 +1,27 @@
+.main_section {
+  position: relative;
+  width: 100vw;
+  max-width: 800px;
+  margin: 0 auto;
+  height: 100vh;
+  background: var(--background-color);
+  box-sizing: border-box;
+  //overflow-x: hidden;
+
+  & .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    position: sticky;
+    background: var(--background-color);
+    border-bottom: 1px solid var(--background-tile);
+  }
+
+  & .header_btn {
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+  }
+}

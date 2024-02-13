@@ -29,7 +29,7 @@ export const CreateTimeSchedule = ({_next, back}) => {
             university: stageInfo.stage1._id,
             author_id: localStorage.getItem('clientId')
         }).then(res => {
-            dispatch(setStage2FromDbAction(res.data))
+            dispatch(setStage2FromDbAction(res.data.times))
             _next()
         })
     }

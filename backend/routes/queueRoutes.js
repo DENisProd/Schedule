@@ -16,7 +16,7 @@ router.post('/', scheduleLimiter, queueController.create)
 router.post('/subscribe/:queueId', scheduleLimiter, queueController.addMember)
 router.get('/:queueId', queueController.getOne)
 router.get('/group/:groupId', queueController.getAllByGroup)
-router.post('/delete/:queueId', queueController.deleteOne)
+router.post('/delete/:queueId', scheduleLimiter, queueController.deleteOne)
 
 
 export default router

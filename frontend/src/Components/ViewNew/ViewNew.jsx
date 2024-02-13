@@ -22,6 +22,7 @@ import Art3 from '../../assets/arts/Art3.svg'
 import Art4 from '../../assets/arts/Art4.svg'
 import {URLS} from "../../utils/urlsUtils";
 import axios from "axios";
+import {loadFromLocalStorageAction} from "../../store/groupReducer";
 
 function isExists (group, groupId, date, univer) {
     if (univer === 'dstu') {
@@ -65,6 +66,7 @@ const ViewNew = ({isTeachers, isRoom, isGroup, isMobile, addToCompare}) => {
     const {groupId} = useParams();
     const dispatch = useDispatch()
     const groups = useSelector(state => state.groups.groups)
+    const groupsCache = useSelector(state => state.groups.cache)
     const [searchParams, setSearchParams] = useSearchParams();
     const [todayDate, setTodayDate] = useState(null)
     const [currentSked, setCurrentSked] = useState({})
@@ -84,6 +86,13 @@ const ViewNew = ({isTeachers, isRoom, isGroup, isMobile, addToCompare}) => {
         return !!group;
     }
 
+    const isGroupExistsInCache = (groupId, date, univer) => {
+        console.log(groupsCache)
+        const _date = dayjs(date).startOf('week').add(1, 'day').format('YYYY-MM-DD')
+        const group = groupsCache.find(group => isExists(group, groupId, _date, univer))
+        return !!group;
+    }
+
     const dayWatcher = () => {
         let sunday = currentWeek[0] // trigger to get prev week
         let monday = currentWeek[8] // trigger to get next week
@@ -94,7 +103,7 @@ const ViewNew = ({isTeachers, isRoom, isGroup, isMobile, addToCompare}) => {
 
             entries.map(entry => {
                 if (entry.intersectionRatio > thresholds) {
-                        setLookAt(entry.target.id)
+                    setLookAt(entry.target.id)
                 }
             })
         }
@@ -112,6 +121,8 @@ const ViewNew = ({isTeachers, isRoom, isGroup, isMobile, addToCompare}) => {
     }
 
     const getIfNotExist = (date, univer) => {
+        const isExistsInCache = isGroupExistsInCache(groupId, date, univer)
+        console.log('in cache', isExistsInCache)
         const isExists = isGroupExists(groupId, date, univer)
         if (!isExists) {
             dispatch(fetchGroups(groupId, date, univer))
@@ -124,6 +135,7 @@ const ViewNew = ({isTeachers, isRoom, isGroup, isMobile, addToCompare}) => {
     }
 
     const getGroup = (group) => {
+        console.log(group)
         if (group?.group) {
             axios.get(URLS.ACADEMIC_GROUPS + group?.group).then(res => {
                 setCurrentSked(prevState => ({...prevState, group: {...res.data}}))
@@ -131,6 +143,10 @@ const ViewNew = ({isTeachers, isRoom, isGroup, isMobile, addToCompare}) => {
         }
     }
 
+    useEffect(() => {
+        if (!groupsCache)
+            dispatch(loadFromLocalStorageAction())
+    }, [groupsCache])
     useEffect(() => {
         if (dataFetch.current)
             return
@@ -171,7 +187,7 @@ const ViewNew = ({isTeachers, isRoom, isGroup, isMobile, addToCompare}) => {
         if (todayDate) {
             const mondayString = getMondayOfWeek(todayDate)
             const week = getWeek(mondayString)
-
+            console.log('week')
             const group = groups.find(group => {
                 return group.id === groupId && group.date === mondayString
             })
@@ -186,6 +202,7 @@ const ViewNew = ({isTeachers, isRoom, isGroup, isMobile, addToCompare}) => {
                     id: group.id,
                     name: group.name,
                     date: group.date,
+                    isCreator: group.isCreator,
                     sked
                 })
             }

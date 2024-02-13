@@ -72,10 +72,10 @@
     --background-color: #FE7676;
     --bg-semi-transperent: rgba(8, 12, 20, 0.6);
     --text-color: #FCFFFF;
-    --background-secondary: #FF9190;
+    --background-secondary: #3A3D41;
     --background-tile: #FF9190;
     --background-tile2: #ff9b9a;
-    --background-tile-border: #F6ADAE;
+    --background-tile-border: #ccc;
     --menu-bg: #f8b3cf;
     /*--menu-bg: #2D2D2D;*/
     --text-color-secondary: #F4F6F8;
@@ -93,10 +93,10 @@
 
     --primary-color: #802E5D;
     --primary-white: #F7E6E5;
-    --primary-cyan: #57C5FE;
-    --primary-orange: #F9DD6A;
-    --primary-red: #FE848F;
-    --primary-green: #3da83f;
+    --primary-cyan: #887BB0;
+    --primary-orange: #FFF4BD;
+    --primary-red: #F4B9B8;
+    --primary-green: #85D2D0;
     --primary-gray: #ffffff;
     --primary-dark: #23242A;
     --primary-dark2: #26272E;
@@ -169,7 +169,7 @@ body {
 
 #root {
     /*background: #FAFAFD;*/
-    height: 96vh;
+    height: 100vh;
     /*overflow-y: hidden;*/
     --nav-height: 15px;
 }
@@ -201,16 +201,11 @@ body {
 }
 
 .main-container {
-    width: 700px;
+    width: 100vw;
     margin: 0 auto 0 auto;
     text-align: center;
-    padding-bottom: 17em;
     /*padding: 0.8em;*/
-}
-
-.main-container.top{
-    padding-bottom: 5em;
-    padding-top: 11em;
+    padding-bottom: 10rem;
 }
 
 .tiles-main-container {

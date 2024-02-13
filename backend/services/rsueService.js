@@ -9,7 +9,6 @@ import {FormData} from "formdata-node"
 import dayjs from "dayjs";
 import mongoose from "mongoose";
 import https from "https";
-import axios from "axios";
 
 const subjectNumbers = {
     "8:30": 1,
@@ -50,14 +49,14 @@ const shortFaculties = {
 }
 
 
-export const RSUE_ID = mongoose.Types.ObjectId('64d2baa6e6556ef902b29994')
+export const RSUE_ID = mongoose.Types.ObjectId('64e098eb62ae508c1f674171')
 
 class RsueService {
     async fetchRsue(type, facultyId, courseId) {
         const formData = new FormData();
         formData.append('query', type);
         formData.append('type_id', facultyId);
-        if (courseId) formData.append('kind_id', courseId);
+        if (courseId)formData.append('kind_id', courseId);
 
         const options = {
             method: 'POST',
@@ -85,6 +84,7 @@ class RsueService {
     }
 
     async getGroupsFromServer() {
+        console.log('from server rsue')
         return await Promise.all(Object.keys(faculties).map(async faculty => {
             const response = await this.fetchRsue('getKinds', faculty)
             if (response) {
@@ -92,14 +92,17 @@ class RsueService {
                     const response2 = await this.fetchRsue('getCategories', faculty, resp.kind_id)
                     // let groups2 = []
                     response2.map(async obj => {
-                        const group = new AcademicGroup({
-                            faculty: shortFaculties[faculty],
-                            groupID: obj.category_id,
-                            name: obj.category,
-                            level: Number.parseInt(resp.kind_id),
-                            university: RSUE_ID
-                        })
-                        await group.save()
+                        const groupFromDb = await AcademicGroup.findOne({ name: obj.category, university: RSUE_ID})
+                        if (!groupFromDb) {
+                            const group = new AcademicGroup({
+                                faculty: shortFaculties[faculty],
+                                groupID: Number(obj.category_id),
+                                name: obj.category,
+                                level: Number.parseInt(resp.kind_id),
+                                university: RSUE_ID
+                            })
+                            await group.save()
+                        }
                     })
                     // return groups2
                 }))
@@ -111,8 +114,8 @@ class RsueService {
     }
 
     async getGroups() {
-        const schedule = await AcademicGroup.find({university: RSUE_ID}, {_id: 0, __v: 0})
-        if (schedule) return schedule
+        const schedule = await AcademicGroup.find({university: RSUE_ID}, { __v: 0})
+        if (schedule.length > 0) return schedule
         else return await this.getGroupsFromServer()
     }
 
@@ -182,7 +185,7 @@ class RsueService {
     }
 
     async removeWeek() {
-        const weeks = await Week.find({university: RSUE_ID});
+        const weeks = await Week.find({ university: RSUE_ID });
         const promises = weeks.map((w) => w.remove());
         return Promise.all(promises)
             .then(() => {
@@ -194,17 +197,18 @@ class RsueService {
     }
 
     async getAllSchedule() {
-        const groups = await AcademicGroup.find({university: RSUE_ID})
-        return Promise.all(groups.map(group => {
-            this.parseSchedule(group.faculty)
-        }))
+            const groups = await AcademicGroup.find({university: RSUE_ID})
+            return Promise.all(groups.map(async group => {
+                await this.parseSchedule(group.groupID, group.faculty, group)
+            }))
     }
 
     async parseSchedule(facultyId, kursId, groupId, group) {
         const formData = new FormData();
         formData.append('f', facultyId);
         formData.append('k', kursId);
-        formData.append('g', groupId);
+        let grgrgr = groupId
+        formData.append('g', grgrgr);
         formData.append('uuid', this.uuid(groupId));
 
         const options = {
@@ -233,10 +237,12 @@ class RsueService {
                     curWeekNumber: 1,
                     groupID: groupName,
                     university: RSUE_ID,
-                    faculty: shortFaculties[facultyId]
+                    faculty: shortFaculties[facultyId],
+                    group: group._id
                 })
 
                 await oddWeek.save()
+                // console.log(oddWeek)
 
                 const evenWeek = new Week({
                     isEven_: true,
@@ -246,10 +252,12 @@ class RsueService {
                     curWeekNumber: 2,
                     university: RSUE_ID,
                     groupID: groupName,
-                    faculty: shortFaculties[facultyId]
+                    faculty: shortFaculties[facultyId],
+                    group: group._id
                 })
 
                 await evenWeek.save()
+                // console.log(evenWeek)
 
                 return {oddId: oddWeek.id, evenId: evenWeek.id}
             })
@@ -272,12 +280,13 @@ class RsueService {
                     },
                 }
             })
-        return schedule
+            return schedule
     }
 
     async getWeekScheduleByGroupId(groupName, weekNumber, date) {
         const _today = dayjs(date).startOf('week').add(1, 'day')
         const today = _today.format('YYYY-MM-DDTHH:mm:ss')
+        // console.log('groupName',groupName)
         const schedule = await Week.findOne({
             groupName: groupName,
             university: RSUE_ID,
@@ -296,7 +305,8 @@ class RsueService {
                         __v: 0
                     },
                 }
-            })
+            }).exec()
+            // console.log('schedule', schedule)
         if (schedule) {
             console.log('schedule is exists')
             const _schedule = JSON.parse(JSON.stringify(schedule))
@@ -311,17 +321,18 @@ class RsueService {
             console.log('schedule is not exists')
             const group = await AcademicGroup.findOne({name: groupName, university: RSUE_ID})
             if (group) {
-                console.log('group is exists')
+                // console.log('group' + group.name + ' is exists')
                 // Получаем массивы ключей и значений объекта
                 const keys = Object.keys(shortFaculties);
                 const values = Object.values(shortFaculties);
 
                 // Ищем индекс значения в массиве значений
                 const index = values.indexOf(group.faculty);
-
                 // Получаем ключ по индексу
                 const faculty = keys[index];
-                await this.parseSchedule(faculty, group.level, group.groupID, group)
+                const _sched = await this.parseSchedule(faculty, group.level, group.groupID, group)
+                // console.log('_ched',_sched)
+                
                 const sked = await Week.findOne({
                     groupName: groupName,
                     university: RSUE_ID,
@@ -341,13 +352,20 @@ class RsueService {
                             },
                         }
                     })
-                const _sked = JSON.parse(JSON.stringify(sked))
-                const _days = await Promise.all(_sked.days.map(day => {
-                    const _day_t = _today.add(Number(day.dayNumber) - 1, 'day').format('YYYY-MM-DDTHH:mm:ss')
-                    return {...day, date: _day_t}
-                }))
+                    // console.log('sked', sked)
+                    if (sked) {
+                        const _sked = JSON.parse(JSON.stringify(sked))
+                        const _days = await Promise.all(_sked.days.map(day => {
+                            const _day_t = _today.add(Number(day.dayNumber) - 1, 'day').format('YYYY-MM-DDTHH:mm:ss')
+                            return {...day, date: _day_t}
+                        }))
+                        // console.log('days',_days)
 
-                return {..._sked, mondayDate: today, days: _days}
+                        return {..._sked, mondayDate: today, days: _days}
+                    } else {
+                        
+                        return { days: {}, isError: true}
+                    }
                 // return {..._sked, mondayDate: today}
                 // return {..._sked, mondayDate: today}
             } else {

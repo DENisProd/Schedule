@@ -20,8 +20,9 @@ class UniversityController {
                         city: req.body.city,
                         is_moderated: true,
                         author_id: req.body.author_id,
-                        type: req.body.type,
+                        type: req.body.type || 'ORGANIZATION',
                         created_at: new Date(),
+                        url: req.body.url,
                         code: transliterate(req.body.short_name).toUpperCase()
                     });
                     const savedUniversity = await university.save();
@@ -38,10 +39,14 @@ class UniversityController {
     // Получение списка всех университетов
     async getAllUniversities(req, res) {
         try {
-            const universities = await University.find();
-            res.json(universities);
+            const _uuid = req.query.user
+            console.log('uuid', _uuid)
+            const universities = await University.find({
+                $or: [{ is_moderated: true }, { author_id: _uuid }],
+              })
+            res.json(universities)
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            res.status(500).json({ error: error.message })
         }
     }
 

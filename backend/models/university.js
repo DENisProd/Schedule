@@ -8,7 +8,8 @@ const universitySchema = new Schema({
     is_moderated: Boolean,
     author_id: {type: String, required: true},
     created_at: Date,
-    code: String
+    code: String,
+    url: String
 })
 
 const University = model('University', universitySchema)

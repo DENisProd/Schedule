@@ -1,0 +1,40 @@
+.container {
+  box-sizing: border-box;
+  padding: 0.5rem 0.5rem 7rem 0.5rem;
+
+  & header {
+    display: grid;
+    grid-template-columns: 1fr 4fr 1fr;
+    text-align: center;
+
+    & h1 {
+      font-size: 1.2rem;
+    }
+
+    & button {
+      background: none;
+      outline: none;
+      border: none;
+      color: var(--primary-gray2);
+    }
+  }
+
+  & .queue_tile {
+    background: var(--background-tile);
+    box-sizing: border-box;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 1rem;
+
+    & h5 {
+      margin-block-end: 0;
+      margin-block-start: 0.2rem;
+      color: var(--text-color);
+
+      & .secondary {
+        color: var(--primary-gray);
+        font-weight: 400;
+      }
+    }
+  }
+}

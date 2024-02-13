@@ -1,0 +1,43 @@
+.themes {
+  display: flex;
+  padding-bottom: 0.5rem;
+
+  & .visible {
+
+  }
+
+  & .color_container {
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+
+    & .theme_btn {
+      width: 2rem;
+      height: 2rem;
+      cursor: pointer;
+      border-radius: 1rem;
+
+      &.light_theme_btn {
+        background: #FFFFFF;
+        border: 1px solid var(--primary-gray);
+      }
+
+      &.dark_theme_btn {
+        background: var(--primary-dark);
+        border: 1px solid var(--primary-dark);
+      }
+
+      &.pink_theme_btn {
+        background: var(--primary-red);
+        border: 1px solid var(--primary-red);
+      }
+
+      &.yellow_theme_btn {
+        background: var(--primary-orange);
+        border: 1px solid var(--primary-orange);
+      }
+    }
+  }
+}

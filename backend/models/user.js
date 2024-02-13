@@ -12,8 +12,8 @@ const userSchema = new Schema({
     os: String,
     referer: String,
     authorized: Boolean, // Поле, которое будет отражать согласие пользователя на сбор данных
-    favoriteGroups: [{type: String}],
-    searchedGroups: [{type: String}],
+    favoriteGroups: [{type: ObjectId, ref: 'AcademicGroup'}],
+    searchedGroups: [{type: ObjectId, ref: 'AcademicGroup'}],
     created: {type: Date, default: Date.now()},
     group: String,
     enterCount: Number,

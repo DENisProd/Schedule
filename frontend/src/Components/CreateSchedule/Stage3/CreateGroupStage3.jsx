@@ -65,9 +65,11 @@ export const CreateGroupStage3 = ({_next, back}) => {
                 </div>
             </p>
 
-            <p>
-                <span>Или выберите существующие группы для вашего учебного заведения, которые открыли для общего доступа</span>
-            </p>
+            {Array.isArray(groups) && groups.length > 0 &&
+                <p>
+                    <span>Или выберите существующие группы для вашего учебного заведения, которые открыли для общего доступа</span>
+                </p>
+            }
 
             <div className={styles.groups_list}>
                 {Array.isArray(groups) && groups.map(gr =>

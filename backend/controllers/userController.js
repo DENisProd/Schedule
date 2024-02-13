@@ -1,22 +1,69 @@
 import User from "../models/user.js";
 
 import {v4} from 'uuid'
+import UserService from "../services/userService.js";
+const userService = new UserService()
+import config from "config"
+
+const SAVE_STATUSES = {
+    STATS_SAVED: 1,
+    SAVE_ERROR: 0
+}
 
 class UserController {
     getMe = async (req, res) => {
         try {
             const receivedClientId = req.body.clientId;
 
-            const existingClient = await User.findOne({clientId: receivedClientId});
+            console.log('clientID', receivedClientId)
+            const existingClient = await userService.findUserByUid(receivedClientId)
 
-            if (existingClient) return res.status(200).json({message: 'ok', clientId: req.body.clientId});
-            else {
+            if (existingClient) {
+                const { favoriteGroups, searchGroups } = req.body;
+                console.log('fg', favoriteGroups);
+                console.log('sg', searchGroups); // Добавляем вывод для отладки
+              
+                let saveStatus;
+                let responseObject = {};
+              
+                if (Array.isArray(favoriteGroups)) {
+                  favoriteGroups.forEach(_group => {
+                    if (existingClient.favoriteGroups && !existingClient.favoriteGroups.includes(_group.id)) {
+                      console.log('group is not saved');
+                      existingClient.favoriteGroups.push(_group.id);
+                    }
+                  });
+                  console.log(existingClient.favoriteGroups)
+                }
+              
+                // Обработка searchGroups
+                if (Array.isArray(searchGroups)) {
+                    searchGroups.forEach(_group => {
+                    if (existingClient.searchedGroups && !existingClient.searchedGroups.includes(_group.id)) {
+                      console.log('search group is not saved');
+                      existingClient.searchedGroups.push(_group.id);
+                    }
+                  });
+                }
+              
+                // Сохранение изменений в базе данных
                 try {
-                    const answer = await this.createUser(req, res);
-                    return res.status(answer.status).json(answer.message);
+                    console.log('save')
+                  await existingClient.save();
+                  saveStatus = SAVE_STATUSES.STATS_SAVED;
                 } catch (error) {
-                    console.error(error);
-                    return res.status(400).json({ message: 'Ошибка при сохранении данных' });
+                  console.error('Error', error);
+                  saveStatus = SAVE_STATUSES.SAVE_ERROR;
+                }
+              
+                return res.status(200).json({ message: 'ok', clientId: req.body.clientId, saveStatus });
+              } else {
+                try {
+                    const answer = await this.createUser(req, res)
+                    return res.status(answer.status).json(answer.message)
+                } catch (error) {
+                    console.error('error', error)
+                    return res.status(400).json({ message: 'Ошибка при сохранении данных' })
                 }
             }
         } catch (e) {
@@ -24,6 +71,8 @@ class UserController {
             return res.status(404).json({message: 'Произошла ошибка при авторизации'})
         }
     }
+
+
 
     createUser = async (req, res) => {
         const newClientId = v4();
@@ -47,6 +96,7 @@ class UserController {
         const browser = req?.headers['user-agent'].split(') ')[0].split(' (')[1];
         const os = req?.headers['user-agent'].split(') ')[0].split(' (')[0];
         const referer = req?.headers['referer'] || '';
+        const enterCount = req.body.enterCounts
 
         // Сохраняем данные клиента в MongoDB
         const clientData = new User({
@@ -60,7 +110,10 @@ class UserController {
             browser,
             os,
             referer,
+            favoriteGroups: [],
+            searchedGroups: [],
             authorized: true, // Здесь отмечаем, что данные сохранены с согласия пользователя
+            enterCount,
         });
 
         // Используем промис для сохранения данных клиента
@@ -78,6 +131,20 @@ class UserController {
                 }
             });
         });
+    }
+
+    updateUser = async (req, res) => {
+        
+    }
+
+    getAllUsers = async (req, res) => {
+        if (req.body.pwd === config.get("adminPassword")){
+            const usersFromDb = await User.find({}).populate('favoriteGroups').exec()
+
+            return res.status(200).json({success: "ok", data: usersFromDb})
+        }
+
+        return res.status(200).json({success: "false"})
     }
 }
 

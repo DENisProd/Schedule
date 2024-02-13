@@ -33,7 +33,8 @@ export const CreateUniversityStage1 = ({_next}) => {
     const stage = useSelector(state => state.createSchedule)
 
     useEffect(() => {
-        axios.get(URLS.UNIVERSITY).then(res => {
+        const uuid = localStorage.getItem('clientId') || 0
+        axios.get(URLS.UNIVERSITY +'?user='+uuid).then(res => {
             let _un2 = {};
             let arr = []
 

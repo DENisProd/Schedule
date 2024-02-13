@@ -1,0 +1,34 @@
+.scroll_container {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  max-width: 500px;
+  width: calc(100%);
+  margin: 0 auto;
+  overflow-y: scroll;
+  gap: 20px;
+  scrollbar-width: none;
+  //background: var(--background-tile);
+  padding: 0.7rem 0.3rem 0 0.6rem;
+  border-radius: 0 0 35px 35px;
+  background: var(--background-tile);
+  z-index: 2;
+  //position: fixed;
+  left: 50%;
+  //transform: translateX(-50%);
+  box-sizing: border-box;
+  overflow-x: hidden;
+  //position: absolute;
+
+  &.top {
+    top: 31vh;
+    border-radius: 35px 35px 0 0;
+    height: 69%;
+  }
+}
+
+.container {
+  background: var(--primary-dark);
+  height: 100vh;
+  overflow-y: scroll;
+}

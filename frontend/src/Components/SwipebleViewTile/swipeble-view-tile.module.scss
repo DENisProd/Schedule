@@ -1,7 +1,6 @@
 .subject_tile_container {
   display: flex;
   overflow: hidden;
-  /* overflow-x: scroll; */
   scroll-padding-left: 0.3rem;
   scroll-padding-right: 0.3rem;
   scroll-snap-type: x mandatory;
@@ -31,7 +30,6 @@
     overflow: hidden;
     transition: all 0.2s ease-out;
     //box-shadow: 0px 4px 20px rgba(197, 197, 197, 0.15);
-    border: var(--background-tile-border) 1px solid;
 
     &.green {
       background: var(--primary-green);

@@ -8,6 +8,7 @@ import Subject from "../models/subject.js";
 import Day from "../models/dayModel.js";
 import Week from "../models/weekOfSubjects.js";
 import GroupService from "../services/groupService.js";
+import User from "../models/user.js";
 
 const dstuService = new DstuService()
 const rsueService = new RsueService()
@@ -28,11 +29,31 @@ Date.prototype.getWeek = function () {
     const daysSinceFirstDayOfYear = (this - firstDayOfYear) / 86400000;
     return Math.ceil((daysSinceFirstDayOfYear + firstDayOfYear.getDay() + 1) / 7);
 };
-const _getOneById = async (groupId, university, date) => {
+const _getOneById = async (groupId, university, date, user) => {
     try {
         if (groupId) {
             switch (university.toUpperCase()) {
                 case UNIVERSITIES.DSTU: {
+                    const week = await dstuService.getWeekScheduleByGroupIdAndDate(groupId, date)
+
+                    if (week) {
+                        console.log("is exists in db")
+                        return {week}
+                    } else {
+                        console.log("not exists in db")
+                        const week_id = await dstuService.getWeekIdScheduleFromServer(groupId, date)
+                        // console.log(week_id)
+
+                        if (week_id) {
+                            const weekSchedule = await dstuService.getWeekScheduleById(week_id)
+                            return {week: weekSchedule}
+                        } else
+                            return 404
+
+                    }
+                    break
+                }
+                case UNIVERSITIES.DGTU: {
                     const week = await dstuService.getWeekScheduleByGroupIdAndDate(groupId, date)
 
                     if (week) {
@@ -60,6 +81,20 @@ const _getOneById = async (groupId, university, date) => {
 
                     const sch = await rsueService
                         // .getSchedule(weekNumber % 2 === 0 ? schedule[1] : schedule[0], groupId)
+                        .getWeekScheduleByGroupId(groupId, weekNumber, date)  
+                    if (sch)
+                        return {week: sch}
+                    else
+                        return 404
+                }
+                case UNIVERSITIES.RGEU: {
+                    // getWeekScheduleByGroupId
+                    //const schedule = await rsueService.parseSchedule(3,3,2)
+                    const _date = new Date(date)
+                    const weekNumber = Number.parseInt(_date.getWeek())
+
+                    const sch = await rsueService
+                        // .getSchedule(weekNumber % 2 === 0 ? schedule[1] : schedule[0], groupId)
                         .getWeekScheduleByGroupId(groupId, weekNumber, date)
 
                     if (sch)
@@ -71,7 +106,7 @@ const _getOneById = async (groupId, university, date) => {
                     const _date = new Date(date)
                     const weekNumber = Number.parseInt(_date.getWeek())
 
-                    const sch = await groupService.getWeekScheduleByGroupId(groupId, weekNumber, date, university)
+                    const sch = await groupService.getWeekScheduleByGroupId(groupId, weekNumber, date, university, user)
 
                     if (sch)
                         return {week: sch}
@@ -88,8 +123,8 @@ const _getOneById = async (groupId, university, date) => {
 
 class groupController {
 
-    async getOneById(groupId, university, date) {
-        return _getOneById(groupId, university, date)
+    async getOneById(groupId, university, date, user) {
+        return _getOneById(groupId, university, date, user)
     }
 
     async getCompare(req, res) {
@@ -108,8 +143,6 @@ class groupController {
                     return data.week
                 })
             )
-
-            console.log(schedule)
             res.json(schedule)
 
         } catch (e) {
@@ -120,16 +153,28 @@ class groupController {
     async getAllForUniversity(req, res) {
         try {
             const university = req.params.univer.toString().toUpperCase()
-
+            console.log(university)
             if (university) {
 
                 switch (university) {
                     case UNIVERSITIES.DSTU: {
+                        console.log('dstu')
+                        const response = await dstuService.getGroups()
+                        res.status(200).json(response)
+                        break
+                    }
+                    case UNIVERSITIES.DGTU: {
+                        console.log('dgtu')
                         const response = await dstuService.getGroups()
                         res.status(200).json(response)
                         break
                     }
                     case UNIVERSITIES.RSUE: {
+                        const response = await rsueService.getGroups()
+                        res.status(200).json(response)
+                        break
+                    }
+                    case UNIVERSITIES.RGEU: {
                         const response = await rsueService.getGroups()
                         res.status(200).json(response)
                         break
@@ -152,13 +197,16 @@ class groupController {
 
     createSchedule = async (req, res) => {
         try {
-            const {groupId, universityId, isEven_, days} = req.body
+            const {groupId, universityId, isEven_, days, author_id} = req.body
 
             const university = await University.findById(universityId)
             if (!university) return res.status(404).json({message: 'Учебное заведение не найдено'})
 
             const group = await AcademicGroup.findById(groupId)
             if (!group) return res.status(404).json({message: 'Группа не найдена'})
+
+            const userFromDb = await User.findOne({ clientId: author_id })
+            if (!userFromDb) return res.status(404).json({ isError: true, message: 'Пользователь не найден' })
 
             const monday = dayjs().startOf('week').add(1, 'day')
             //.format('YYYY-MM-DDTHH:mm:ss')
@@ -180,6 +228,7 @@ class groupController {
                                 year: monday.year(),
                                 number: subject.number,
                                 isSubgroup: subject.isSubgroup,
+                                group: group._id,
                             })
                             await _subject.save()
                             return _subject._id
@@ -204,6 +253,8 @@ class groupController {
                 groupID: group.name,
                 university: universityId,
                 faculty: group.faculty,
+                group: group._id,
+                author_id: userFromDb._id
             })
             await _week.save()
 

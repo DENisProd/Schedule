@@ -16,11 +16,11 @@ const universityController = new UniversityController()
 
 router.post('/', scheduleLimiter, universityController.createUniversity)
 
-router.get('/', scheduleLimiter, universityController.getAllUniversities)
-router.get('/:id', scheduleLimiter, universityController.getUniversity)
-router.get('/type/:type', scheduleLimiter, universityController.getUniversityByType)
-router.get('/city/:city', scheduleLimiter, universityController.getUniversityByCity)
-router.get('/code/:code', scheduleLimiter, universityController.getOneUniversityByCode)
+router.get('/', universityController.getAllUniversities)
+router.get('/:id', universityController.getUniversity)
+router.get('/type/:type', universityController.getUniversityByType)
+router.get('/city/:city', universityController.getUniversityByCity)
+router.get('/code/:code', universityController.getOneUniversityByCode)
 
 router.put('/:id', scheduleLimiter, universityController.updateUniversity)
 router.delete('/:id', scheduleLimiter, universityController.deleteUniversity)

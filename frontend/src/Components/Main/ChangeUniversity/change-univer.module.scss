@@ -1,0 +1,12 @@
+.container {
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: height 0.3s ease-out, opacity 0.3s ease-out;
+
+  &.visible {
+    opacity: 1;
+    height: 8rem;
+    pointer-events: all;
+  }
+}

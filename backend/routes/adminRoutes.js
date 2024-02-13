@@ -46,7 +46,6 @@ router.post('/error/', apiLimiter, async (req, res) => {
 })
 
 router.post('/all/', admin10, async (req, res) => {
-    console.log(req.body)
     try {
         const data = await ClientInfo.find({})
         //res.status(200).json(data)
@@ -63,13 +62,13 @@ router.post('/all/', admin10, async (req, res) => {
 router.post('/stats/', apiLimiter, async (req, res) => {
     try {
         const ip = req.clientIp;
+
         const newClientInfo = new ClientInfo({
             userAgent: req.headers['user-agent'],
             ipAdress: ip,
-            searchedGroups: req.body.sg,
-            favoriteGroups: req.body.fav,
+            author_id: req.body.user_uuid || '',
             enterCount: req.body.count,
-            group: req.body.group
+            group: req.body.group.toString()
         })
 
         await newClientInfo.save()

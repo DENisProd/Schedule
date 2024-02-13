@@ -6,6 +6,8 @@ import {TaskSearch} from "../Tasks/TasksHeader/TaskSearch";
 import {MapComponent} from "./MapComponent";
 import {MainTerritory} from "./Buildings/MainTerritory";
 import {FourthFloor10} from "./Buildings/10/FourthFloor10";
+import {SecondFloor10} from "./Buildings/10/SecondFloor10";
+import {TenTerritory} from "./Buildings/10/TenTerritory";
 
 export default function Navigator() {
     const [value, setValue] = useState('')
@@ -76,11 +78,13 @@ export default function Navigator() {
 
     const getMapComponent = (build, floor) => {
         if (build === 10) {
-            if (floor === 3) return <ThirdFloor10 handleButtonClick={handleButtonClick}/>
+            if (floor === 2) return <SecondFloor10 handleButtonClick={handleButtonClick}/>
+            else if (floor === 3) return <ThirdFloor10 handleButtonClick={handleButtonClick}/>
             else if (floor === 4) return <FourthFloor10 handleButtonClick={handleButtonClick}/>
             else if (floor === 5) return <FiveFloor10 handleButtonClick={handleButtonClick}/>
-            else return <MainTerritory handleButtonClick={handleButtonClick}/>
+            else return <TenTerritory handleButtonClick={handleButtonClick}/>
         }
+        else return <MainTerritory handleButtonClick={handleButtonClick}/>
     }
 
     useEffect(() => {

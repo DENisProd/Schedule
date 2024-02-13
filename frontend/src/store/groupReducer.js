@@ -1,11 +1,17 @@
 import dayjs from "dayjs";
 
 const defaultState = {
-    groups: []
+    groups: [],
+    cache: []
 }
 
 const ADD_GROUP = "ADD_GROUP"
 const NOTHING = "NOTHING"
+const SET_CACHE = "SET_CACHE"
+const SAVE_MY_GROUP = "SAVE_MY_GROUP"
+
+const SAVE_TO_LOCAL_STORAGE = "SAVE_TO_LOCAL_STORAGE"
+const LOAD_FROM_LOCAL_STORAGE = "LOAD_FROM_LOCAL_STORAGE"
 
 export const groupReducer = (state = defaultState, action) => {
     switch (action.type) {
@@ -13,12 +19,24 @@ export const groupReducer = (state = defaultState, action) => {
             const group = state.groups.find(group => isExists(group, action.payload.id, action.payload.date))
             if (group) return state
             return {...state, groups: [...state.groups, action.payload]}
+        case SET_CACHE:
+            return {...state, cache: action.payload}
+        case SAVE_MY_GROUP:
+
+            return state
+        case SAVE_TO_LOCAL_STORAGE:
+            const myGroup = JSON.parse(localStorage.getItem("my-group2"))
+            const myGroupSchedule = state.groups.filter(gr => gr.name.includes(myGroup.name) && gr.group.includes(myGroup.id))
+            localStorage.setItem("groupsState", JSON.stringify(myGroupSchedule));
+
+            return state;
+        case LOAD_FROM_LOCAL_STORAGE:
+            // Загружаем состояние из localStorage
+            const savedState = JSON.parse(localStorage.getItem("groupsState")) || defaultState;
+            // console.log(savedState)
+            return { ...state, cache: savedState };
         case NOTHING:
             return state
-        // case ADD_CUSTOMER:
-        //     return {...state, customers: [...state.customers, action.payload]}
-        // case REMOVE_CUSTOMER:
-        //     return {...state, customers: state.customers.filter(customer => customer.id !== action.payload)}
         default:
             return state
     }
@@ -26,7 +44,9 @@ export const groupReducer = (state = defaultState, action) => {
 
 export const addGroupAction = (payload) => ({type: ADD_GROUP, payload})
 export const emptyAction = () => ({type: NOTHING})
-// export const removeCustomerAction = (payload) => ({type: REMOVE_CUSTOMER, payload})
+
+export const saveToLocalStorageAction = () => ({ type: SAVE_TO_LOCAL_STORAGE });
+export const loadFromLocalStorageAction = () => ({ type: LOAD_FROM_LOCAL_STORAGE });
 
 function isExists (group, groupId, date) {
     if (group.id === groupId) {

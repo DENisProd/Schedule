@@ -7,6 +7,7 @@ import {messageReducer} from "./messageReducer";
 import {compareReducer} from "./compareReducer";
 import todoReducer from "./todoReducer";
 import {createScheduleReducer} from "./createScheduleReducer";
+import {userReducer} from "./userReducer";
 
 const rootReducer = combineReducers({
     groups: groupReducer,
@@ -14,7 +15,8 @@ const rootReducer = combineReducers({
     messages: messageReducer,
     compare: compareReducer,
     todo: todoReducer,
-    createSchedule: createScheduleReducer
+    createSchedule: createScheduleReducer,
+    user: userReducer,
 })
 
 export const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)))

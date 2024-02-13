@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@nestjs/cli": "^10.1.10",
     "dayjs": "^1.11.7",
     "moment": "^2.29.4",
     "ua-parser-js": "^1.0.33",

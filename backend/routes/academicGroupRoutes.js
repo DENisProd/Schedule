@@ -14,6 +14,7 @@ const scheduleLimiter = rateLimit({
 
 router.post('/', scheduleLimiter, academicGroupController.create)
 router.get('/', academicGroupController.getAll)
+router.get('/:groupId', academicGroupController.getOne)
 router.get('/univer/:univerId', academicGroupController.getByUniversity)
 router.get('/code/:code', academicGroupController.getByUniversityCode)
 router.get('/faculty/:faculty', academicGroupController.getByFaculty)

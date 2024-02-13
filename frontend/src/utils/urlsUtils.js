@@ -13,6 +13,15 @@ export const UNIVERSITIES_URLS = {
     QUEUE: 'https://schedule.darksecrets.ru/api/queue/',
     // SUBJECT: 'http://localhost:5000/subject/',
     SUBJECT: 'https://schedule.darksecrets.ru/api/subject/',
+    GET_ALL_USERS: 'https://schedule.darksecrets.ru/api/user/allusers/',
+    STUDORGS: 'https://schedule.darksecrets.ru/api/studorgs/',
+}
+
+export const AUTH_URLS = {
+    LOGIN: 'https://schedule.darksecrets.ru/api/auth/',
+    LOGIN_VK: 'https://schedule.darksecrets.ru/api/auth/vk',
+    LOGIN_YANDEX: 'https://schedule.darksecrets.ru/api/auth/ya',
+    RATING: 'https://schedule.darksecrets.ru/api/auth/rating',
 }
 
 export const URLS = {
@@ -22,7 +31,7 @@ export const URLS = {
     // GET_GROUPS: BASE_URL + "raspGrouplist",
     GET_GROUPS: "https://schedule.darksecrets.ru/api/group/all/",
     // GET_GROUPS: "http://localhost:5000/api/group/all/",
-    // GET_TEACHERS: BASE_URL + "raspTeacherlist",
+    GET_TEACHERS: BASE_URL + "raspTeacherlist",
     GET_TEACHERS_SCHEDULE: "http://localhost:5000/teachers/",
     GET_ROOMS: BASE_URL + "raspAudlist",
     GET_UNIVERSITY: BASE_URL + "",

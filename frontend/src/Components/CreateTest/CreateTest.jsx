@@ -9,6 +9,8 @@ import {Dropdown} from "../UIKit/DropdownNew/Dropdown";
 import {CATEGORIES} from "../CreateSchedule/Stage1/CreateUniversityStage1";
 import {checkGroups} from "../../utils/localStorageHelpers";
 import Loader2 from "../Loader/Loader2";
+import {fetchSearch, SEARCH_TYPES} from "../../asyncActions/search";
+import {useDispatch, useSelector} from "react-redux";
 
 export const BLOCKED_CREATE_UNIVERSITY = [
     'DGTU', 'RGEU'
@@ -16,6 +18,10 @@ export const BLOCKED_CREATE_UNIVERSITY = [
 
 export const CreateTest = () => {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const search = useSelector(state => state.search)
+
+    const [teachersList, setTeachersList] = useState([])
 
     const [universities, setUniversities] = useState([])
     const [universitiesFullName, setUniversitiesFullName] = useState([])
@@ -28,10 +34,11 @@ export const CreateTest = () => {
     const [type, setType] = useState('UNIVERSITY')
     const [searchValue, setSearchValue] = useState('')
     const [isLoading, setIsLoading] = useState(true)
+    const [isTeachers, setIsTeachers] = useState(false)
 
     useEffect(() => {
-
-        axios.get(URLS.UNIVERSITY).then(res => {
+        const uuid = localStorage.getItem('clientId') || 0
+        axios.get(URLS.UNIVERSITY+'?user='+uuid).then(res => {
             setUniversitiesFull(res.data)
             let _un = {};
             let _un2 = {};
@@ -56,8 +63,6 @@ export const CreateTest = () => {
                 setIsLoading(false)
             }
         });
-
-        // getGroupsByUniverCode()
     }, [])
 
     const onSelectUniversity = (value) => {
@@ -66,7 +71,6 @@ export const CreateTest = () => {
     }
 
     const getGroupsByUniverCode = (_code) => {
-        console.log(_code)
         axios.get(URLS.ACADEMIC_GROUPS + 'code/' + _code).then(res => {
             let obj = []
             if (Array.isArray(res.data)) {
@@ -109,13 +113,29 @@ export const CreateTest = () => {
     }
 
     useEffect(() => {
-        console.log(university)
-    }, [university])
+        if (isTeachers && !teachersList)
+            dispatch(fetchSearch(SEARCH_TYPES.TEACHERS, university))
+    }, [isTeachers])
+
+    useEffect(() => {
+        if (search.teachers) {
+            setTeachersList(search.teachers.data)
+        }
+    }, [search.teachers])
 
     const searchHandle = (event) => {
-        setSearchValue(event.target.value)
-        if (Array.isArray(groups))
-            setFilteredGroups(groups.filter(group => group.name.toLowerCase().includes(event.target.value.toLowerCase() || '')))
+        const val = event.target.value
+        setSearchValue(val)
+        if (isTeachers) {
+            if (Array.isArray(search.teachers)) {
+                setTeachersList(search.teachers.data.filter(teacher => {
+                    return teacher.name.toLowerCase().includes(val.toLowerCase())
+                }))
+            }
+        } else {
+            if (Array.isArray(groups))
+                setFilteredGroups(groups.filter(group => group.name.toLowerCase().includes(val.toLowerCase() || '')))
+        }
     }
 
     return (
@@ -128,6 +148,12 @@ export const CreateTest = () => {
                 </button>
                 <h2>Поиск</h2>
             </div>
+            {university.code === 'DGTU' &&
+                <div className={styles.choose_container}>
+                    <div className={cn(styles.button, !isTeachers && styles.active)} onClick={() => setIsTeachers(false)}>Группы</div>
+                    <div className={cn(styles.button, isTeachers && styles.active)} onClick={() => setIsTeachers(true)}>Преподаватели</div>
+                </div>
+            }
             {/*<SelectInput options={universitiesFullName} value={universitiesFullName[university]}*/}
             {/*             onChange={onSelectUniversity}/>*/}
             <div>
@@ -165,33 +191,63 @@ export const CreateTest = () => {
                             style={{color: 'var(--text-color)'}} to={'/create/'}>Создайте</Link></div>
                     </div>
                 }
-                <div className={cn(styles.groups_tile, styles.no_back)}>
-                    <div>Группа</div>
-                    <div>Курс</div>
-                    <div>Факультет</div>
-                    {/*<div>{group.university && universities[group.university]}</div>*/}
-                </div>
-                {Array.isArray(filteredGroups) &&
+                {!isTeachers ?
                     <>
-                        {filteredGroups.length > 0 ?
-                            filteredGroups.map(group =>
-                                <div className={styles.groups_tile}
-                                     key={group.id}
-                                     onClick={() => {
-                                         addToSearched(group)
-                                         navigate("/group/" + (university.code === 'DGTU' ? group.groupID : group.name) + '?u=' + (university.code === undefined ? 'dgtu' : university.code))
-                                     }}
-                                >
-                                    <div>{group?.name}</div>
-                                    <div>{group?.level}</div>
-                                    <div>{group?.faculty}</div>
-                                    {/*<div>{group.university && universities[group.university]}</div>*/}
-                                </div>
-                            )
-                            :
-                            <div className={cn(styles.groups_tile, styles.flex)}>
-                                <div>Ничего не найдено</div>
-                            </div>
+                        <div className={cn(styles.groups_tile, styles.no_back)}>
+                            <div>Группа</div>
+                            <div>Курс</div>
+                            <div>Факультет</div>
+                            {/*<div>{group.university && universities[group.university]}</div>*/}
+                        </div>
+                        {Array.isArray(filteredGroups) &&
+                            <>
+                                {filteredGroups.length > 0 ?
+                                    filteredGroups.map(group =>
+                                        <div className={styles.groups_tile}
+                                             key={group.id}
+                                             onClick={() => {
+                                                 addToSearched(group)
+                                                 navigate("/group/" + (university.code === 'DGTU' ? group.groupID : group.name) + '?u=' + (university.code === undefined ? 'dgtu' : university.code))
+                                             }}
+                                        >
+                                            <div>{group?.name}</div>
+                                            <div>{group?.level}</div>
+                                            <div>{group?.faculty}</div>
+                                            {/*<div>{group.university && universities[group.university]}</div>*/}
+                                        </div>
+                                    )
+                                    :
+                                    <div className={cn(styles.groups_tile, styles.flex)}>
+                                        <div>Ничего не найдено</div>
+                                    </div>
+                                }
+                            </>
+                        }
+                    </>
+                :
+                    <>
+                        <div className={cn(styles.groups_tile, styles.no_back, styles.teacher)}>
+                            <div>ФИО преподавателя</div>
+                        </div>
+                        {Array.isArray(teachersList) &&
+                            <>
+                                {teachersList.length > 0 ?
+                                    teachersList.map(teacher =>
+                                        <div className={cn(styles.groups_tile, styles.teacher)}
+                                             key={teacher.id}
+                                             onClick={() => {
+                                                 navigate('/teacher/' + teacher.id)
+                                             }}
+                                        >
+                                            <div>{teacher.name}</div>
+                                        </div>
+                                    )
+                                    :
+                                    <div className={cn(styles.groups_tile, styles.flex)}>
+                                        <div>Ничего не найдено</div>
+                                    </div>
+                                }
+                            </>
                         }
                     </>
                 }

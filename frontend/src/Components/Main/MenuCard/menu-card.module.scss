@@ -1,0 +1,42 @@
+.card {
+  //width: 10rem;
+  flex: 1;
+  min-width: 150px;
+  max-height: 16rem;
+  //height: 10rem;
+  border-radius: 1rem;
+  background: var(--background-tile);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  box-sizing: border-box;
+  padding: 0.5rem;
+  cursor: pointer;
+  aspect-ratio: 1/1;
+  flex-basis: 150px;
+  text-decoration: none;
+  color: var(--text-color);
+
+  & svg {
+    position: absolute;
+    top: 1.9rem;
+    left: 50%;
+    height: 50%;
+    transform: translateX(-50%);
+
+    & path {
+      fill: var(--text-color);
+    }
+  }
+
+  & h3 {
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  &:hover {
+    box-shadow: 0px 4px 19px 0px rgba(168, 168, 168, 0.87);
+  }
+}

@@ -1,4 +1,6 @@
 export const UNIVERSITIES = {
     DSTU: "DSTU",
-    RSUE: "RSUE"
+    DGTU: "DGTU",
+    RSUE: "RSUE",
+    RGEU: "RGEU"
 }

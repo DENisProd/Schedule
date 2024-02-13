@@ -102,6 +102,11 @@
         font-size: 15px;
         font-weight: 600;
 
+        &.teacher {
+            display: flex;
+            justify-content: center;
+        }
+
         &.flex {
             display: flex;
             justify-content: start;
@@ -110,6 +115,33 @@
         &.no_back {
             background: none;
             padding: 0.2rem 1.3rem;
+        }
+    }
+}
+
+.choose_container {
+    display: flex;
+    justify-content: start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    & .button {
+        padding: 0.5rem 1rem;
+        background: var(--background-tile);
+        color: var(--text-color);
+        border-radius: 35px;
+        cursor: pointer;
+        transition: opacity .2s ease-in-out, transform .2s ease-in-out;
+        user-select: none;
+
+        &.active {
+            background: var(--primary-color);
+            color: var(--primary-white);
+        }
+
+        &:hover {
+            transform: translateY(1px);
+            opacity: 0.8;
         }
     }
 }

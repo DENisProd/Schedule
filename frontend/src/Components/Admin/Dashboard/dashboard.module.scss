@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  overflow-x: scroll;
+
+  & img {
+    //width: 300px;
+    //height: 250px;
+    //object-fit: cover;
+  }
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--primary-gray2)
+}

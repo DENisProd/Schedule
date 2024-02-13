@@ -12,18 +12,22 @@ class ScheduleTimeController {
                 const userFromDb = await User.findOne({clientId: req.body.author_id})
 
                 if (userFromDb) {
-                    // TODO добавить проверку на валидность времени
                     const scheduleEntries = req.body.schedule.map((entry) => ({
-                        author_id: req.body.author_id,
                         timeStart: entry.startTime,
                         timeEnd: entry.endTime,
                         number: entry.number,
+                    }))
+
+                    const scheduleTimes = await ScheduleTime({
+                        author_id: req.body.author_id,
                         university: universityFromDb._id,
-                    }));
+                        times: scheduleEntries
+                    })
+                    // TODO добавить проверку на валидность времени
 
-                    await ScheduleTime.insertMany(scheduleEntries);
+                    await scheduleTimes.save()
 
-                    return res.status(201).json({message: 'Расписание звонков успешно создано', schedule: scheduleEntries})
+                    return res.status(201).json({message: 'Расписание звонков успешно создано', schedule: scheduleTimes})
                 }
             }
             return res.status(404).json({message: 'Учебное заведение не найдено'})

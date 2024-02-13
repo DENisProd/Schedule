@@ -24,6 +24,17 @@ class AcademicGroupController {
         }
     }
 
+    getOne = async (req,res) => {
+        try {
+            const group = await AcademicGroup.findById(req.params.groupId).populate('university').exec()
+            if (!group) return res.status(404).json({ isError: true, message: 'Группа не найдена' })
+            return res.status(200).json(group)
+        } catch (e) {
+            console.log(e)
+            return res.status(500).json({ isError: true, message: 'что-то пошло не так...' })
+        }
+    }
+
     getAll = async (req, res) => {
         try {
             const groups = await AcademicGroup.find({})
@@ -38,10 +49,8 @@ class AcademicGroupController {
         try {
             const univer = await University.findById(req.params.univerId)
             if (univer) {
-                const groups = await AcademicGroup.find({ university: univer._id }).populate('university').exec();
-                console.log(groups)
-                if (groups)  return res.status(200).json(groups);
-
+                const groups = await AcademicGroup.find({ university: univer._id})
+                if (groups) return res.status(200).json({...groups})
 
                 return res.status(404).json({message: 'Не найдено групп для данного учебного заведения'})
             }
@@ -53,7 +62,7 @@ class AcademicGroupController {
 
     getByUniversityCode = async (req, res) => {
         try {
-            const univer = await University.findOne({ code: req.params.code.toUpperCase() }).populate('university').exec()
+            const univer = await University.findOne({ code: req.params.code.toUpperCase() })
             if (univer) {
                 const groups = await AcademicGroup.find({ university: univer._id}).lean()
                 if (groups) {

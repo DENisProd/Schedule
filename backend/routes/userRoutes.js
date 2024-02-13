@@ -4,6 +4,8 @@ import rateLimit from "express-rate-limit";
 import userMiddleware from "../middleware/user.middleware.js";
 import UserController from "../controllers/userController.js";
 
+
+
 const router = new Router()
 const userController = new UserController()
 
@@ -15,6 +17,7 @@ const scheduleLimiter = rateLimit({
 })
 
 router.post('/me', scheduleLimiter, userController.getMe)
+router.post('/allusers', scheduleLimiter, userController.getAllUsers)
 
 
 export default router

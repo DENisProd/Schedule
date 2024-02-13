@@ -5,6 +5,7 @@ import User from "./User"
 import UAParser from "ua-parser-js"
 import Dashboard from "./Dashboard/Dashboard";
 import ErrorBoundary from "../../utils/ErrorBoundary";
+import {AdminNew} from "./AdminNew";
 
 const get_url = "https://schedule.darksecrets.ru/api/all/"
 
@@ -156,6 +157,7 @@ export default function Admin() {
 
     return (
         <div>
+            <AdminNew/>
             <h1>Admin</h1>
             <p>Введите пароль</p>
             <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" name="password"/>
@@ -163,6 +165,7 @@ export default function Admin() {
             {isDataLoaded &&
 <ErrorBoundary>
     <div className="tiles-main-container" id={"admin_container"}>
+
         <h4>Уникальных пользователей: {eniqueUsers}</h4>
         <h4>Количество групп, которые искали: {searchUnion.length}</h4>
         <GetCountByDay/>

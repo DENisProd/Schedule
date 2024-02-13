@@ -19,6 +19,6 @@ router.get('/:univerId', scheduleTimeController.getAllByUniversity);
 
 router.put('/:id', scheduleTimeController.update);
 
-router.delete('/:id', scheduleTimeController.delete);
+router.delete('/:id', scheduleLimiter, scheduleTimeController.delete);
 
 export default router

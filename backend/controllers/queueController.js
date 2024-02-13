@@ -25,7 +25,7 @@ class QueueController {
             })
 
             await queue.save()
-            return res.status(201).json({ isError: false, ...queue})
+            return res.status(201).json(queue)
 
         } catch (e) {
             console.log(e)
@@ -51,7 +51,7 @@ class QueueController {
             })
 
             await queue.save()
-            return res.status(200).json({ isError: false, queue})
+            return res.status(200).json(queue)
         } catch (e) {
             console.log(e)
             return res.status(400).json({
@@ -69,7 +69,7 @@ class QueueController {
 
             const queues = await Queue.find({ group: groupId })
 
-            return res.status(200).json({ isError: false, queues})
+            return res.status(200).json(queues)
         } catch (e) {
             console.log(e)
             return res.status(400).json({
@@ -86,7 +86,7 @@ class QueueController {
             const queue = await Queue.findById(queueId)
             if (!queue) return res.status(404).json({ isError: true, message: 'Очередь не найдена' })
 
-            return res.status(200).json({ isError: false, queue})
+            return res.status(200).json(queue)
         } catch (e) {
             console.log(e)
             return res.status(400).json({

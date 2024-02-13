@@ -10,13 +10,16 @@ import GroupUploadingSchema from "../models/groupUpdating.js";
 import GroupUploading from "../models/groupUpdating.js";
 import University from "../models/university.js";
 import mongoose from "mongoose";
+import { createVoenkaDay } from "../utils/voenkaSchedule.js";
 
 const GROUP_URLS = {
     "DSTU": "",
     "RSUE": ""
 }
 
-export const DSTU_ID = mongoose.Types.ObjectId('64d2529b4e0d38f5c52c1b66')
+const voenka = "Военная кафедра"
+
+export const DSTU_ID = mongoose.Types.ObjectId('64e097f9d969bf39ffe614be')
 
 class DstuService {
     async fetchGroup(URL, groupId, date) {
@@ -25,6 +28,8 @@ class DstuService {
     }
 
     async adaptToServer (subject, groupID) {
+
+        //if (subject["дисциплина"].includes(voenka)) console.log('voenka')
         try {
             const subj = new Subject({
                 audName: subject["аудитория"],
@@ -51,18 +56,14 @@ class DstuService {
 
     async createDay(groupName, groupID, date, day) {
 
-        let day_processed = []
-        day.map(subj => {
-            subj.map(subgroup => {
-                day_processed.push(subgroup)
-            })
-        })
+        const day_processed = day.flat()
+        const filteredSubjects = day_processed.filter(subject => subject !== undefined);
 
         const dayObject = new Day({
             groupName: groupName,
             groupID: groupID,
             date: date,
-            subjects: day_processed
+            subjects: filteredSubjects
         })
         await dayObject.save()
 
@@ -72,11 +73,25 @@ class DstuService {
     async processGroupedSchedule(schedule, info) {
         const groupFromDb = await AcademicGroup.findOne({ groupID: +info.group.groupID, university: DSTU_ID })
 
+        let isVoenkaProcessed = false
         let week = await Promise.all(Object.keys(schedule).map(async date => {
             let day = await Promise.all(schedule[date].map(async subjectArray => {
-                return await Promise.all(subjectArray.map(async subject => {
-                    return await this.adaptToServer(subject, groupFromDb?._id)
-                }))
+
+                const isVoenka = subjectArray[0]["дисциплина"].includes('Военная кафедра')
+                if (isVoenka) {
+                    // Обработка Военной кафедры
+                    if (!isVoenkaProcessed) {
+                        isVoenkaProcessed = true;
+                        return await createVoenkaDay(subjectArray[0], info.group.name, info.group.groupID, groupFromDb?._id);
+                    }
+                } else {
+                    return await Promise.all(subjectArray.map(async subject => {
+                        return await this.adaptToServer(subject, groupFromDb?._id)
+                    }))
+                }
+                // return await Promise.all(subjectArray.map(async subject => {
+                //     return await this.adaptToServer(subject, groupFromDb?._id)
+                // }))
             }))
             return await this.createDay(info.group.name, info.group.groupID, date, day)
         }))
@@ -91,6 +106,7 @@ class DstuService {
             mondayDate: info.date,
             days: week,
             university: DSTU_ID,
+            group: groupFromDb?._id
         })
 
         await this.subscribeToGroup(info.group.groupID)
@@ -110,18 +126,18 @@ class DstuService {
             if (findedGroup) {
                 let groupThread = findedGroup.name.slice(0, -1)
                 const allGroupsFromDb = await AcademicGroup.find({name: {$regex: new RegExp(groupThread)}})
-
                 allGroupsFromDb.map(async group => {
-                    const newGroup = new GroupUploading({
-                        groupID: group.groupId
-                    })
-                    await newGroup.save()
+                    const findedGroup = await GroupUploading.findOne({ groupId: group.groupID, groupName: group.name })
+                    if (!findedGroup) {
+                        const newGroup = new GroupUploading({
+                            groupID: group.groupID,
+                            groupName: group.name
+                        })
+                        await newGroup.save()
+                    }
                 })
             }
-
-
         }
-
     }
 
     async removeWeek(monday) {
@@ -138,19 +154,29 @@ class DstuService {
 
     async groupSchedule(schedule) {
         let obj = {};
-        let rasp1 = schedule.data.rasp;
-        for (let i = 0; i < rasp1.length; i++) {
-            const raspDate = rasp1[i]["дата"].split("T");
-            if (obj[raspDate[0]] && obj[raspDate[0]].length > 0) {
-                if (
-                    rasp1[i]["номерЗанятия"] === rasp1[i - 1]["номерЗанятия"] &&
-                    rasp1[i - 1]["дата"].split("T")[0] === raspDate[0]
-                ) {
-                    obj[raspDate[0]][obj[raspDate[0]].length - 1].push({
-                        ...rasp1[i],
-                        isPodgr: true,
-                    });
+        if (schedule?.data?.rasp) {
+            let rasp1 = schedule.data.rasp;
+            for (let i = 0; i < rasp1.length; i++) {
+                const raspDate = rasp1[i]["дата"].split("T");
+                if (obj[raspDate[0]] && obj[raspDate[0]].length > 0) {
+                    if (
+                        rasp1[i]["номерЗанятия"] === rasp1[i - 1]["номерЗанятия"] &&
+                        rasp1[i - 1]["дата"].split("T")[0] === raspDate[0]
+                    ) {
+                        obj[raspDate[0]][obj[raspDate[0]].length - 1].push({
+                            ...rasp1[i],
+                            isPodgr: true,
+                        });
+                    } else {
+                        obj[raspDate[0]].push([
+                            {
+                                ...rasp1[i],
+                                isPodgr: false,
+                            },
+                        ]);
+                    }
                 } else {
+                    obj[raspDate[0]] = [];
                     obj[raspDate[0]].push([
                         {
                             ...rasp1[i],
@@ -158,17 +184,22 @@ class DstuService {
                         },
                     ]);
                 }
-            } else {
-                obj[raspDate[0]] = [];
-                obj[raspDate[0]].push([
-                    {
-                        ...rasp1[i],
-                        isPodgr: false,
-                    },
-                ]);
             }
+            return await this.processGroupedSchedule(obj, schedule.data.info)
         }
-        return await this.processGroupedSchedule(obj, schedule.data.info)
+        else {
+            console.log('in else')
+            return null
+        }
+    }
+
+    async safetyUpdateSchedule() {
+        const _date = new Date()
+        try {
+            getWeekIdScheduleFromServer(50896, _date)
+        } catch (e) {
+            
+        }
     }
 
     async getWeekIdScheduleFromServer(groupId, date) {
@@ -177,8 +208,8 @@ class DstuService {
                 return await this.groupSchedule(res)
             })
         } catch (e) {
-            console.log(e)
-            return {status: 500, message: "Ошибка сервера"}
+            console.log('groupId', e)
+            return null
         }
     }
 
@@ -253,9 +284,9 @@ class DstuService {
     }
 
     async getGroups() {
-        // await this.getGroupsFromServer()
-
-        return AcademicGroup.find({university: DSTU_ID}, { __v: 0});
+        const groupsFromDb = await AcademicGroup.find({university: DSTU_ID}, { __v: 0})
+        if (groupsFromDb.length > 0) return groupsFromDb
+        else return await this.getGroupsFromServer()
     }
 
     async getTeacherSchedule(teacherName, date) {

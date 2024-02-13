@@ -1,7 +1,7 @@
 import CalendarComponent from "./View/CalendarComponent";
 import {useNavigate, useParams} from "react-router-dom";
 import {useCallback, useContext, useEffect, useState} from "react";
-
+import styles from './Views/view-teacher.module.scss'
 import axios from "axios";
 import SwipebleViewTileOld from "./SwipebleViewTile/SwipebleViewTileOld";
 import Loader from "./Loader/Loader";
@@ -319,14 +319,17 @@ export default function View({isTeachers, isRoom, isGroup, addToCompare}) {
     }
 
     return (
-        <div className={cn("main-container", settings?.calDir === "top" && "top")} id={"tiles-container"}>
+        <div className={cn(styles.container, "main-container top")} id={"tiles-container"}>
             {/*<div className="tiles-container">*/}
-            <ViewHeader currentDate={currentDate} updateSchedule={updateSchedule} groupedRasp={groupedRasp}
-                        scrollTo={scrollTo} lookAt={lookAt} isGroup={isGroup} isTeachers={isTeachers} isRoom={isRoom} isLoaded={isLoaded}
-                        inFavorites={inFavorites} checkFavorites={checkFavorites} group={info} addToCompare={addToCompare}/>
+            {/*<ViewHeader currentDate={currentDate} updateSchedule={updateSchedule} groupedRasp={groupedRasp}*/}
+            {/*            scrollTo={scrollTo} lookAt={lookAt} isGroup={isGroup} isTeachers={isTeachers} isRoom={isRoom} isLoaded={isLoaded}*/}
+            {/*            inFavorites={inFavorites} checkFavorites={checkFavorites} group={info} addToCompare={addToCompare}/>*/}
+                <ViewHeader currentDate={currentDate} updateSchedule={updateSchedule} groupedRasp={groupedRasp}
+                            scrollTo={scrollTo} lookAt={lookAt} isGroup={isGroup} isTeachers={isTeachers} isRoom={isRoom} isLoaded={isLoaded}
+                            inFavorites={inFavorites} checkFavorites={checkFavorites} group={info} addToCompare={addToCompare}/>
 
             {/*<Calendar2/>*/}
-            <div id={"scrollArea"}>
+            <div className={styles.scroll_container} id={"scrollArea"}>
 
                 {/*<div className="tiles-main-container" id={"scrollArea"}>*/}
                     {isError ?

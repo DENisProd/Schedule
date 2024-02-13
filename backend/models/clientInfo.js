@@ -4,8 +4,7 @@ const clientInfoSchema = new Schema({
     userAgent: {type: String},
     ipAdress: {type: String},
     group: {type: String},
-    searchedGroups: [{type: String}],
-    favoriteGroups: [{type: String}],
+    author_id: {type: String},
     enterCount: {type: Number},
     created: {type: Date, default: Date.now}
 })

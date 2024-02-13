@@ -6,12 +6,15 @@ import corsMiddleware from "./middleware/cors.middleware.js"
 import requestIp from 'request-ip'
 import morgan from 'morgan'
 import https from 'https'
+import passportStrategy from "./passport/passport.js"
+
 
 import groupRouter from "./routes/groupRoutes.js"
 import CronController from "./controllers/cronController.js";
 
 const app = express()
 const PORT = config.get("serverPort")
+import 'dotenv/config'
 
 import fs from 'fs'
 import path from 'path'
@@ -22,10 +25,21 @@ import adminRoutes from "./routes/adminRoutes.js";
 import academicGroupRoutes from "./routes/academicGroupRoutes.js";
 import queueRoutes from "./routes/queueRoutes.js";
 import subjectRouter from "./routes/subjectRouter.js";
+import authRoutes from "./routes/authRoutes.js";
+import passport from "passport";
+import cookieSession from "cookie-session";
 
 app.use(requestIp.mw())
 app.use(corsMiddleware)
 app.use(express.json())
+
+app.use(
+    cookieSession({
+        name: "session",
+        keys: ["cyberwolve"],
+        maxAge: 24 * 60 * 60 * 100,
+    })
+);
 
 const accessLogStream = fs.createWriteStream(path.join(process.cwd(), 'access.log'), { flags: 'a' });
 
@@ -66,6 +80,9 @@ const parseIp = (req) => req.headers['x-forwarded-for'] || req.socket.remoteAddr
 // Trust the first proxy in front of your application
 app.set('trust proxy', 1);
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use("/group", groupRouter)
 app.use("/universities", universityRoutes)
 app.use("/user", userRoutes)
@@ -74,6 +91,7 @@ app.use('', adminRoutes)
 app.use('/groups', academicGroupRoutes)
 app.use('/queue', queueRoutes)
 app.use('/subject', subjectRouter)
+app.use('/auth', authRoutes)
 
 
 app.get('/', (req, res) => {

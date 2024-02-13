@@ -12,6 +12,10 @@ const BottomNavigation = () => {
     const groupId = checkGroups("groupId2")
     const myGroup = checkGroups("my-group2")
 
+    useEffect(() => {
+        // console.log(groupId, myGroup)
+    }, [groupId, myGroup])
+
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selected, setSelected] = useState('/')
 
@@ -25,9 +29,11 @@ const BottomNavigation = () => {
     return (
         <>
             <div className={styles.container}>
-                <div className={cn(selected === '/menu/' && isModalOpen && styles.selected)} onClick={() => {
-                    setSelected('/menu/')
-                    setIsModalOpen(true)
+                <div className={cn(selected === '/menu/' && styles.selected)} onClick={() => {
+                    setIsModalOpen(false)
+                    navigate("/main")
+                    //setSelected('/menu/')
+                    //setIsModalOpen(true)
 
                 }}>
                     <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -69,19 +75,27 @@ const BottomNavigation = () => {
                      onClick={() => {
                          setIsModalOpen(false)
                          console.log(myGroup)
+                         let isError = false
                          if (myGroup) {
-                             if (myGroup.university === 'DGTU')
-                                navigate("/group/" + myGroup.groupID + '?u=' + myGroup.university)
-                             else
-                                 navigate("/group/" + myGroup.name + '?u=' + myGroup.university)
+                             if (myGroup.university) {
+                                 if (myGroup.university === 'DGTU')
+                                     navigate("/group/" + myGroup.groupID + '?u=' + myGroup.university)
+                                 else
+                                     navigate("/group/" + myGroup.name + '?u=' + myGroup.university)
+                             } else {
+                                 isError = true
+                             }
                          } else if (groupId) {
-                             if (groupId.university === 'DGTU')
-                                 navigate("/group/" + groupId.groupID + '?u=' + myGroup.university)
-                             else
-                                 navigate("/group/" + groupId.name + '?u=' + myGroup.university)
-                         } else {
-                             navigate("/")
-                         }
+                             if (groupId.university) {
+                                 if (groupId.university === 'DGTU')
+                                     navigate("/group/" + groupId.groupID + '?u=' + myGroup.university)
+                                 else
+                                     navigate("/group/" + groupId.name + '?u=' + myGroup.university)
+                             } else {
+                                 isError = true
+                             }
+                         } else isError = true
+                         if (isError) navigate("/")
                          // navigate("/group/" + (myGroup > 100 ? myGroup : groupId))
                      }}>
                     <svg

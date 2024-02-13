@@ -23,7 +23,8 @@ export function groupByDate(schedule) {
         sked,
         name: schedule.groupName,
         date: schedule.mondayDate.split("T")[0],
-        university: schedule.university
+        university: schedule.university,
+        isCreator: schedule.isCreator || false
     }
 }
 

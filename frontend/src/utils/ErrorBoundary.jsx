@@ -26,10 +26,10 @@ export default class ErrorBoundary extends Component {
 
         if (hasError) {
             // You can render any custom fallback UI
-            const favorites = localStorage.getItem('favorites')
-            const myGroup = localStorage.getItem('my-group')
-            const searchList = localStorage.getItem('searchList')
-            const groupId = localStorage.getItem('groupId')
+            const favorites = localStorage.getItem('favorites2')
+            const myGroup = localStorage.getItem('my-group2')
+            const searchList = localStorage.getItem('searchList2')
+            const groupId = localStorage.getItem('groupId2')
             const version = localStorage.getItem('version')
             const location = window.location.href
 

@@ -38,11 +38,13 @@ export const ScheduleTileStage4Create = ({day}) => {
     useEffect(() => {
         let obj = []
         scheduleTimes.stage2.map(time => {
+            console.log(time)
             obj.push({
                 ...time,
                 optionName:  `${time.number} пара     ${time.timeStart}-${time.timeEnd}`
             })
         })
+        console.log(obj)
         setTimeList(obj)
     }, [scheduleTimes.stage2FromDb])
 
@@ -52,7 +54,7 @@ export const ScheduleTileStage4Create = ({day}) => {
             const data = {
                 timeStart: selectedObject.timeStart,
                 endTime: selectedObject.timeEnd,
-                groupName: scheduleTimes.stage3.group?.name || 'unknown',
+                groupName: scheduleTimes.stage3?.name || 'unknown',
                 audName,
                 name: name.value,
                 teacherName: teacherName.value,
@@ -94,7 +96,6 @@ export const ScheduleTileStage4Create = ({day}) => {
         setName(null)
         setTeacherName(null)
         setAudName('')
-        setType('')
         setSelectedObject(null)
         nameRef.current.clear()
         // setIsVisible(false)
@@ -184,7 +185,7 @@ export const ScheduleTileStage4Create = ({day}) => {
                     }}>
                         <button className={styles.nextButton} style={{
                             width: '50%'
-                        }} onClick={add} disabled={!(name.value && teacherName.value && selectedObject && audName && type)}>Сохранить пару</button>
+                        }} onClick={add} disabled={!(name?.value && teacherName?.value && selectedObject && audName && type)}>Сохранить пару</button>
                     </p>
                 </>
                 :

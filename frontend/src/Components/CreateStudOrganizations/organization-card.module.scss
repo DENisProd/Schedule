@@ -1,0 +1,59 @@
+.util_card {
+  width: 100%;
+  height: 10rem;
+  padding: 1rem;
+  box-sizing: border-box;
+  background: var(--background-tile);
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  //transition: all .2s cubic-bezier(.42,0,.34,1.01);
+
+  & img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 10rem;
+    width: 16rem;
+    object-fit: cover;
+    z-index: 1;
+  }
+
+  & .overlay {
+    content: '';
+    position: absolute;
+    top: 0;
+    height: 100%;
+    left: 0;
+    width: 100%;
+    z-index: 2;
+    background: linear-gradient(90deg, var(--background-tile) 0%, var(--background-tile) 55%, rgba(255, 255, 255, 0.00) 100%);
+  }
+
+  & h1 {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    z-index: 3;
+    margin-block-start: 0;
+    margin-block-end: 0;
+  }
+
+  & h3 {
+    color: var(--primary-gray2);
+    width: 50%;
+    position: absolute;
+    top: 3rem;
+    left: 1rem;
+    z-index: 3;
+    font-weight: 400;
+  }
+
+  &:hover {
+    box-shadow: 0px 4px 19px 0px rgba(168, 168, 168, 0.87);
+  }
+}

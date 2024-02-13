@@ -8,7 +8,7 @@ const groupController = new GroupController()
 
 const scheduleLimiter = rateLimit({
     windowMs: 60 * 1000, // 1 minute
-    max: 16, // Limit each IP to 100 requests per `window` (here, per 1 minute)
+    max: 25, // Limit each IP to 100 requests per `window` (here, per 1 minute)
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
@@ -20,12 +20,12 @@ const scheduleCreateLimiter = rateLimit({
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
 
-router.post('/compare/', scheduleLimiter, groupController.getCompare)
+router.post('/compare/', scheduleCreateLimiter, groupController.getCompare)
 router.get('/:id', scheduleLimiter, async (req, res) => {
-    const {university, date} = req.query
+    const {university, date, user} = req.query
     const groupId = req.params.id
-
-    const data = await groupController.getOneById(groupId, university, date)
+    console.log(groupId)
+    const data = await groupController.getOneById(groupId, university, date, user)
 
     if (data === 404)
         res.status(404).json({message: 'Группа не найдена'})

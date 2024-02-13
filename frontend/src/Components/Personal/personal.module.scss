@@ -1,6 +1,150 @@
 .main {
   width: 100%;
   box-sizing: border-box;
-  padding: 1rem;
+  padding: 1rem 1rem 7rem 1rem;
   text-align: center;
+
+  & header {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+
+    & button {
+      background: none;
+      border: none;
+      color: var(--text-color);
+      text-align: left;
+      padding: 0;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  }
+
+  & h1 {
+    margin-block-start: 0;
+    margin-block-end: 0;
+    font-size: 1.3rem;
+  }
+
+  & .user_card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+    background: var(--background-tile);
+    border-radius: 1rem;
+
+    & img {
+      width: 8rem;
+      height: 8rem;
+      border-radius: 50%;
+    }
+
+    & p {
+      margin-block-start: 0;
+      margin-block-end: 0;
+    }
+  }
+  & .hot_block {
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+    border-radius: 1rem;
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    cursor: pointer;
+
+    & svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    & div {
+      width: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  & .code_block {
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+    background: var(--background-tile);
+    border-radius: 1rem;
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    flex-direction: column;
+
+    & p {
+      margin-block-start: 0;
+      margin-block-end: 0;
+    }
+  }
+}
+
+.qrcode {
+  margin: 1rem auto;
+  width: 250px;
+  height: 250px;
+  padding: 0.6rem;
+  background: #FFFFFF;
+  border-radius: 2rem;
+
+  //@media screen and (max-width: 1024px) {
+  //  & {
+  //    width: 100%;
+  //    aspect-ratio: 1;
+  //  }
+  //}
+}
+
+.copy {
+  background: var(--background-color);
+  padding: 0.2rem 0.8rem;
+  border-radius: 0.5rem;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  color: var(--text-color);
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+
+  &:hover {
+    background: var(--primary-color);
+    color: #FFFFFF;
+  }
+
+  & svg {
+    width: 24px;
+    height: 24px;
+
+    & path {
+      stroke: var(--text-color);
+    }
+
+    &.fill {
+      & path {
+        fill: var(--text-color);
+      }
+    }
+  }
+}
+
+.center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }

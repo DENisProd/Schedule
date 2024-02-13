@@ -1,34 +1,47 @@
 .view-header {
-    position: fixed;
-    width: 700px;
-    margin: 0 auto 0 auto;
-    /*background: var(--background-color);*/
-    backdrop-filter: blur(20px);
-    border-top: var(--nav-color-secondary) 2px solid;
-    background: var(--bg-semi-transperent);
-    display: flex;
-    flex-direction: column;
-    gap: 0.5em;
-    padding-top: 0.5em;
-    padding-bottom: 0.2em;
-    bottom: calc(var(--nav-height) - 2px);
+    /*position: fixed;*/
+    /*width: 700px;*/
+    /*margin: 0 auto 0 auto;*/
+    /*!*background: var(--background-color);*!*/
+    /*backdrop-filter: blur(20px);*/
+    /*border-top: var(--nav-color-secondary) 2px solid;*/
+    /*background: var(--bg-semi-transperent);*/
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    /*gap: 0.5em;*/
+    /*padding-top: 0.5em;*/
+    /*padding-bottom: 0.2em;*/
+    /*bottom: calc(var(--nav-height) - 2px);*/
+
+    height: 26%;
+    width: 100%;
+    bottom: calc(var(--nav-height) + 8vh);
+
+    z-index: 1;
 
 }
 
+.view-header .title-h2 {
+    color: #FFFFFF;
+    align-self: center;
+}
+
 .view-header.top {
+    /*top: 0;*/
+    /*height: 130px;*/
+    /*border-top: none;*/
+    /*border-bottom: var(--nav-color-secondary) 2px solid;*/
+    /*padding-top: 0.5em;*/
+    /*padding-bottom: 0.5em;*/
     top: 0;
-    height: 130px;
-    border-top: none;
-    border-bottom: var(--nav-color-secondary) 2px solid;
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
+    height: 32%;
 }
 
 .view-container {
     display: flex;
-    justify-content: space-between;
-    margin: 0;
+    justify-content: center;
     align-items: center;
+    margin-bottom: 1rem;
 }
 
 .mini-calendar-container {
@@ -63,13 +76,13 @@
 
 }
 
-.mini-calendar-item.exists {
-    background: var(--background-secondary);
-}
+/*.mini-calendar-item.exists {*/
+/*    background: var(--background-secondary);*/
+/*}*/
 
-.mini-calendar-item.exists h1{
-    color: var(--text-color)
-}
+/*.mini-calendar-item.exists h1{*/
+/*    color: var(--text-color)*/
+/*}*/
 
 .mini-calendar-item h4 {
     color: var(--text-color-secondary);
@@ -131,6 +144,8 @@
     text-align: -webkit-center;
     display: flex;
     justify-content: space-between;
+    max-width: 700px;
+    margin: 0 auto;
 }
 
 .calendar-main-container button {
@@ -139,7 +154,7 @@
     font-weight: 800;
     font-size: 1.5em;
     cursor: pointer;
-    color: var(--text-color)
+    color: #FFFFFF;
 }
 
 .calendar-main-container button:hover {
@@ -160,14 +175,6 @@
 
     .mini-calendar-container {
         height: 70px;
-    }
-
-    .view-header {
-        height: 110px;
-    }
-
-    .view-header.top {
-        height: 130px;
     }
 }
 

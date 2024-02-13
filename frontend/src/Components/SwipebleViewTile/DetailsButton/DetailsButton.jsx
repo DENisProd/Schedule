@@ -24,7 +24,7 @@ export const DetailsButton = ({subject}) => {
     // }, [isMenuVisible]);
 
     useEffect(() => {
-        console.log(subject)
+        // console.log(subject)
     }, [])
 
     return (
